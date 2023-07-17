@@ -3,8 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"os"
 
+	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
 )
 
@@ -24,4 +26,11 @@ func main() {
 	}
 
 	fmt.Println(name)
+
+	router := gin.Default()
+	router.GET("/", func(c *gin.Context) {
+		c.IndentedJSON(http.StatusOK, "Hello World!")
+	})
+
+	router.Run("localhost:8080")
 }

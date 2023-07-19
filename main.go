@@ -20,7 +20,7 @@ var db *pgx.Conn
 func getAllRecipes(c *gin.Context) {
 	rows, err := db.Query(context.Background(), "select * from recipes")
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "QueryRow failed: %v\n", err)
+		fmt.Fprintf(os.Stderr, "QueryRow failed getAllRecipes: %v\n", err)
 		return
 	}
 
@@ -43,12 +43,25 @@ func getAllRecipes(c *gin.Context) {
 		fmt.Fprintf(os.Stderr, "Scan all recipes failed: %v\n", err)
 	}
 	fmt.Print(recipes)
-	c.JSON(http.StatusOK, recipes)
+	c.JSON(http.StatusOK, gin.H{
+		"data": recipes,
+	})
 
 }
 
 func getRecipeById(c *gin.Context) {
-	c.Param("id")
+	id := c.Param("id")
+
+	var recipe Recipe
+
+	err := db.QueryRow(context.Background(), "select id, name from recipes where id=$1", id).Scan(&recipe.Id, &recipe.Name)
+
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "QueryRow failed getRecipeById: %v\n", err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": recipe})
 }
 
 func postRecipe(c *gin.Context) {

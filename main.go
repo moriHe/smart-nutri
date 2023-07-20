@@ -49,12 +49,41 @@ func getAllRecipes(c *gin.Context) {
 
 }
 
+type Ingredient struct {
+	Id   int8
+	Name string
+}
+
 func getRecipeById(c *gin.Context) {
 	id := c.Param("id")
 
 	var recipe Recipe
 
 	err := db.QueryRow(context.Background(), "select id, name from recipes where id=$1", id).Scan(&recipe.Id, &recipe.Name)
+
+	rows, recipe_ingredients_err := db.Query(context.Background(), "select recipes_ingredients.id, name from recipes_ingredients join ingredients on recipes_ingredients.ingredient_id = ingredients.id where recipes_ingredients.recipe_id = 1")
+
+	if recipe_ingredients_err != nil {
+		fmt.Fprintf(os.Stderr, "QueryRow failed getAllRecipes: %v\n", err)
+		return
+	}
+
+	defer rows.Close()
+
+	var ingredients []Ingredient
+
+	for rows.Next() {
+		var ingredient Ingredient
+
+		err = rows.Scan(&ingredient.Id, &ingredient.Name)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Scan all recipes failed: %v\n", err)
+			return
+		}
+		ingredients = append(ingredients, ingredient)
+	}
+
+	fmt.Printf("%v\n", ingredients)
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "QueryRow failed getRecipeById: %v\n", err)

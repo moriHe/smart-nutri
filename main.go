@@ -61,9 +61,9 @@ func getRecipeById(c *gin.Context) {
 
 	err := db.QueryRow(context.Background(), "select id, name from recipes where id=$1", id).Scan(&recipe.Id, &recipe.Name)
 
-	rows, recipe_ingredients_err := db.Query(context.Background(), "select recipes_ingredients.id, name from recipes_ingredients join ingredients on recipes_ingredients.ingredient_id = ingredients.id where recipes_ingredients.recipe_id = 1")
+	rows, recipeIngredientsErr := db.Query(context.Background(), "select recipes_ingredients.id, name from recipes_ingredients join ingredients on recipes_ingredients.ingredient_id = ingredients.id where recipes_ingredients.recipe_id = 1")
 
-	if recipe_ingredients_err != nil {
+	if recipeIngredientsErr != nil {
 		fmt.Fprintf(os.Stderr, "QueryRow failed getAllRecipes: %v\n", err)
 		return
 	}

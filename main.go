@@ -64,15 +64,52 @@ func getRecipeById(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": recipe})
 }
 
+type PostRecipePayload struct {
+	Name string `json:"name"`
+}
+
 func postRecipe(c *gin.Context) {
+	var payload PostRecipePayload
+
+	if err := c.BindJSON(&payload); err != nil {
+		return
+	}
+	fmt.Printf("%s\n", payload.Name)
+
+	_, err := db.Exec(context.Background(), "insert into recipes (name) values ($1)", payload.Name)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Unable to insert recipe row: %v\n", err)
+		return
+	}
 
 }
 
 func patchRecipe(c *gin.Context) {
+	id := c.Param("id")
+	var payload PostRecipePayload
+
+	if err := c.BindJSON(&payload); err != nil {
+		return
+	}
+	fmt.Printf("%s\n", payload.Name)
+	fmt.Printf("%s\n", id)
+
+	_, err := db.Exec(context.Background(), "update recipes set name = $1 where id = $2", payload.Name, id)
+
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Unable to update recipe row: %v\n", err)
+	}
 
 }
 
 func deleteRecipe(c *gin.Context) {
+	id := c.Param("id")
+
+	_, err := db.Exec(context.Background(), "delete from recipes where id = $1", id)
+
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Unable to delete recipe row: %v\n", err)
+	}
 
 }
 
@@ -102,7 +139,7 @@ func main() {
 	router.GET("/recipes", getAllRecipes)
 	router.GET("/recipes/:id", getRecipeById)
 	router.POST("/recipes", postRecipe)
-	router.PATCH("/recieps", patchRecipe)
+	router.PATCH("/recipes/:id", patchRecipe)
 	router.DELETE("/recipes/:id", deleteRecipe)
 
 	router.Run("localhost:8080")

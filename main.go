@@ -171,12 +171,10 @@ func patchRecipe(c *gin.Context) {
 
 }
 
-// TODO Post extra ingredient
 // TODO Delete RecipeIngredient
 
 func deleteRecipe(c *gin.Context) {
 	id := c.Param("id")
-	// TODO delete junction table rows
 	_, err1 := db.Exec(context.Background(), "delete from recipes_ingredients where recipe_id =$1", id)
 
 	if err1 != nil {
@@ -189,6 +187,16 @@ func deleteRecipe(c *gin.Context) {
 		fmt.Fprintf(os.Stderr, "Unable to delete recipe row: %v\n", err)
 	}
 
+}
+
+func deleteIngredient(c *gin.Context) {
+	// The id is the main key in this case
+	id := c.Param("id")
+	_, err := db.Exec(context.Background(), "delete from recipes_ingredients where recipes_ingredients.id = $1", id)
+
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Unable to delete recipe row: %v\n", err)
+	}
 }
 
 func main() {
@@ -221,6 +229,7 @@ func main() {
 	router.DELETE("/recipes/:id", deleteRecipe)
 
 	router.POST("recipes/:id/ingredients", postIngredient)
+	router.DELETE("recipes/ingredients/:id", deleteIngredient)
 
 	router.Run("localhost:8080")
 }

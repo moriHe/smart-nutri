@@ -105,6 +105,10 @@ type PostRecipePayload struct {
 	Ingredients []Id `json:"ingredients"`
 }
 
+type PostIngredientsPayload struct {
+	Ingredients []Id `json:"ingredients"`
+}
+
 func postRecipe(c *gin.Context) {
 	var payload PostRecipePayload
 	var recipeId int32
@@ -112,12 +116,30 @@ func postRecipe(c *gin.Context) {
 	if err := c.BindJSON(&payload); err != nil {
 		return
 	}
-	fmt.Printf("%s\n", payload.Name)
 
 	err := db.QueryRow(context.Background(), "insert into recipes (name) values ($1) returning id", payload.Name).Scan(&recipeId)
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to insert recipe row: %v\n", err)
+		return
+	}
+
+	for i := 0; i < len(payload.Ingredients); i++ {
+		_, err := db.Exec(context.Background(), "insert into recipes_ingredients(recipe_id, ingredient_id) values ($1, $2)", recipeId, payload.Ingredients[i])
+
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Unable to insert to recipes_ingredients: %v\n", err)
+		}
+	}
+
+}
+
+func postIngredient(c *gin.Context) {
+	recipeId := c.Param("id")
+
+	var payload PostIngredientsPayload
+
+	if err := c.BindJSON(&payload); err != nil {
 		return
 	}
 
@@ -129,7 +151,6 @@ func postRecipe(c *gin.Context) {
 			fmt.Fprintf(os.Stderr, "Unable to insert to recipes_ingredients: %v\n", err)
 		}
 	}
-
 }
 
 func patchRecipe(c *gin.Context) {
@@ -198,6 +219,8 @@ func main() {
 	router.POST("/recipes", postRecipe)
 	router.PATCH("/recipes/:id", patchRecipe)
 	router.DELETE("/recipes/:id", deleteRecipe)
+
+	router.POST("recipes/:id/ingredients", postIngredient)
 
 	router.Run("localhost:8080")
 }

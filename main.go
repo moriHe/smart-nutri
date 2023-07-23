@@ -150,9 +150,18 @@ func patchRecipe(c *gin.Context) {
 
 }
 
+// TODO Post extra ingredient
+// TODO Delete RecipeIngredient
+
 func deleteRecipe(c *gin.Context) {
 	id := c.Param("id")
 	// TODO delete junction table rows
+	_, err1 := db.Exec(context.Background(), "delete from recipes_ingredients where recipe_id =$1", id)
+
+	if err1 != nil {
+		fmt.Fprintf(os.Stderr, "Unable to delete recipe row: %v\n", err1)
+	}
+
 	_, err := db.Exec(context.Background(), "delete from recipes where id = $1", id)
 
 	if err != nil {

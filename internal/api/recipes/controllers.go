@@ -169,8 +169,6 @@ func patchRecipe(c *gin.Context) {
 
 }
 
-// TODO Delete RecipeIngredient
-
 func deleteRecipe(c *gin.Context) {
 	id := c.Param("id")
 	_, err1 := db.Db.Exec(context.Background(), "delete from recipes_ingredients where recipe_id =$1", id)

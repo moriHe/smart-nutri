@@ -1,6 +1,6 @@
 package recipes
 
-type Id = int8
+type Id = int32
 type Name = string
 
 type Ingredient struct {

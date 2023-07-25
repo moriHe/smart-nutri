@@ -7,6 +7,6 @@ import (
 
 func main() {
 	store := storage.NewPostgresStorage()
-	api.StartServer(store)
+	api.StartGinServer(store)
 
 }

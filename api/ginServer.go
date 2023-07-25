@@ -12,7 +12,7 @@ type Server struct {
 	store storage.Storage
 }
 
-func StartServer(store storage.Storage) *Server {
+func StartGinServer(store storage.Storage) *Server {
 	router := gin.Default()
 	server := &Server{store: store}
 

@@ -116,7 +116,7 @@ func (s *PostgresStorage) PostRecipeIngredient(recipeId string, payload types.Po
 	return nil
 }
 
-func (s *PostgresStorage) PatchRecipe(recipeId string, payload types.PostRecipePayload) error {
+func (s *PostgresStorage) PatchRecipeName(recipeId string, payload types.PostRecipePayload) error {
 	_, err := s.db.Exec(context.Background(), "update recipes set name = $1 where id = $2", payload.Name, recipeId)
 
 	if err != nil {

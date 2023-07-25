@@ -21,7 +21,7 @@ func StartGinServer(store storage.Storage) *Server {
 	router.GET("/recipes/:id", server.HandleGetRecipeById)
 	router.POST("/recipes", server.HandlePostRecipe)
 	router.POST("/recipes/:id/ingredients", server.HandlePostRecipeIngredient)
-	router.PATCH("/recipes/:id", server.HandlePatchRecipe)
+	router.PATCH("/recipes/:id", server.HandlePatchRecipeName)
 	router.DELETE("/recipes/:id", server.HandleDeleteRecipe)
 	router.DELETE("/recipes/ingredients/:id", server.HandleDeleteRecipeIngredient)
 	router.Run("localhost:8080")
@@ -73,15 +73,15 @@ func (s *Server) HandlePostRecipeIngredient(c *gin.Context) {
 	s.store.PostRecipeIngredient(recipeId, payload)
 }
 
-// Patch should also update ingredients
-func (s *Server) HandlePatchRecipe(c *gin.Context) {
+// TODO: remove ingredient slice from payload
+func (s *Server) HandlePatchRecipeName(c *gin.Context) {
 	recipeId := c.Param("id")
 	var payload types.PostRecipePayload
 
 	if err := c.BindJSON(&payload); err != nil {
 		return
 	}
-	s.store.PatchRecipe(recipeId, payload)
+	s.store.PatchRecipeName(recipeId, payload)
 }
 
 func (s *Server) HandleDeleteRecipe(c *gin.Context) {

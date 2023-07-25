@@ -23,6 +23,31 @@ func NewPostgresStorage() *PostgresStorage {
 	return &PostgresStorage{db: db}
 }
 
+func (s *PostgresStorage) GetAllRecipes() (error, *[]types.ShallowRecipe) {
+	rows, err := s.db.Query(context.Background(), "select * from recipes")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "QueryRow failed getAllRecipes: %v\n", err)
+		return errors.New("AllRecipeErr"), nil
+	}
+
+	defer rows.Close()
+
+	var recipes []types.ShallowRecipe
+
+	for rows.Next() {
+		var recipe types.ShallowRecipe
+
+		err = rows.Scan(&recipe.Id, &recipe.Name)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Scan all recipes failed: %v\n", err)
+			return errors.New("AllRecipeErr"), nil
+		}
+		recipes = append(recipes, recipe)
+	}
+
+	return nil, &recipes
+}
+
 func (s *PostgresStorage) GetRecipeById(id string) (error, *types.FullRecipe) {
 
 	var recipe types.FullRecipe

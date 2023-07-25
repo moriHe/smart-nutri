@@ -64,9 +64,9 @@ func (s *PostgresStorage) GetRecipeById(id string) (error, *types.FullRecipe) {
 	defer rows.Close()
 
 	for rows.Next() {
-		var ingredient types.Ingredient
+		var ingredient types.RecipeIngredient
 
-		err = rows.Scan(&ingredient.RecipeIngredientId, &ingredient.Id, &ingredient.Name)
+		err = rows.Scan(&ingredient.Id, &ingredient.IngredientId, &ingredient.Name)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Scan all recipes failed: %v\n", err)
 			return errors.New("Test1"), nil
@@ -83,7 +83,7 @@ func (s *PostgresStorage) GetRecipeById(id string) (error, *types.FullRecipe) {
 	return nil, &recipe
 }
 
-func (s *PostgresStorage) PostRecipe(payload types.PostRecipePayload) error {
+func (s *PostgresStorage) PostRecipe(payload types.PostRecipe) error {
 	var recipeId int32
 	err := s.db.QueryRow(context.Background(), "insert into recipes (name) values ($1) returning id", payload.Name).Scan(&recipeId)
 
@@ -92,8 +92,8 @@ func (s *PostgresStorage) PostRecipe(payload types.PostRecipePayload) error {
 		return errors.New("post recipe error")
 	}
 
-	for i := 0; i < len(payload.Ingredients); i++ {
-		_, err := s.db.Exec(context.Background(), "insert into recipes_ingredients(recipe_id, ingredient_id) values ($1, $2)", recipeId, payload.Ingredients[i])
+	for i := 0; i < len(payload.IngredientIds); i++ {
+		_, err := s.db.Exec(context.Background(), "insert into recipes_ingredients(recipe_id, ingredient_id) values ($1, $2)", recipeId, payload.IngredientIds[i])
 
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Unable to insert to recipes_ingredients: %v\n", err)
@@ -103,20 +103,18 @@ func (s *PostgresStorage) PostRecipe(payload types.PostRecipePayload) error {
 	return nil
 }
 
-func (s *PostgresStorage) PostRecipeIngredient(recipeId string, payload types.PostIngredientsPayload) error {
-	for i := 0; i < len(payload.Ingredients); i++ {
-		fmt.Println(recipeId, payload.Ingredients[i])
-		_, err := s.db.Exec(context.Background(), "insert into recipes_ingredients(recipe_id, ingredient_id) values ($1, $2)", recipeId, payload.Ingredients[i])
+func (s *PostgresStorage) PostRecipeIngredient(recipeId string, payload types.PostRecipeIngredient) error {
+	fmt.Println(payload.IngredientId)
+	_, err := s.db.Exec(context.Background(), "insert into recipes_ingredients(recipe_id, ingredient_id) values ($1, $2)", recipeId, payload.IngredientId)
 
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Unable to insert to recipes_ingredients: %v\n", err)
-			return errors.New("postIngredient error")
-		}
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Unable to insert to recipes_ingredients: %v\n", err)
+		return errors.New("postIngredient error")
 	}
 	return nil
 }
 
-func (s *PostgresStorage) PatchRecipeName(recipeId string, payload types.PostRecipePayload) error {
+func (s *PostgresStorage) PatchRecipeName(recipeId string, payload types.PatchRecipeName) error {
 	_, err := s.db.Exec(context.Background(), "update recipes set name = $1 where id = $2", payload.Name, recipeId)
 
 	if err != nil {

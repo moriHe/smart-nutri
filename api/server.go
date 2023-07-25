@@ -55,7 +55,7 @@ func (s *Server) HandleGetRecipeById(c *gin.Context) {
 }
 
 func (s *Server) HandlePostRecipe(c *gin.Context) {
-	var payload types.PostRecipePayload
+	var payload types.PostRecipe
 	if err := c.BindJSON(&payload); err != nil {
 		return
 	}
@@ -65,7 +65,7 @@ func (s *Server) HandlePostRecipe(c *gin.Context) {
 func (s *Server) HandlePostRecipeIngredient(c *gin.Context) {
 	recipeId := c.Param("id")
 
-	var payload types.PostIngredientsPayload
+	var payload types.PostRecipeIngredient
 
 	if err := c.BindJSON(&payload); err != nil {
 		return
@@ -77,7 +77,7 @@ func (s *Server) HandlePostRecipeIngredient(c *gin.Context) {
 // TODO: make types simpler
 func (s *Server) HandlePatchRecipeName(c *gin.Context) {
 	recipeId := c.Param("id")
-	var payload types.PostRecipePayload
+	var payload types.PatchRecipeName
 
 	if err := c.BindJSON(&payload); err != nil {
 		return

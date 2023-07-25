@@ -7,9 +7,9 @@ import (
 type Storage interface {
 	GetAllRecipes() (error, *[]types.ShallowRecipe)
 	GetRecipeById(string) (error, *types.FullRecipe)
-	PostRecipe(types.PostRecipePayload) error
-	PostRecipeIngredient(string, types.PostIngredientsPayload) error
-	PatchRecipeName(string, types.PostRecipePayload) error
+	PostRecipe(types.PostRecipe) error
+	PostRecipeIngredient(string, types.PostRecipeIngredient) error
+	PatchRecipeName(string, types.PatchRecipeName) error
 	DeleteRecipe(string) error
 	DeleteRecipeIngredient(string) error
 }

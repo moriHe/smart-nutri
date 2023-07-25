@@ -20,6 +20,9 @@ func StartGinServer(store storage.Storage) *Server {
 	router.GET("/recipes", server.HandleGetAllRecipes)
 	router.GET("/recipes/:id", server.HandleGetRecipeById)
 	router.POST("/recipes", server.HandlePostRecipe)
+	router.POST("/recipes/:id/ingredients", server.HandlePostRecipeIngredient)
+	router.PATCH("/recipes/:id", server.HandlePatchRecipe)
+	router.DELETE("/recipes/:id", server.HandleDeleteRecipe)
 	router.Run("localhost:8080")
 	return server
 
@@ -56,4 +59,32 @@ func (s *Server) HandlePostRecipe(c *gin.Context) {
 		return
 	}
 	s.store.PostRecipe(payload)
+}
+
+func (s *Server) HandlePostRecipeIngredient(c *gin.Context) {
+	recipeId := c.Param("id")
+
+	var payload types.PostIngredientsPayload
+
+	if err := c.BindJSON(&payload); err != nil {
+		return
+	}
+	s.store.PostRecipeIngredient(recipeId, payload)
+}
+
+// Patch should also update ingredients
+func (s *Server) HandlePatchRecipe(c *gin.Context) {
+	recipeId := c.Param("id")
+	var payload types.PostRecipePayload
+
+	if err := c.BindJSON(&payload); err != nil {
+		return
+	}
+	s.store.PatchRecipe(recipeId, payload)
+}
+
+func (s *Server) HandleDeleteRecipe(c *gin.Context) {
+	recipeId := c.Param("id")
+	s.store.DeleteRecipe(recipeId)
+
 }

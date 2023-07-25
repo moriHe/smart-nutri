@@ -102,3 +102,45 @@ func (s *PostgresStorage) PostRecipe(payload types.PostRecipePayload) error {
 	}
 	return nil
 }
+
+func (s *PostgresStorage) PostRecipeIngredient(recipeId string, payload types.PostIngredientsPayload) error {
+	for i := 0; i < len(payload.Ingredients); i++ {
+		fmt.Println(recipeId, payload.Ingredients[i])
+		_, err := s.db.Exec(context.Background(), "insert into recipes_ingredients(recipe_id, ingredient_id) values ($1, $2)", recipeId, payload.Ingredients[i])
+
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Unable to insert to recipes_ingredients: %v\n", err)
+			return errors.New("postIngredient error")
+		}
+	}
+	return nil
+}
+
+func (s *PostgresStorage) PatchRecipe(recipeId string, payload types.PostRecipePayload) error {
+	_, err := s.db.Exec(context.Background(), "update recipes set name = $1 where id = $2", payload.Name, recipeId)
+
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Unable to update recipe row: %v\n", err)
+		return errors.New("PatchRecipe error")
+	}
+
+	return nil
+}
+
+func (s *PostgresStorage) DeleteRecipe(recipeId string) error {
+	_, err1 := s.db.Exec(context.Background(), "delete from recipes_ingredients where recipe_id =$1", recipeId)
+
+	if err1 != nil {
+		fmt.Fprintf(os.Stderr, "Unable to delete recipe row: %v\n", err1)
+		return errors.New("deleteRecipe error")
+	}
+
+	_, err := s.db.Exec(context.Background(), "delete from recipes where id = $1", recipeId)
+
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Unable to delete recipe row: %v\n", err)
+		return errors.New("deleteRecipe error")
+
+	}
+	return nil
+}

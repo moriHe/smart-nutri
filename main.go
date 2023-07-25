@@ -1,14 +1,12 @@
 package main
 
 import (
-	api "github.com/moriHe/smart-nutri/internal/api"
-	"github.com/moriHe/smart-nutri/internal/db"
+	"github.com/moriHe/smart-nutri/api"
+	"github.com/moriHe/smart-nutri/storage"
 )
 
 func main() {
-	db.ConnPostgres()
-	defer db.ClosePostgres()
-
-	api.ConnRouter()
+	store := storage.NewPostgresStorage()
+	api.StartGinServer(store)
 
 }

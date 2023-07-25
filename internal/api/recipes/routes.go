@@ -5,8 +5,6 @@ import (
 )
 
 func RecipeRoutes(router *gin.Engine) {
-	router.GET("/recipes", getAllRecipes)
-	router.GET("/recipes/:id", getRecipeById)
 	router.POST("/recipes", postRecipe)
 	router.PATCH("/recipes/:id", patchRecipe)
 	router.DELETE("/recipes/:id", deleteRecipe)

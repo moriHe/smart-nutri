@@ -3,80 +3,11 @@ package recipes
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/moriHe/smart-nutri/internal/db"
 )
-
-func getAllRecipes(c *gin.Context) {
-	rows, err := db.Db.Query(context.Background(), "select * from recipes")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "QueryRow failed getAllRecipes: %v\n", err)
-		return
-	}
-
-	defer rows.Close()
-
-	var recipes []ShallowRecipe
-
-	for rows.Next() {
-		var recipe ShallowRecipe
-
-		err = rows.Scan(&recipe.Id, &recipe.Name)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Scan all recipes failed: %v\n", err)
-			return
-		}
-		recipes = append(recipes, recipe)
-	}
-
-	if rows.Err() != nil {
-		fmt.Fprintf(os.Stderr, "Scan all recipes failed: %v\n", err)
-	}
-	fmt.Print(recipes)
-	c.JSON(http.StatusOK, gin.H{
-		"data": recipes,
-	})
-
-}
-
-func getRecipeById(c *gin.Context) {
-	id := c.Param("id")
-
-	var recipe FullRecipe
-
-	err := db.Db.QueryRow(context.Background(), "select id, name from recipes where id=$1", id).Scan(&recipe.Id, &recipe.Name)
-
-	rows, recipeIngredientsErr := db.Db.Query(context.Background(), "select recipes_ingredients.id, recipes_ingredients.ingredient_id, name from recipes_ingredients join ingredients on recipes_ingredients.ingredient_id = ingredients.id where recipes_ingredients.recipe_id = $1", id)
-
-	if recipeIngredientsErr != nil {
-		fmt.Fprintf(os.Stderr, "QueryRow failed getAllRecipes: %v\n", err)
-		return
-	}
-
-	defer rows.Close()
-
-	for rows.Next() {
-		var ingredient Ingredient
-
-		err = rows.Scan(&ingredient.RecipeIngredientId, &ingredient.Id, &ingredient.Name)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Scan all recipes failed: %v\n", err)
-			return
-		}
-
-		recipe.Ingredients = append(recipe.Ingredients, ingredient)
-	}
-
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "QueryRow failed getRecipeById: %v\n", err)
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"data": recipe})
-}
 
 func postRecipe(c *gin.Context) {
 	var payload PostRecipePayload

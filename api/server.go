@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/moriHe/smart-nutri/storage"
+	"github.com/moriHe/smart-nutri/types"
 )
 
 type Server struct {
@@ -18,6 +19,7 @@ func StartGinServer(store storage.Storage) *Server {
 
 	router.GET("/recipes", server.HandleGetAllRecipes)
 	router.GET("/recipes/:id", server.HandleGetRecipeById)
+	router.POST("/recipes", server.HandlePostRecipe)
 	router.Run("localhost:8080")
 	return server
 
@@ -46,4 +48,12 @@ func (s *Server) HandleGetRecipeById(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"data": recipe})
 
+}
+
+func (s *Server) HandlePostRecipe(c *gin.Context) {
+	var payload types.PostRecipePayload
+	if err := c.BindJSON(&payload); err != nil {
+		return
+	}
+	s.store.PostRecipe(payload)
 }

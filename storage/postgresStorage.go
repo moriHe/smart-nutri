@@ -82,3 +82,23 @@ func (s *PostgresStorage) GetRecipeById(id string) (error, *types.FullRecipe) {
 
 	return nil, &recipe
 }
+
+func (s *PostgresStorage) PostRecipe(payload types.PostRecipePayload) error {
+	var recipeId int32
+	err := s.db.QueryRow(context.Background(), "insert into recipes (name) values ($1) returning id", payload.Name).Scan(&recipeId)
+
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Unable to insert recipe row: %v\n", err)
+		return errors.New("post recipe error")
+	}
+
+	for i := 0; i < len(payload.Ingredients); i++ {
+		_, err := s.db.Exec(context.Background(), "insert into recipes_ingredients(recipe_id, ingredient_id) values ($1, $2)", recipeId, payload.Ingredients[i])
+
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Unable to insert to recipes_ingredients: %v\n", err)
+			return errors.New("post recipe loop error")
+		}
+	}
+	return nil
+}

@@ -73,8 +73,6 @@ func (s *Server) HandlePostRecipeIngredient(c *gin.Context) {
 	s.store.PostRecipeIngredient(recipeId, payload)
 }
 
-// TODO: remove ingredient slice from payload
-// TODO: make types simpler
 func (s *Server) HandlePatchRecipeName(c *gin.Context) {
 	recipeId := c.Param("id")
 	var payload types.PatchRecipeName

@@ -23,6 +23,7 @@ func StartGinServer(store storage.Storage) *Server {
 	router.POST("/recipes/:id/ingredients", server.HandlePostRecipeIngredient)
 	router.PATCH("/recipes/:id", server.HandlePatchRecipe)
 	router.DELETE("/recipes/:id", server.HandleDeleteRecipe)
+	router.DELETE("/recipes/ingredients/:id", server.HandleDeleteRecipeIngredient)
 	router.Run("localhost:8080")
 	return server
 
@@ -86,5 +87,11 @@ func (s *Server) HandlePatchRecipe(c *gin.Context) {
 func (s *Server) HandleDeleteRecipe(c *gin.Context) {
 	recipeId := c.Param("id")
 	s.store.DeleteRecipe(recipeId)
+
+}
+
+func (s *Server) HandleDeleteRecipeIngredient(c *gin.Context) {
+	recipeId := c.Param("id")
+	s.store.DeleteRecipeIngredient(recipeId)
 
 }

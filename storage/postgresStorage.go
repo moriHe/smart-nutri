@@ -144,3 +144,13 @@ func (s *PostgresStorage) DeleteRecipe(recipeId string) error {
 	}
 	return nil
 }
+
+func (s *PostgresStorage) DeleteRecipeIngredient(recipeIngredientId string) error {
+	_, err := s.db.Exec(context.Background(), "delete from recipes_ingredients where recipes_ingredients.id = $1", recipeIngredientId)
+
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Unable to delete recipe row: %v\n", err)
+		return errors.New("delee recipe ingredient error")
+	}
+	return nil
+}

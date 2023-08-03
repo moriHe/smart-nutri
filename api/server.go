@@ -67,10 +67,14 @@ func (s *Server) HandleGetRecipeById(c *gin.Context) {
 
 func (s *Server) HandlePostRecipe(c *gin.Context) {
 	var payload types.PostRecipe
+
 	if err := c.BindJSON(&payload); err != nil {
 		return
 	}
-	s.store.PostRecipe(payload)
+	err := s.store.PostRecipe(payload)
+	if errorResponse(c, err) == true {
+		return
+	}
 }
 
 func (s *Server) HandlePostRecipeIngredient(c *gin.Context) {

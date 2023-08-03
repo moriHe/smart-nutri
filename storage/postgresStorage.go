@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/moriHe/smart-nutri/types"
@@ -74,20 +75,19 @@ func (s *PostgresStorage) GetRecipeById(id string) (*types.FullRecipe, error) {
 }
 
 func (s *PostgresStorage) PostRecipe(payload types.PostRecipe) error {
-	var recipeId int32
+	var recipeId int
 	err := s.db.QueryRow(context.Background(), "insert into recipes (name) values ($1) returning id", payload.Name).Scan(&recipeId)
 
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Unable to insert recipe row: %v\n", err)
-		return errors.New("post recipe error")
+		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Step 1: Failed to create recipe: %s", err)}
 	}
 
 	for i := 0; i < len(payload.IngredientIds); i++ {
 		_, err := s.db.Exec(context.Background(), "insert into recipes_ingredients(recipe_id, ingredient_id) values ($1, $2)", recipeId, payload.IngredientIds[i])
 
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Unable to insert to recipes_ingredients: %v\n", err)
-			return errors.New("post recipe loop error")
+			s.DeleteRecipe(strconv.Itoa(recipeId))
+			return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Step 2: Failed to create recipe: %s", err)}
 		}
 	}
 	return nil

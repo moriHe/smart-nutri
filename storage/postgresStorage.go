@@ -25,11 +25,7 @@ func NewPostgresStorage() *PostgresStorage {
 }
 
 func (s *PostgresStorage) GetAllRecipes() (*[]types.ShallowRecipe, error) {
-	rows, err := s.db.Query(context.Background(), "select * from recipes")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "QueryRow failed getAllRecipes: %v\n", err)
-		return nil, errors.New("AllRecipeErr")
-	}
+	rows, _ := s.db.Query(context.Background(), "select * from recipes")
 
 	defer rows.Close()
 
@@ -38,10 +34,9 @@ func (s *PostgresStorage) GetAllRecipes() (*[]types.ShallowRecipe, error) {
 	for rows.Next() {
 		var recipe types.ShallowRecipe
 
-		err = rows.Scan(&recipe.Id, &recipe.Name)
+		err := rows.Scan(&recipe.Id, &recipe.Name)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Scan all recipes failed: %v\n", err)
-			return nil, errors.New("AllRecipeErr")
+			return nil, &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Scan recipes table failed: %s", err)}
 		}
 		recipes = append(recipes, recipe)
 	}

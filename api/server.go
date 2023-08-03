@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -31,39 +30,38 @@ func StartGinServer(store storage.Storage) *Server {
 
 func errorResponse(c *gin.Context, err error) bool {
 	if err != nil {
-
 		if requestErr, ok := err.(*types.RequestError); ok {
 			c.JSON(requestErr.Status, gin.H{"error": requestErr})
-			return false
 		} else {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Something went wrong"})
-			return false
 		}
+		return true
 	}
-	return true
+
+	return false
+}
+
+func successResponse[T any](c *gin.Context, response T) {
+	c.JSON(http.StatusOK, gin.H{"data": response})
 }
 
 func (s *Server) HandleGetAllRecipes(c *gin.Context) {
 	recipes, err := s.store.GetAllRecipes()
-	if err != nil {
-		fmt.Println("handleGetAllRecipes error")
+	if errorResponse(c, err) == true {
 		return
 	}
-
-	fmt.Println(recipes)
-
-	c.JSON(http.StatusOK, gin.H{"data": recipes})
+	successResponse[*[]types.ShallowRecipe](c, recipes)
 }
 
 func (s *Server) HandleGetRecipeById(c *gin.Context) {
 	id := c.Param("id")
 
 	recipe, err := s.store.GetRecipeById(id)
-	if errorResponse(c, err) == false {
+
+	if errorResponse(c, err) == true {
 		return
 	}
-
-	c.JSON(http.StatusOK, gin.H{"data": recipe})
+	successResponse[*types.FullRecipe](c, recipe)
 
 }
 

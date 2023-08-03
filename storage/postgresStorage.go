@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
 	"os"
 
 	"github.com/jackc/pgx/v5"
@@ -23,11 +24,11 @@ func NewPostgresStorage() *PostgresStorage {
 	return &PostgresStorage{db: db}
 }
 
-func (s *PostgresStorage) GetAllRecipes() (error, *[]types.ShallowRecipe) {
+func (s *PostgresStorage) GetAllRecipes() (*[]types.ShallowRecipe, error) {
 	rows, err := s.db.Query(context.Background(), "select * from recipes")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "QueryRow failed getAllRecipes: %v\n", err)
-		return errors.New("AllRecipeErr"), nil
+		return nil, errors.New("AllRecipeErr")
 	}
 
 	defer rows.Close()
@@ -40,36 +41,34 @@ func (s *PostgresStorage) GetAllRecipes() (error, *[]types.ShallowRecipe) {
 		err = rows.Scan(&recipe.Id, &recipe.Name)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Scan all recipes failed: %v\n", err)
-			return errors.New("AllRecipeErr"), nil
+			return nil, errors.New("AllRecipeErr")
 		}
 		recipes = append(recipes, recipe)
 	}
 
-	return nil, &recipes
+	return &recipes, nil
 }
 
-func (s *PostgresStorage) GetRecipeById(id string) (error, *types.FullRecipe) {
+func (s *PostgresStorage) GetRecipeById(id string) (*types.FullRecipe, error) {
 
-	var recipe types.FullRecipe
+	recipe := types.FullRecipe{Ingredients: []types.RecipeIngredient{}}
 
 	err := s.db.QueryRow(context.Background(), "select id, name from recipes where id=$1", id).Scan(&recipe.Id, &recipe.Name)
 
-	rows, recipeIngredientsErr := s.db.Query(context.Background(), "select recipes_ingredients.id, recipes_ingredients.ingredient_id, name from recipes_ingredients join ingredients on recipes_ingredients.ingredient_id = ingredients.id where recipes_ingredients.recipe_id = $1", id)
-
-	if recipeIngredientsErr != nil {
-		fmt.Fprintf(os.Stderr, "QueryRow failed getAllRecipes: %v\n", err)
-		return errors.New("Test"), nil
+	if err != nil {
+		return nil, &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Bad Request: No recipe found with id %s", id)}
 	}
 
+	rows, _ := s.db.Query(context.Background(), "select recipes_ingredients.id, recipes_ingredients.ingredient_id, name from recipes_ingredients join ingredients on recipes_ingredients.ingredient_id = ingredients.id where recipes_ingredients.recipe_id = $1", id)
 	defer rows.Close()
 
 	for rows.Next() {
 		var ingredient types.RecipeIngredient
 
 		err = rows.Scan(&ingredient.Id, &ingredient.IngredientId, &ingredient.Name)
+
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Scan all recipes failed: %v\n", err)
-			return errors.New("Test1"), nil
+			return nil, &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Scan recipe_ingredients table failed: %s", err)}
 		}
 
 		recipe.Ingredients = append(recipe.Ingredients, ingredient)
@@ -77,10 +76,10 @@ func (s *PostgresStorage) GetRecipeById(id string) (error, *types.FullRecipe) {
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "QueryRow failed getRecipeById: %v\n", err)
-		return errors.New("Test2"), nil
+		return nil, &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("TEST TEST TEST TEST")}
 	}
 
-	return nil, &recipe
+	return &recipe, nil
 }
 
 func (s *PostgresStorage) PostRecipe(payload types.PostRecipe) error {

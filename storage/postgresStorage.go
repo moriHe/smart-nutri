@@ -75,10 +75,6 @@ func (s *PostgresStorage) GetRecipeById(id string) (*types.FullRecipe, error) {
 		recipe.Ingredients = append(recipe.Ingredients, ingredient)
 	}
 
-	if err != nil {
-		return nil, &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("recipe_ingredients table failed: %s", err)}
-	}
-
 	return &recipe, nil
 }
 

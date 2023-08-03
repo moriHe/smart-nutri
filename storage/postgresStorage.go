@@ -94,12 +94,11 @@ func (s *PostgresStorage) PostRecipe(payload types.PostRecipe) error {
 }
 
 func (s *PostgresStorage) PostRecipeIngredient(recipeId string, payload types.PostRecipeIngredient) error {
-	fmt.Println(payload.IngredientId)
 	_, err := s.db.Exec(context.Background(), "insert into recipes_ingredients(recipe_id, ingredient_id) values ($1, $2)", recipeId, payload.IngredientId)
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to insert to recipes_ingredients: %v\n", err)
-		return errors.New("postIngredient error")
+		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Failed to post recipe_ingredient: %s", err)}
 	}
 	return nil
 }

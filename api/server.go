@@ -41,27 +41,29 @@ func errorResponse(c *gin.Context, err error) bool {
 	return false
 }
 
-func successResponse[T any](c *gin.Context, response T) {
-	c.JSON(http.StatusOK, gin.H{"data": response})
+func handleResponse[T any](c *gin.Context, successResponse T, err error) {
+	if err != nil {
+		if requestErr, ok := err.(*types.RequestError); ok {
+			c.JSON(requestErr.Status, gin.H{"error": requestErr})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Something went wrong"})
+		}
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": successResponse})
 }
 
 func (s *Server) HandleGetAllRecipes(c *gin.Context) {
 	recipes, err := s.store.GetAllRecipes()
-	if errorResponse(c, err) == true {
-		return
-	}
-	successResponse[*[]types.ShallowRecipe](c, recipes)
+	handleResponse[*[]types.ShallowRecipe](c, recipes, err)
 }
 
 func (s *Server) HandleGetRecipeById(c *gin.Context) {
 	id := c.Param("id")
 
 	recipe, err := s.store.GetRecipeById(id)
-
-	if errorResponse(c, err) == true {
-		return
-	}
-	successResponse[*types.FullRecipe](c, recipe)
+	handleResponse[*types.FullRecipe](c, recipe, err)
 
 }
 
@@ -69,23 +71,21 @@ func (s *Server) HandlePostRecipe(c *gin.Context) {
 	var payload types.PostRecipe
 
 	if err := c.BindJSON(&payload); err != nil {
-		return
-	}
-	err := s.store.PostRecipe(payload)
-	if errorResponse(c, err) == true {
-		return
+		errorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Payload malformed"})
+	} else {
+		handleResponse[string](c, "Added recipe", s.store.PostRecipe(payload))
 	}
 }
 
 func (s *Server) HandlePostRecipeIngredient(c *gin.Context) {
 	recipeId := c.Param("id")
-
 	var payload types.PostRecipeIngredient
 
 	if err := c.BindJSON(&payload); err != nil {
-		return
+		errorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Payload malformed"})
+	} else {
+		handleResponse[string](c, "Added recipe ingredient", s.store.PostRecipeIngredient(recipeId, payload))
 	}
-	s.store.PostRecipeIngredient(recipeId, payload)
 }
 
 func (s *Server) HandlePatchRecipeName(c *gin.Context) {

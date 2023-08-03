@@ -29,6 +29,20 @@ func StartGinServer(store storage.Storage) *Server {
 
 }
 
+func errorResponse(c *gin.Context, err error) bool {
+	if err != nil {
+
+		if requestErr, ok := err.(*types.RequestError); ok {
+			c.JSON(requestErr.Status, gin.H{"error": requestErr})
+			return false
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Something went wrong"})
+			return false
+		}
+	}
+	return true
+}
+
 func (s *Server) HandleGetAllRecipes(c *gin.Context) {
 	recipes, err := s.store.GetAllRecipes()
 	if err != nil {
@@ -45,14 +59,8 @@ func (s *Server) HandleGetRecipeById(c *gin.Context) {
 	id := c.Param("id")
 
 	recipe, err := s.store.GetRecipeById(id)
-	if err != nil {
-		if requestErr, ok := err.(*types.RequestError); ok {
-			c.JSON(requestErr.Status, gin.H{"error": requestErr})
-			return
-		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Something went wrong"})
-			return
-		}
+	if errorResponse(c, err) == false {
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": recipe})

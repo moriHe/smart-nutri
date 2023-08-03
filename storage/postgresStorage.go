@@ -59,7 +59,8 @@ func (s *PostgresStorage) GetRecipeById(id string) (*types.FullRecipe, error) {
 		return nil, &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Bad Request: No recipe found with id %s", id)}
 	}
 
-	rows, _ := s.db.Query(context.Background(), "select recipes_ingredients.id, recipes_ingredients.ingredient_id, name from recipes_ingredients join ingredients on recipes_ingredients.ingredient_id = ingredients.id where recipes_ingredients.recipe_id = $1", id)
+	recipeIngredientsQuery := "select recipes_ingredients.id, recipes_ingredients.ingredient_id, name from recipes_ingredients join ingredients on recipes_ingredients.ingredient_id = ingredients.id where recipes_ingredients.recipe_id = $1"
+	rows, _ := s.db.Query(context.Background(), recipeIngredientsQuery, id)
 	defer rows.Close()
 
 	for rows.Next() {
@@ -75,8 +76,7 @@ func (s *PostgresStorage) GetRecipeById(id string) (*types.FullRecipe, error) {
 	}
 
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "QueryRow failed getRecipeById: %v\n", err)
-		return nil, &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("TEST TEST TEST TEST")}
+		return nil, &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("recipe_ingredients table failed: %s", err)}
 	}
 
 	return &recipe, nil

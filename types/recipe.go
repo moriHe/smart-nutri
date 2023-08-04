@@ -1,30 +1,30 @@
 package types
 
 type RecipeIngredient struct {
-	Id           int32  `json:"id"`
-	IngredientId int32  `json:"ingredientId"`
+	Id           int    `json:"id"`
+	IngredientId int    `json:"ingredientId"`
 	Name         string `json:"name"`
 }
 
 // Posts new ingredient to existing recipe
 type PostRecipeIngredient struct {
-	IngredientId int32 `json:"ingredientId"`
+	IngredientId int `json:"ingredientId"`
 }
 
 type ShallowRecipe struct {
-	Id   int32  `json:"id"`
+	Id   int    `json:"id"`
 	Name string `json:"name"`
 }
 
 type FullRecipe struct {
-	Id          int32              `json:"id"`
+	Id          int                `json:"id"`
 	Name        string             `json:"name"`
 	Ingredients []RecipeIngredient `json:"ingredients"`
 }
 
 type PostRecipe struct {
-	Name          string  `json:"name"`
-	IngredientIds []int32 `json:"ingredientIds"`
+	Name          string `json:"name"`
+	IngredientIds []int  `json:"ingredientIds"`
 }
 
 type PatchRecipeName struct {

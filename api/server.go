@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -29,48 +28,64 @@ func StartGinServer(store storage.Storage) *Server {
 
 }
 
-func (s *Server) HandleGetAllRecipes(c *gin.Context) {
-	err, recipes := s.store.GetAllRecipes()
+func errorResponse(c *gin.Context, err error) bool {
 	if err != nil {
-		fmt.Println("handleGetAllRecipes error")
+		if requestErr, ok := err.(*types.RequestError); ok {
+			c.JSON(requestErr.Status, gin.H{"error": requestErr})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Something went wrong"})
+		}
+		return true
+	}
+
+	return false
+}
+
+func handleResponse[T any](c *gin.Context, successResponse T, err error) {
+	if err != nil {
+		if requestErr, ok := err.(*types.RequestError); ok {
+			c.JSON(requestErr.Status, gin.H{"error": requestErr})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Something went wrong"})
+		}
 		return
 	}
 
-	fmt.Println(recipes)
+	c.JSON(http.StatusOK, gin.H{"data": successResponse})
+}
 
-	c.JSON(http.StatusOK, gin.H{"data": recipes})
+func (s *Server) HandleGetAllRecipes(c *gin.Context) {
+	recipes, err := s.store.GetAllRecipes()
+	handleResponse[*[]types.ShallowRecipe](c, recipes, err)
 }
 
 func (s *Server) HandleGetRecipeById(c *gin.Context) {
 	id := c.Param("id")
 
-	err, recipe := s.store.GetRecipeById(id)
-	if err != nil {
-		fmt.Println("handleGetRecipeById error")
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"data": recipe})
+	recipe, err := s.store.GetRecipeById(id)
+	handleResponse[*types.FullRecipe](c, recipe, err)
 
 }
 
 func (s *Server) HandlePostRecipe(c *gin.Context) {
 	var payload types.PostRecipe
+
 	if err := c.BindJSON(&payload); err != nil {
-		return
+		errorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Payload malformed"})
+	} else {
+		handleResponse[string](c, "Added recipe", s.store.PostRecipe(payload))
 	}
-	s.store.PostRecipe(payload)
 }
 
 func (s *Server) HandlePostRecipeIngredient(c *gin.Context) {
 	recipeId := c.Param("id")
-
 	var payload types.PostRecipeIngredient
 
 	if err := c.BindJSON(&payload); err != nil {
-		return
+		errorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Payload malformed"})
+	} else {
+		handleResponse[string](c, "Added recipe ingredient", s.store.PostRecipeIngredient(recipeId, payload))
 	}
-	s.store.PostRecipeIngredient(recipeId, payload)
 }
 
 func (s *Server) HandlePatchRecipeName(c *gin.Context) {
@@ -78,19 +93,18 @@ func (s *Server) HandlePatchRecipeName(c *gin.Context) {
 	var payload types.PatchRecipeName
 
 	if err := c.BindJSON(&payload); err != nil {
-		return
+		errorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Payload malformed"})
+	} else {
+		handleResponse[string](c, "Recipe name updated", s.store.PatchRecipeName(recipeId, payload))
 	}
-	s.store.PatchRecipeName(recipeId, payload)
 }
 
 func (s *Server) HandleDeleteRecipe(c *gin.Context) {
 	recipeId := c.Param("id")
-	s.store.DeleteRecipe(recipeId)
-
+	handleResponse[string](c, "Recipe deleted", s.store.DeleteRecipe(recipeId))
 }
 
 func (s *Server) HandleDeleteRecipeIngredient(c *gin.Context) {
 	recipeId := c.Param("id")
-	s.store.DeleteRecipeIngredient(recipeId)
-
+	handleResponse[string](c, "Recipe ingredient deleted", s.store.DeleteRecipeIngredient(recipeId))
 }

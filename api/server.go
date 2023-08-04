@@ -93,19 +93,20 @@ func (s *Server) HandlePatchRecipeName(c *gin.Context) {
 	var payload types.PatchRecipeName
 
 	if err := c.BindJSON(&payload); err != nil {
-		return
+		errorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Payload malformed"})
+	} else {
+		handleResponse[string](c, "Recipe name updated", s.store.PatchRecipeName(recipeId, payload))
 	}
-	s.store.PatchRecipeName(recipeId, payload)
 }
 
 func (s *Server) HandleDeleteRecipe(c *gin.Context) {
 	recipeId := c.Param("id")
-	s.store.DeleteRecipe(recipeId)
+	handleResponse[string](c, "Recipe deleted", s.store.DeleteRecipe(recipeId))
 
 }
 
 func (s *Server) HandleDeleteRecipeIngredient(c *gin.Context) {
 	recipeId := c.Param("id")
-	s.store.DeleteRecipeIngredient(recipeId)
+	handleResponse[string](c, "Recipe ingredient deleted", s.store.DeleteRecipeIngredient(recipeId))
 
 }

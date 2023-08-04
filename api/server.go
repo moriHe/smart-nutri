@@ -102,11 +102,9 @@ func (s *Server) HandlePatchRecipeName(c *gin.Context) {
 func (s *Server) HandleDeleteRecipe(c *gin.Context) {
 	recipeId := c.Param("id")
 	handleResponse[string](c, "Recipe deleted", s.store.DeleteRecipe(recipeId))
-
 }
 
 func (s *Server) HandleDeleteRecipeIngredient(c *gin.Context) {
 	recipeId := c.Param("id")
 	handleResponse[string](c, "Recipe ingredient deleted", s.store.DeleteRecipeIngredient(recipeId))
-
 }

@@ -16,8 +16,8 @@ type PostgresStorage struct {
 	db *pgxpool.Pool
 }
 
-func NewPostgresStorage() *PostgresStorage {
-	db, err := pgxpool.New(context.Background(), os.Getenv("DATABASE_URL"))
+func NewPostgresStorage(url string) *PostgresStorage {
+	db, err := pgxpool.New(context.Background(), url)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
 		os.Exit(1)

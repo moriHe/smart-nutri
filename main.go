@@ -9,6 +9,6 @@ import (
 
 func main() {
 	store := storage.NewPostgresStorage(os.Getenv("DATABASE_URL"))
-	api.StartGinServer(store)
+	api.StartGinServer(store, "localhost:8080")
 
 }

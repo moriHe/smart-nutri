@@ -8,12 +8,13 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/moriHe/smart-nutri/storage"
 	"github.com/ory/dockertest/v3"
 	"github.com/ory/dockertest/v3/docker"
 	log "github.com/sirupsen/logrus"
 )
 
-var db *pgxpool.Pool
+var Db *storage.PostgresStorage
 
 func TestMain(m *testing.M) {
 	// uses a sensible default on windows (tcp/http) and linux/osx (socket)
@@ -57,11 +58,12 @@ func TestMain(m *testing.M) {
 	pool.MaxWait = 120 * time.Second
 	if err = pool.Retry(func() error {
 		// db, err = sql.Open("postgres", databaseUrl)
-		db, err = pgxpool.New(context.Background(), databaseUrl)
+		pool, err := pgxpool.New(context.Background(), databaseUrl)
 		if err != nil {
 			return err
 		}
-		return db.Ping(context.Background())
+		Db = &storage.PostgresStorage{Db: pool}
+		return Db.Db.Ping(context.Background())
 	}); err != nil {
 		log.Fatalf("Could not connect to docker: %s", err)
 	}

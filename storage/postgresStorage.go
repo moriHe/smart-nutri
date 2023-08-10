@@ -8,16 +8,16 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/moriHe/smart-nutri/types"
 )
 
 type PostgresStorage struct {
-	db *pgx.Conn
+	db *pgxpool.Pool
 }
 
 func NewPostgresStorage() *PostgresStorage {
-	db, err := pgx.Connect(context.Background(), os.Getenv("DATABASE_URL"))
+	db, err := pgxpool.New(context.Background(), os.Getenv("DATABASE_URL"))
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
 		os.Exit(1)

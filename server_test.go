@@ -17,5 +17,5 @@ func TestHandleGetAllRecipes(t *testing.T) {
 	router.R.ServeHTTP(w, req)
 
 	assert.Equal(t, 200, w.Code)
-	assert.Equal(t, "pong", w.Body.String())
+	assert.Equal(t, `{"data":[{"id":1,"name":"Hello World"}]}`, w.Body.String())
 }

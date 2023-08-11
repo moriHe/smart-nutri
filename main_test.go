@@ -7,6 +7,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/moriHe/smart-nutri/storage"
 	"github.com/ory/dockertest/v3"
@@ -67,6 +70,12 @@ func TestMain(m *testing.M) {
 	}); err != nil {
 		log.Fatalf("Could not connect to docker: %s", err)
 	}
+
+	k, err := migrate.New("file://storage/migration", databaseUrl)
+	if err != nil {
+		log.Fatalf("Migration error: %s", err)
+	}
+	k.Up()
 
 	//Run tests
 	code := m.Run()

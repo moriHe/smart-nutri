@@ -129,22 +129,32 @@ func (s *PostgresStorage) DeleteRecipe(recipeId string) error {
 		return errors.New("deleteRecipe error")
 	}
 
-	_, err := s.Db.Exec(context.Background(), "delete from recipes where id = $1", recipeId)
+	recipe, err := s.Db.Exec(context.Background(), "delete from recipes where id = $1", recipeId)
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to delete recipe row: %v\n", err)
 		return errors.New("deleteRecipe error")
 
 	}
+
+	if recipe.RowsAffected() == 0 {
+		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("Recipe does not exist")}
+	}
+
 	return nil
 }
 
 func (s *PostgresStorage) DeleteRecipeIngredient(recipeIngredientId string) error {
-	_, err := s.Db.Exec(context.Background(), "delete from recipes_ingredients where recipes_ingredients.id = $1", recipeIngredientId)
+	recipeIngredient, err := s.Db.Exec(context.Background(), "delete from recipes_ingredients where recipes_ingredients.id = $1", recipeIngredientId)
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to delete recipe row: %v\n", err)
 		return errors.New("delee recipe ingredient error")
 	}
+
+	if recipeIngredient.RowsAffected() == 0 {
+		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("Recipe ingredient does not exist")}
+	}
+
 	return nil
 }

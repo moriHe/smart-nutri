@@ -151,16 +151,44 @@ func TestPatchRecipeNameBadReqNoId(t *testing.T) {
 }
 
 func TestDeleteRecipeSucc(t *testing.T) {
-	// TODO
+	router := api.StartGinServer(Db, "localhost:5432")
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("DELETE", "/recipes/2", nil)
+
+	router.R.ServeHTTP(w, req)
+
+	assert.Equal(t, 200, w.Code)
+	assert.Equal(t, `{"data":"Recipe deleted"}`, w.Body.String())
 }
 
 func TestDeleteRecipeBadReq(t *testing.T) {
-	// TODO
+	router := api.StartGinServer(Db, "localhost:5432")
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("DELETE", "/recipes/1000", nil)
+
+	router.R.ServeHTTP(w, req)
+
+	assert.Equal(t, 400, w.Code)
+	assert.Equal(t, `{"error":{"status":400,"message":"Recipe does not exist"}}`, w.Body.String())
 }
 
 func TestDeleteRecipeIngredientSucc(t *testing.T) {
-	// TODO
+	router := api.StartGinServer(Db, "localhost:5432")
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("DELETE", "/recipes/ingredients/1", nil)
+
+	router.R.ServeHTTP(w, req)
+
+	assert.Equal(t, 200, w.Code)
+	assert.Equal(t, `{"data":"Recipe ingredient deleted"}`, w.Body.String())
 }
 func TestDeleteRecipeIngredientBadReq(t *testing.T) {
-	// TODO
+	router := api.StartGinServer(Db, "localhost:5432")
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("DELETE", "/recipes/ingredients/1000", nil)
+
+	router.R.ServeHTTP(w, req)
+
+	assert.Equal(t, 400, w.Code)
+	assert.Equal(t, `{"error":{"status":400,"message":"Recipe ingredient does not exist"}}`, w.Body.String())
 }

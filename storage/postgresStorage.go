@@ -76,6 +76,9 @@ func (s *PostgresStorage) GetRecipeById(id string) (*types.FullRecipe, error) {
 
 func (s *PostgresStorage) PostRecipe(payload types.PostRecipe) error {
 	var recipeId int
+	if payload.Name == "" {
+		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("No recipe name specified")}
+	}
 	err := s.Db.QueryRow(context.Background(), "insert into recipes (name) values ($1) returning id", payload.Name).Scan(&recipeId)
 
 	if err != nil {
@@ -97,18 +100,22 @@ func (s *PostgresStorage) PostRecipeIngredient(recipeId string, payload types.Po
 	_, err := s.Db.Exec(context.Background(), "insert into recipes_ingredients(recipe_id, ingredient_id) values ($1, $2)", recipeId, payload.IngredientId)
 
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Unable to insert to recipes_ingredients: %v\n", err)
 		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Failed to post recipe_ingredient: %s", err)}
 	}
 	return nil
 }
 
 func (s *PostgresStorage) PatchRecipeName(recipeId string, payload types.PatchRecipeName) error {
-	_, err := s.Db.Exec(context.Background(), "update recipes set name = $1 where id = $2", payload.Name, recipeId)
-
+	if payload.Name == "" {
+		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("No recipe name specified")}
+	}
+	recipe, err := s.Db.Exec(context.Background(), "update recipes set name = $1 where id = $2 returning id", payload.Name, recipeId)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Unable to update recipe row: %v\n", err)
 		return errors.New("PatchRecipe error")
+	}
+
+	if recipe.RowsAffected() == 0 {
+		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("Recipe does not exist")}
 	}
 
 	return nil

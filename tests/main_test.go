@@ -71,7 +71,7 @@ func TestMain(m *testing.M) {
 		log.Fatalf("Could not connect to docker: %s", err)
 	}
 
-	k, err := migrate.New("file://../storage/migration", databaseUrl)
+	k, err := migrate.New("file://../migrations/tests", databaseUrl)
 	if err != nil {
 		log.Fatalf("Migration error: %s", err)
 	}

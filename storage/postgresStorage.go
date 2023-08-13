@@ -8,25 +8,25 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/moriHe/smart-nutri/types"
 )
 
 type PostgresStorage struct {
-	db *pgx.Conn
+	Db *pgxpool.Pool
 }
 
-func NewPostgresStorage() *PostgresStorage {
-	db, err := pgx.Connect(context.Background(), os.Getenv("DATABASE_URL"))
+func NewPostgresStorage(url string) *PostgresStorage {
+	db, err := pgxpool.New(context.Background(), url)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
 		os.Exit(1)
 	}
-	return &PostgresStorage{db: db}
+	return &PostgresStorage{Db: db}
 }
 
 func (s *PostgresStorage) GetAllRecipes() (*[]types.ShallowRecipe, error) {
-	rows, _ := s.db.Query(context.Background(), "select * from recipes")
+	rows, _ := s.Db.Query(context.Background(), "select * from recipes")
 
 	defer rows.Close()
 
@@ -49,14 +49,14 @@ func (s *PostgresStorage) GetRecipeById(id string) (*types.FullRecipe, error) {
 
 	recipe := types.FullRecipe{Ingredients: []types.RecipeIngredient{}}
 
-	err := s.db.QueryRow(context.Background(), "select id, name from recipes where id=$1", id).Scan(&recipe.Id, &recipe.Name)
+	err := s.Db.QueryRow(context.Background(), "select id, name from recipes where id=$1", id).Scan(&recipe.Id, &recipe.Name)
 
 	if err != nil {
 		return nil, &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Bad Request: No recipe found with id %s", id)}
 	}
 
 	recipeIngredientsQuery := "select recipes_ingredients.id, recipes_ingredients.ingredient_id, name from recipes_ingredients join ingredients on recipes_ingredients.ingredient_id = ingredients.id where recipes_ingredients.recipe_id = $1"
-	rows, _ := s.db.Query(context.Background(), recipeIngredientsQuery, id)
+	rows, _ := s.Db.Query(context.Background(), recipeIngredientsQuery, id)
 	defer rows.Close()
 
 	for rows.Next() {
@@ -76,14 +76,17 @@ func (s *PostgresStorage) GetRecipeById(id string) (*types.FullRecipe, error) {
 
 func (s *PostgresStorage) PostRecipe(payload types.PostRecipe) error {
 	var recipeId int
-	err := s.db.QueryRow(context.Background(), "insert into recipes (name) values ($1) returning id", payload.Name).Scan(&recipeId)
+	if payload.Name == "" {
+		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("No recipe name specified")}
+	}
+	err := s.Db.QueryRow(context.Background(), "insert into recipes (name) values ($1) returning id", payload.Name).Scan(&recipeId)
 
 	if err != nil {
 		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Step 1: Failed to create recipe: %s", err)}
 	}
 
 	for i := 0; i < len(payload.IngredientIds); i++ {
-		_, err := s.db.Exec(context.Background(), "insert into recipes_ingredients(recipe_id, ingredient_id) values ($1, $2)", recipeId, payload.IngredientIds[i])
+		_, err := s.Db.Exec(context.Background(), "insert into recipes_ingredients(recipe_id, ingredient_id) values ($1, $2)", recipeId, payload.IngredientIds[i])
 
 		if err != nil {
 			s.DeleteRecipe(strconv.Itoa(recipeId))
@@ -94,50 +97,64 @@ func (s *PostgresStorage) PostRecipe(payload types.PostRecipe) error {
 }
 
 func (s *PostgresStorage) PostRecipeIngredient(recipeId string, payload types.PostRecipeIngredient) error {
-	_, err := s.db.Exec(context.Background(), "insert into recipes_ingredients(recipe_id, ingredient_id) values ($1, $2)", recipeId, payload.IngredientId)
+	_, err := s.Db.Exec(context.Background(), "insert into recipes_ingredients(recipe_id, ingredient_id) values ($1, $2)", recipeId, payload.IngredientId)
 
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Unable to insert to recipes_ingredients: %v\n", err)
 		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Failed to post recipe_ingredient: %s", err)}
 	}
 	return nil
 }
 
 func (s *PostgresStorage) PatchRecipeName(recipeId string, payload types.PatchRecipeName) error {
-	_, err := s.db.Exec(context.Background(), "update recipes set name = $1 where id = $2", payload.Name, recipeId)
-
+	if payload.Name == "" {
+		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("No recipe name specified")}
+	}
+	recipe, err := s.Db.Exec(context.Background(), "update recipes set name = $1 where id = $2 returning id", payload.Name, recipeId)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Unable to update recipe row: %v\n", err)
 		return errors.New("PatchRecipe error")
+	}
+
+	if recipe.RowsAffected() == 0 {
+		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("Recipe does not exist")}
 	}
 
 	return nil
 }
 
 func (s *PostgresStorage) DeleteRecipe(recipeId string) error {
-	_, err1 := s.db.Exec(context.Background(), "delete from recipes_ingredients where recipe_id =$1", recipeId)
+	_, err1 := s.Db.Exec(context.Background(), "delete from recipes_ingredients where recipe_id =$1", recipeId)
 
 	if err1 != nil {
 		fmt.Fprintf(os.Stderr, "Unable to delete recipe row: %v\n", err1)
 		return errors.New("deleteRecipe error")
 	}
 
-	_, err := s.db.Exec(context.Background(), "delete from recipes where id = $1", recipeId)
+	recipe, err := s.Db.Exec(context.Background(), "delete from recipes where id = $1", recipeId)
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to delete recipe row: %v\n", err)
 		return errors.New("deleteRecipe error")
 
 	}
+
+	if recipe.RowsAffected() == 0 {
+		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("Recipe does not exist")}
+	}
+
 	return nil
 }
 
 func (s *PostgresStorage) DeleteRecipeIngredient(recipeIngredientId string) error {
-	_, err := s.db.Exec(context.Background(), "delete from recipes_ingredients where recipes_ingredients.id = $1", recipeIngredientId)
+	recipeIngredient, err := s.Db.Exec(context.Background(), "delete from recipes_ingredients where recipes_ingredients.id = $1", recipeIngredientId)
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to delete recipe row: %v\n", err)
 		return errors.New("delee recipe ingredient error")
 	}
+
+	if recipeIngredient.RowsAffected() == 0 {
+		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("Recipe ingredient does not exist")}
+	}
+
 	return nil
 }

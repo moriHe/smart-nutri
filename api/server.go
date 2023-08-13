@@ -10,11 +10,12 @@ import (
 
 type Server struct {
 	store storage.Storage
+	R     *gin.Engine
 }
 
-func StartGinServer(store storage.Storage) *Server {
+func StartGinServer(store storage.Storage, url string) *Server {
 	router := gin.Default()
-	server := &Server{store: store}
+	server := &Server{store: store, R: router}
 
 	router.GET("/recipes", server.HandleGetAllRecipes)
 	router.GET("/recipes/:id", server.HandleGetRecipeById)
@@ -23,7 +24,7 @@ func StartGinServer(store storage.Storage) *Server {
 	router.PATCH("/recipes/:id", server.HandlePatchRecipeName)
 	router.DELETE("/recipes/:id", server.HandleDeleteRecipe)
 	router.DELETE("/recipes/ingredients/:id", server.HandleDeleteRecipeIngredient)
-	router.Run("localhost:8080")
+	router.Run(url)
 	return server
 
 }

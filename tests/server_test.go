@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
 	"github.com/go-playground/assert"
@@ -11,7 +12,7 @@ import (
 )
 
 func startServer() *api.Server {
-	r := api.StartGinServer(Db, "localhost:5432")
+	r := api.StartGinServer(Db, os.Getenv("DOCKER_TEST_SERVER_URL"))
 	return r
 }
 

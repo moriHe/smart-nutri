@@ -1,5 +1,5 @@
 run:
 	go run ./
 
-initPostgresDev:
-	go run ./migrations/initDevPostgres
+initPostgres:
+	go run ./migrations/initPostgres

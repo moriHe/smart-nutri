@@ -17,7 +17,7 @@ func main() {
 	}
 	// TODO bind file path to this file instead of make file
 	// Call from root with initPostgresDev script
-	m, err := migrate.New("file://migrations/initDevPostgres", os.Getenv("DATABASE_URL"))
+	m, err := migrate.New("file://migrations/initPostgres", os.Getenv("DATABASE_URL"))
 	if err != nil {
 		log.Fatalf("Migration error: %s", err)
 	}

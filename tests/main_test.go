@@ -3,6 +3,7 @@ package tests
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"testing"
 	"time"
@@ -14,7 +15,6 @@ import (
 	"github.com/moriHe/smart-nutri/storage"
 	"github.com/ory/dockertest/v3"
 	"github.com/ory/dockertest/v3/docker"
-	log "github.com/sirupsen/logrus"
 )
 
 var Db *storage.PostgresStorage
@@ -71,11 +71,11 @@ func TestMain(m *testing.M) {
 		log.Fatalf("Could not connect to docker: %s", err)
 	}
 
-	k, err := migrate.New("file://../migrations/tests", databaseUrl)
+	mg, err := migrate.New("file://../migrations/tests", databaseUrl)
 	if err != nil {
 		log.Fatalf("Migration error: %s", err)
 	}
-	k.Up()
+	mg.Up()
 
 	//Run tests
 	code := m.Run()

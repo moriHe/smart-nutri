@@ -1,14 +1,20 @@
 package main
 
 import (
+	"log"
 	"os"
 
+	"github.com/joho/godotenv"
 	"github.com/moriHe/smart-nutri/api"
 	"github.com/moriHe/smart-nutri/storage"
 )
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 	store := storage.NewPostgresStorage(os.Getenv("DATABASE_URL"))
-	api.StartGinServer(store, "localhost:8080")
+	api.StartGinServer(store, os.Getenv("SERVER_URL"))
 
 }

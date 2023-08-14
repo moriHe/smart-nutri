@@ -10,8 +10,13 @@ import (
 	"github.com/moriHe/smart-nutri/api"
 )
 
-func TestGetAllRecipesSucc(t *testing.T) {
+func startServer() *api.Server {
 	r := api.StartGinServer(Db, "localhost:5432")
+	return r
+}
+
+func TestGetAllRecipesSucc(t *testing.T) {
+	r := startServer()
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/recipes", nil)
@@ -22,7 +27,7 @@ func TestGetAllRecipesSucc(t *testing.T) {
 }
 
 func TestGetRecipeByIdSucc(t *testing.T) {
-	r := api.StartGinServer(Db, "localhost:5432")
+	r := startServer()
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/recipes/1", nil)
@@ -34,7 +39,7 @@ func TestGetRecipeByIdSucc(t *testing.T) {
 }
 
 func TestGetRecipeByIdBadReq(t *testing.T) {
-	r := api.StartGinServer(Db, "localhost:5432")
+	r := startServer()
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/recipes/1000", nil)
 	r.R.ServeHTTP(w, req)
@@ -44,7 +49,7 @@ func TestGetRecipeByIdBadReq(t *testing.T) {
 }
 
 func TestPostRecipeSuccNoIngredients(t *testing.T) {
-	r := api.StartGinServer(Db, "localhost:5432")
+	r := startServer()
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/recipes", bytes.NewBuffer([]byte(`{
 		"name": "Wantan"
@@ -57,7 +62,7 @@ func TestPostRecipeSuccNoIngredients(t *testing.T) {
 }
 
 func TestPostRecipeSuccIngredients(t *testing.T) {
-	r := api.StartGinServer(Db, "localhost:5432")
+	r := startServer()
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/recipes", bytes.NewBuffer([]byte(`{
 		"name": "Wantan",
@@ -72,7 +77,7 @@ func TestPostRecipeSuccIngredients(t *testing.T) {
 }
 
 func TestPostRecipeBadReq(t *testing.T) {
-	r := api.StartGinServer(Db, "localhost:5432")
+	r := startServer()
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/recipes", bytes.NewBuffer([]byte(`{
 		"hello": "world"
@@ -85,7 +90,7 @@ func TestPostRecipeBadReq(t *testing.T) {
 }
 
 func TestPostRecipeIngredientSucc(t *testing.T) {
-	r := api.StartGinServer(Db, "localhost:5432")
+	r := startServer()
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/recipes/2/ingredients", bytes.NewBuffer([]byte(`{
 		"ingredientId": 2
@@ -98,7 +103,7 @@ func TestPostRecipeIngredientSucc(t *testing.T) {
 }
 
 func TestPostRecipeIngredientBadReq(t *testing.T) {
-	r := api.StartGinServer(Db, "localhost:5432")
+	r := startServer()
 	w := httptest.NewRecorder()
 
 	req, _ := http.NewRequest("POST", "/recipes/1000/ingredients", bytes.NewBuffer([]byte(`{
@@ -112,7 +117,7 @@ func TestPostRecipeIngredientBadReq(t *testing.T) {
 }
 
 func TestPatchRecipeNameSucc(t *testing.T) {
-	r := api.StartGinServer(Db, "localhost:5432")
+	r := startServer()
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("PATCH", "/recipes/2", bytes.NewBuffer([]byte(`{
 		"name": "Beyond Burger"
@@ -125,7 +130,7 @@ func TestPatchRecipeNameSucc(t *testing.T) {
 }
 
 func TestPatchRecipeNameBadReqNoName(t *testing.T) {
-	r := api.StartGinServer(Db, "localhost:5432")
+	r := startServer()
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("PATCH", "/recipes/2", bytes.NewBuffer([]byte(`{
 		"hello": "world"
@@ -138,7 +143,7 @@ func TestPatchRecipeNameBadReqNoName(t *testing.T) {
 }
 
 func TestPatchRecipeNameBadReqNoId(t *testing.T) {
-	r := api.StartGinServer(Db, "localhost:5432")
+	r := startServer()
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("PATCH", "/recipes/1000", bytes.NewBuffer([]byte(`{
 		"name": "Pasta"
@@ -151,7 +156,7 @@ func TestPatchRecipeNameBadReqNoId(t *testing.T) {
 }
 
 func TestDeleteRecipeSucc(t *testing.T) {
-	r := api.StartGinServer(Db, "localhost:5432")
+	r := startServer()
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("DELETE", "/recipes/2", nil)
 
@@ -162,7 +167,7 @@ func TestDeleteRecipeSucc(t *testing.T) {
 }
 
 func TestDeleteRecipeBadReq(t *testing.T) {
-	r := api.StartGinServer(Db, "localhost:5432")
+	r := startServer()
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("DELETE", "/recipes/1000", nil)
 
@@ -173,7 +178,7 @@ func TestDeleteRecipeBadReq(t *testing.T) {
 }
 
 func TestDeleteRecipeIngredientSucc(t *testing.T) {
-	r := api.StartGinServer(Db, "localhost:5432")
+	r := startServer()
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("DELETE", "/recipes/ingredients/1", nil)
 
@@ -183,7 +188,7 @@ func TestDeleteRecipeIngredientSucc(t *testing.T) {
 	assert.Equal(t, `{"data":"Recipe ingredient deleted"}`, w.Body.String())
 }
 func TestDeleteRecipeIngredientBadReq(t *testing.T) {
-	r := api.StartGinServer(Db, "localhost:5432")
+	r := startServer()
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("DELETE", "/recipes/ingredients/1000", nil)
 

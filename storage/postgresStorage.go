@@ -75,6 +75,8 @@ func (s *PostgresStorage) GetRecipeById(id string) (*types.FullRecipe, error) {
 }
 
 func (s *PostgresStorage) PostRecipe(payload types.PostRecipe) error {
+	// TODO Include new columns in payload [ingredientId, amountPerPortion, XXX]
+	// TODO Add column portions
 	var recipeId int
 	if payload.Name == "" {
 		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("No recipe name specified")}
@@ -97,7 +99,8 @@ func (s *PostgresStorage) PostRecipe(payload types.PostRecipe) error {
 }
 
 func (s *PostgresStorage) PostRecipeIngredient(recipeId string, payload types.PostRecipeIngredient) error {
-	_, err := s.Db.Exec(context.Background(), "insert into recipes_ingredients(recipe_id, ingredient_id) values ($1, $2)", recipeId, payload.IngredientId)
+	query := "insert into recipes_ingredients(recipe_id, ingredient_id, amount_per_portion, unit, market, is_bio) values ($1, $2, $3, $4, $5, $6)"
+	_, err := s.Db.Exec(context.Background(), query, recipeId, payload.IngredientId, payload.AmountPerPortion, payload.Unit, payload.Market, payload.IsBio)
 
 	if err != nil {
 		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Failed to post recipe_ingredient: %s", err)}

@@ -8,7 +8,11 @@ type RecipeIngredient struct {
 
 // Posts new ingredient to existing recipe
 type PostRecipeIngredient struct {
-	IngredientId int `json:"ingredientId"`
+	IngredientId     int     `json:"ingredientId"`
+	AmountPerPortion float32 `json:"amountPerPortion"`
+	Unit             int     `json:"unit"`
+	Market           int     `json:"market"`
+	IsBio            bool    `json:"isBio"`
 }
 
 type ShallowRecipe struct {

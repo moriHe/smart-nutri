@@ -29,7 +29,7 @@ func TestGetAllRecipesSucc(t *testing.T) {
 
 func TestGetRecipeByIdSucc(t *testing.T) {
 	r := startServer()
-
+	// TODO Return all fields
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/recipes/1", nil)
 	r.R.ServeHTTP(w, req)
@@ -67,7 +67,7 @@ func TestPostRecipeSuccIngredients(t *testing.T) {
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/recipes", bytes.NewBuffer([]byte(`{
 		"name": "Wantan",
-		"ingredients": [1,2]
+		"ingredientIds": [1,2]
 	}`)))
 
 	r.R.ServeHTTP(w, req)
@@ -94,7 +94,11 @@ func TestPostRecipeIngredientSucc(t *testing.T) {
 	r := startServer()
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/recipes/2/ingredients", bytes.NewBuffer([]byte(`{
-		"ingredientId": 2
+		"ingredientId": 2,
+		"amount": 1,
+		"unit": 1,
+		"market": 1,
+		"isBio": true
 	}`)))
 
 	r.R.ServeHTTP(w, req)

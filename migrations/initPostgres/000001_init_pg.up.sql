@@ -10,7 +10,33 @@ CREATE TABLE IF NOT EXISTS ingredients(
     category TEXT
 );
 
-INSERT INTO "public"."ingredients" ("id", "name", "synonym", "category") VALUES
+CREATE TABLE IF NOT EXISTS markets(
+    id SERIAL NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL
+);
+
+INSERT INTO markets ("id", "name") VALUES
+(1, 'Rewe'),
+(2, 'Edeka'),
+(3, 'Bio Company'),
+(4, 'Wochenmarkt'),
+(5, 'Aldi'),
+(6, 'Lidl');
+SELECT setval(pg_get_serial_sequence('markets', 'id'), max(id)) FROM markets;
+
+CREATE TABLE IF NOT EXISTS  units(
+    id SERIAL NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL
+);
+
+INSERT INTO units ("id", "name") VALUES
+(1, 'GRAM'),
+(2, 'MILLILITER'),
+(3, 'TABLESPOON'),
+(4, 'TEASPOON');
+SELECT setval(pg_get_serial_sequence('units', 'id'), max(id)) FROM units;
+
+INSERT INTO ingredients ("id", "name", "synonym", "category") VALUES
 (1, 'Kalb, Brust, roh', '', 'Fleisch und Innereien/Kalb'),
 (2, 'Kalb, Kotelett, roh', '', 'Fleisch und Innereien/Kalb'),
 (3, 'Kalb, Nierstück, Steak, roh', '', 'Fleisch und Innereien/Kalb'),
@@ -511,7 +537,7 @@ INSERT INTO "public"."ingredients" ("id", "name", "synonym", "category") VALUES
 (825, 'Toastbrot, Vollkorn', '', 'Brote, Flocken und Frühstückscerealien/Brote und Brotwaren'),
 (826, 'Toastbrot mit Pflanzenölen', '', 'Brote, Flocken und Frühstückscerealien/Brote und Brotwaren'),
 (827, 'Toastbrot mit Butter', '', 'Brote, Flocken und Frühstückscerealien/Brote und Brotwaren');
-INSERT INTO "public"."ingredients" ("id", "name", "synonym", "category") VALUES
+INSERT INTO ingredients ("id", "name", "synonym", "category") VALUES
 (828, 'Tessinerbrot', '', 'Brote, Flocken und Frühstückscerealien/Brote und Brotwaren'),
 (829, 'Ruchbrot', '', 'Brote, Flocken und Frühstückscerealien/Brote und Brotwaren'),
 (830, 'Roggenbrot mit Sauerteig', '', 'Brote, Flocken und Frühstückscerealien/Brote und Brotwaren'),
@@ -1012,7 +1038,7 @@ INSERT INTO "public"."ingredients" ("id", "name", "synonym", "category") VALUES
 (13310, 'Poulet, Schenkel, mit Haut, gebraten (ohne Zusatz von Fett und Salz)', '', 'Fleisch und Innereien/Geflügel'),
 (13316, 'Kalbsplätzli, gebraten (ohne Zugabe von Fett und Salz)', '', 'Fleisch und Innereien/Kalb'),
 (13317, 'Gehacktes (Durchschnitt aus Rind, Kalb, Schwein, Poulet), gebraten (ohne Zusatz von Fett und Salz)', '', 'Fleisch und Innereien');
-INSERT INTO "public"."ingredients" ("id", "name", "synonym", "category") VALUES
+INSERT INTO ingredients ("id", "name", "synonym", "category") VALUES
 (13318, 'Geschnetzeltes (Durchschnitt aus Rind, Kalb, Schwein, Geflügel), gebraten (ohne Zusatz von Fett und Salz)', '', 'Fleisch und Innereien'),
 (13319, 'Plätzli (Durchschnitt aus Geflügel, Kalb, Rind, Schwein), gebraten (ohne Zusatz von Fett und Salz)', '', 'Fleisch und Innereien'),
 (13320, 'Leber (Durchschnitt aus Rind, Kalb, Schwein), gebraten (ohne Zusatz von Fett und Salz)', '', 'Fleisch und Innereien'),
@@ -1158,10 +1184,15 @@ INSERT INTO "public"."ingredients" ("id", "name", "synonym", "category") VALUES
 (14131, 'Mandelgetränk, nature, mit Calcium und Vitaminen angereichert', '', 'Milch und Milchprodukte/Milchersatzprodukte'),
 (14132, 'Kokosnussgetränk, nature, mit Calcium und Vitaminen angereichert', '', 'Milch und Milchprodukte/Milchersatzprodukte'),
 (14133, 'Reisgetränk, nature, mit Calcium angereichert', '', 'Milch und Milchprodukte/Milchersatzprodukte');
+SELECT setval(pg_get_serial_sequence('ingredients', 'id'), max(id)) FROM ingredients;
 
 
 CREATE TABLE IF NOT EXISTS recipes_ingredients(
 	id SERIAL NOT NULL PRIMARY KEY,
     recipe_id INTEGER NOT NULL REFERENCES recipes (id),
-    ingredient_id INTEGER NOT NULL REFERENCES ingredients (id)
+    ingredient_id INTEGER NOT NULL REFERENCES ingredients (id),
+    amount_per_portion FLOAT NOT NULL,
+    unit INTEGER NOT NULL REFERENCES units (id),
+    market INTEGER NOT NULL REFERENCES markets (id),
+    is_bio BOOLEAN NOT NULL
 );

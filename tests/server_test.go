@@ -33,7 +33,7 @@ func TestGetRecipeByIdSucc(t *testing.T) {
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/recipes/1", nil)
 	r.R.ServeHTTP(w, req)
-	res := `{"data":{"id":1,"name":"Spaghetti","recipeIngredients":` +
+	res := `{"data":{"id":1,"name":"Spaghetti","portions":1,"recipeIngredients":` +
 		`[{"id":1,"name":"Tomaten","amountPerPortion":100,"unit":"GRAM","market":` +
 		`"Rewe","isBio":true},{"id":2,"name":"Knoblauch","amountPerPortion":200,` +
 		`"unit":"GRAM","market":"Rewe","isBio":false}]}}`

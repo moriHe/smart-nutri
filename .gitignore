@@ -1,1 +1,3 @@
-scripts
+.env
+migrations/initPostgres/*.sql
+migrations/tests/*.sql

@@ -3,6 +3,7 @@ package tests
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"testing"
 	"time"
@@ -11,15 +12,19 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/joho/godotenv"
 	"github.com/moriHe/smart-nutri/storage"
 	"github.com/ory/dockertest/v3"
 	"github.com/ory/dockertest/v3/docker"
-	log "github.com/sirupsen/logrus"
 )
 
 var Db *storage.PostgresStorage
 
 func TestMain(m *testing.M) {
+	err := godotenv.Load("../.env")
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 	// uses a sensible default on windows (tcp/http) and linux/osx (socket)
 	pool, err := dockertest.NewPool("")
 	if err != nil {
@@ -50,7 +55,7 @@ func TestMain(m *testing.M) {
 		log.Fatalf("Could not start resource: %s", err)
 	}
 
-	hostAndPort := resource.GetHostPort("5432/tcp")
+	hostAndPort := resource.GetHostPort(os.Getenv("DOCKER_TEST_HOST_PORT"))
 	databaseUrl := fmt.Sprintf("postgres://user_name:secret@%s/dbname?sslmode=disable", hostAndPort)
 
 	log.Println("Connecting to database on url: ", databaseUrl)
@@ -71,11 +76,11 @@ func TestMain(m *testing.M) {
 		log.Fatalf("Could not connect to docker: %s", err)
 	}
 
-	k, err := migrate.New("file://../storage/migration", databaseUrl)
+	mg, err := migrate.New("file://../migrations/tests", databaseUrl)
 	if err != nil {
 		log.Fatalf("Migration error: %s", err)
 	}
-	k.Up()
+	mg.Up()
 
 	//Run tests
 	code := m.Run()

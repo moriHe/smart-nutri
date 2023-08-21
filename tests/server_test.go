@@ -4,14 +4,20 @@ import (
 	"bytes"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
 	"github.com/go-playground/assert"
 	"github.com/moriHe/smart-nutri/api"
 )
 
+func startServer() *api.Server {
+	r := api.StartGinServer(Db, os.Getenv("DOCKER_TEST_SERVER_URL"))
+	return r
+}
+
 func TestGetAllRecipesSucc(t *testing.T) {
-	r := api.StartGinServer(Db, "localhost:5432")
+	r := startServer()
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/recipes", nil)
@@ -22,19 +28,22 @@ func TestGetAllRecipesSucc(t *testing.T) {
 }
 
 func TestGetRecipeByIdSucc(t *testing.T) {
-	r := api.StartGinServer(Db, "localhost:5432")
-
+	r := startServer()
+	// TODO Return all fields
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/recipes/1", nil)
 	r.R.ServeHTTP(w, req)
-
+	res := `{"data":{"id":1,"name":"Spaghetti","recipeIngredients":` +
+		`[{"id":1,"name":"Tomaten","amountPerPortion":100,"unit":"GRAM","market":` +
+		`"Rewe","isBio":true},{"id":2,"name":"Knoblauch","amountPerPortion":200,` +
+		`"unit":"GRAM","market":"Rewe","isBio":false}]}}`
 	assert.Equal(t, 200, w.Code)
-	assert.Equal(t, `{"data":{"id":1,"name":"Spaghetti","ingredients":[{"id":1,"ingredientId":1,"name":"Tomaten"},{"id":2,"ingredientId":2,"name":"Knoblauch"}]}}`, w.Body.String())
+	assert.Equal(t, res, w.Body.String())
 
 }
 
 func TestGetRecipeByIdBadReq(t *testing.T) {
-	r := api.StartGinServer(Db, "localhost:5432")
+	r := startServer()
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/recipes/1000", nil)
 	r.R.ServeHTTP(w, req)
@@ -44,7 +53,7 @@ func TestGetRecipeByIdBadReq(t *testing.T) {
 }
 
 func TestPostRecipeSuccNoIngredients(t *testing.T) {
-	r := api.StartGinServer(Db, "localhost:5432")
+	r := startServer()
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/recipes", bytes.NewBuffer([]byte(`{
 		"name": "Wantan"
@@ -57,12 +66,12 @@ func TestPostRecipeSuccNoIngredients(t *testing.T) {
 }
 
 func TestPostRecipeSuccIngredients(t *testing.T) {
-	r := api.StartGinServer(Db, "localhost:5432")
+	r := startServer()
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("POST", "/recipes", bytes.NewBuffer([]byte(`{
-		"name": "Wantan",
-		"ingredients": [1,2]
-	}`)))
+	body := `{"name": "Wantan","recipeIngredients": [{"ingredientId": 1,` +
+		`"amountPerPortion": 100,"unitId": 1,"marketId": 1,"isBio": true},{"ingredientId": 2,` +
+		`"amountPerPortion": 200,"unitId": 2,"marketId": 2,"isBio": false}]}`
+	req, _ := http.NewRequest("POST", "/recipes", bytes.NewBuffer([]byte(body)))
 
 	r.R.ServeHTTP(w, req)
 
@@ -71,8 +80,9 @@ func TestPostRecipeSuccIngredients(t *testing.T) {
 	assert.Equal(t, `{"data":"Added recipe"}`, w.Body.String())
 }
 
+// TODO: Add bad request tests for missing ingriedientId, amountPerPortion etc
 func TestPostRecipeBadReq(t *testing.T) {
-	r := api.StartGinServer(Db, "localhost:5432")
+	r := startServer()
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/recipes", bytes.NewBuffer([]byte(`{
 		"hello": "world"
@@ -85,10 +95,14 @@ func TestPostRecipeBadReq(t *testing.T) {
 }
 
 func TestPostRecipeIngredientSucc(t *testing.T) {
-	r := api.StartGinServer(Db, "localhost:5432")
+	r := startServer()
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/recipes/2/ingredients", bytes.NewBuffer([]byte(`{
-		"ingredientId": 2
+		"ingredientId": 2,
+		"amount": 1,
+		"unitId": 1,
+		"marketId": 1,
+		"isBio": true
 	}`)))
 
 	r.R.ServeHTTP(w, req)
@@ -98,7 +112,7 @@ func TestPostRecipeIngredientSucc(t *testing.T) {
 }
 
 func TestPostRecipeIngredientBadReq(t *testing.T) {
-	r := api.StartGinServer(Db, "localhost:5432")
+	r := startServer()
 	w := httptest.NewRecorder()
 
 	req, _ := http.NewRequest("POST", "/recipes/1000/ingredients", bytes.NewBuffer([]byte(`{
@@ -112,7 +126,7 @@ func TestPostRecipeIngredientBadReq(t *testing.T) {
 }
 
 func TestPatchRecipeNameSucc(t *testing.T) {
-	r := api.StartGinServer(Db, "localhost:5432")
+	r := startServer()
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("PATCH", "/recipes/2", bytes.NewBuffer([]byte(`{
 		"name": "Beyond Burger"
@@ -125,7 +139,7 @@ func TestPatchRecipeNameSucc(t *testing.T) {
 }
 
 func TestPatchRecipeNameBadReqNoName(t *testing.T) {
-	r := api.StartGinServer(Db, "localhost:5432")
+	r := startServer()
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("PATCH", "/recipes/2", bytes.NewBuffer([]byte(`{
 		"hello": "world"
@@ -138,7 +152,7 @@ func TestPatchRecipeNameBadReqNoName(t *testing.T) {
 }
 
 func TestPatchRecipeNameBadReqNoId(t *testing.T) {
-	r := api.StartGinServer(Db, "localhost:5432")
+	r := startServer()
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("PATCH", "/recipes/1000", bytes.NewBuffer([]byte(`{
 		"name": "Pasta"
@@ -151,7 +165,7 @@ func TestPatchRecipeNameBadReqNoId(t *testing.T) {
 }
 
 func TestDeleteRecipeSucc(t *testing.T) {
-	r := api.StartGinServer(Db, "localhost:5432")
+	r := startServer()
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("DELETE", "/recipes/2", nil)
 
@@ -162,7 +176,7 @@ func TestDeleteRecipeSucc(t *testing.T) {
 }
 
 func TestDeleteRecipeBadReq(t *testing.T) {
-	r := api.StartGinServer(Db, "localhost:5432")
+	r := startServer()
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("DELETE", "/recipes/1000", nil)
 
@@ -173,7 +187,7 @@ func TestDeleteRecipeBadReq(t *testing.T) {
 }
 
 func TestDeleteRecipeIngredientSucc(t *testing.T) {
-	r := api.StartGinServer(Db, "localhost:5432")
+	r := startServer()
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("DELETE", "/recipes/ingredients/1", nil)
 
@@ -183,7 +197,7 @@ func TestDeleteRecipeIngredientSucc(t *testing.T) {
 	assert.Equal(t, `{"data":"Recipe ingredient deleted"}`, w.Body.String())
 }
 func TestDeleteRecipeIngredientBadReq(t *testing.T) {
-	r := api.StartGinServer(Db, "localhost:5432")
+	r := startServer()
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("DELETE", "/recipes/ingredients/1000", nil)
 

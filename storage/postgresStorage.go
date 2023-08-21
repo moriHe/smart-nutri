@@ -47,7 +47,7 @@ func (s *PostgresStorage) GetAllRecipes() (*[]types.ShallowRecipe, error) {
 
 func (s *PostgresStorage) GetRecipeById(id string) (*types.FullRecipe, error) {
 
-	recipe := types.FullRecipe{Ingredients: []types.RecipeIngredient{}}
+	recipe := types.FullRecipe{RecipeIngredients: []types.RecipeIngredient{}}
 
 	err := s.Db.QueryRow(context.Background(), "select id, name from recipes where id=$1", id).Scan(&recipe.Id, &recipe.Name)
 
@@ -55,26 +55,36 @@ func (s *PostgresStorage) GetRecipeById(id string) (*types.FullRecipe, error) {
 		return nil, &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Bad Request: No recipe found with id %s", id)}
 	}
 
-	recipeIngredientsQuery := "select recipes_ingredients.id, recipes_ingredients.ingredient_id, name from recipes_ingredients join ingredients on recipes_ingredients.ingredient_id = ingredients.id where recipes_ingredients.recipe_id = $1"
+	recipeIngredientsQuery := "select recipes_ingredients.id, ingredients.name, amount_per_portion, " +
+		"units.name, markets.name, is_bio from recipes_ingredients " +
+		"join ingredients on recipes_ingredients.ingredient_id = ingredients.id " +
+		"join units on recipes_ingredients.unit = units.id " +
+		"join markets on recipes_ingredients.market = markets.id " +
+		"where recipes_ingredients.recipe_id = $1"
 	rows, _ := s.Db.Query(context.Background(), recipeIngredientsQuery, id)
 	defer rows.Close()
 
 	for rows.Next() {
 		var ingredient types.RecipeIngredient
 
-		err = rows.Scan(&ingredient.Id, &ingredient.IngredientId, &ingredient.Name)
+		err = rows.Scan(&ingredient.Id, &ingredient.Name, &ingredient.AmountPerPortion, &ingredient.Unit, &ingredient.Market, &ingredient.IsBio)
 
 		if err != nil {
 			return nil, &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Scan recipe_ingredients table failed: %s", err)}
 		}
 
-		recipe.Ingredients = append(recipe.Ingredients, ingredient)
+		recipe.RecipeIngredients = append(recipe.RecipeIngredients, ingredient)
 	}
 
 	return &recipe, nil
 }
 
+var postRecipeIngredientQuery = "insert into recipes_ingredients(recipe_id, " +
+	"ingredient_id, amount_per_portion, unit, market, is_bio) values ($1, $2, $3, $4, $5, $6)"
+
 func (s *PostgresStorage) PostRecipe(payload types.PostRecipe) error {
+	// TODO Include new columns in payload [ingredientId, amountPerPortion, XXX]
+	// TODO Add column portions
 	var recipeId int
 	if payload.Name == "" {
 		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("No recipe name specified")}
@@ -85,8 +95,9 @@ func (s *PostgresStorage) PostRecipe(payload types.PostRecipe) error {
 		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Step 1: Failed to create recipe: %s", err)}
 	}
 
-	for i := 0; i < len(payload.IngredientIds); i++ {
-		_, err := s.Db.Exec(context.Background(), "insert into recipes_ingredients(recipe_id, ingredient_id) values ($1, $2)", recipeId, payload.IngredientIds[i])
+	for i := 0; i < len(payload.RecipeIngredients); i++ {
+		recipeIngredient := payload.RecipeIngredients[i]
+		_, err := s.Db.Exec(context.Background(), postRecipeIngredientQuery, recipeId, recipeIngredient.IngredientId, recipeIngredient.AmountPerPortion, recipeIngredient.UnitId, recipeIngredient.MarketId, recipeIngredient.IsBio)
 
 		if err != nil {
 			s.DeleteRecipe(strconv.Itoa(recipeId))
@@ -97,7 +108,7 @@ func (s *PostgresStorage) PostRecipe(payload types.PostRecipe) error {
 }
 
 func (s *PostgresStorage) PostRecipeIngredient(recipeId string, payload types.PostRecipeIngredient) error {
-	_, err := s.Db.Exec(context.Background(), "insert into recipes_ingredients(recipe_id, ingredient_id) values ($1, $2)", recipeId, payload.IngredientId)
+	_, err := s.Db.Exec(context.Background(), postRecipeIngredientQuery, recipeId, payload.IngredientId, payload.AmountPerPortion, payload.UnitId, payload.MarketId, payload.IsBio)
 
 	if err != nil {
 		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Failed to post recipe_ingredient: %s", err)}

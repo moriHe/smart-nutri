@@ -83,8 +83,6 @@ var postRecipeIngredientQuery = "insert into recipes_ingredients(recipe_id, " +
 	"ingredient_id, amount_per_portion, unit, market, is_bio) values ($1, $2, $3, $4, $5, $6)"
 
 func (s *PostgresStorage) PostRecipe(payload types.PostRecipe) error {
-	// TODO Include new columns in payload [ingredientId, amountPerPortion, XXX]
-	// TODO Add column portions
 	var recipeId int
 	if payload.Name == "" {
 		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("No recipe name specified")}

@@ -10,13 +10,6 @@ type RecipeIngredient struct {
 }
 
 // Posts new ingredient to existing recipe
-type PostRecipeIngredient struct {
-	IngredientId     int     `json:"ingredientId"`
-	AmountPerPortion float32 `json:"amountPerPortion"`
-	Unit             int     `json:"unit"`
-	Market           int     `json:"market"`
-	IsBio            bool    `json:"isBio"`
-}
 
 type ShallowRecipe struct {
 	Id   int    `json:"id"`
@@ -28,10 +21,16 @@ type FullRecipe struct {
 	Name              string             `json:"name"`
 	RecipeIngredients []RecipeIngredient `json:"recipeIngredients"`
 }
-
+type PostRecipeIngredient struct {
+	IngredientId     int     `json:"ingredientId"`
+	AmountPerPortion float32 `json:"amountPerPortion"`
+	Unit             int     `json:"unit"`
+	Market           int     `json:"market"`
+	IsBio            bool    `json:"isBio"`
+}
 type PostRecipe struct {
-	Name          string `json:"name"`
-	IngredientIds []int  `json:"ingredientIds"`
+	Name              string                 `json:"name"`
+	RecipeIngredients []PostRecipeIngredient `json:"recipeIngredients"`
 }
 
 type PatchRecipeName struct {

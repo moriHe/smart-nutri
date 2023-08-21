@@ -24,8 +24,8 @@ type FullRecipe struct {
 type PostRecipeIngredient struct {
 	IngredientId     int     `json:"ingredientId"`
 	AmountPerPortion float32 `json:"amountPerPortion"`
-	Unit             int     `json:"unit"`
-	Market           int     `json:"market"`
+	UnitId           int     `json:"unitId"`
+	MarketId         int     `json:"marketId"`
 	IsBio            bool    `json:"isBio"`
 }
 type PostRecipe struct {

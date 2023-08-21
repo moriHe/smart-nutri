@@ -97,7 +97,7 @@ func (s *PostgresStorage) PostRecipe(payload types.PostRecipe) error {
 
 	for i := 0; i < len(payload.RecipeIngredients); i++ {
 		recipeIngredient := payload.RecipeIngredients[i]
-		_, err := s.Db.Exec(context.Background(), postRecipeIngredientQuery, recipeId, recipeIngredient.IngredientId, recipeIngredient.AmountPerPortion, recipeIngredient.Unit, recipeIngredient.Market, recipeIngredient.IsBio)
+		_, err := s.Db.Exec(context.Background(), postRecipeIngredientQuery, recipeId, recipeIngredient.IngredientId, recipeIngredient.AmountPerPortion, recipeIngredient.UnitId, recipeIngredient.MarketId, recipeIngredient.IsBio)
 
 		if err != nil {
 			s.DeleteRecipe(strconv.Itoa(recipeId))
@@ -108,7 +108,7 @@ func (s *PostgresStorage) PostRecipe(payload types.PostRecipe) error {
 }
 
 func (s *PostgresStorage) PostRecipeIngredient(recipeId string, payload types.PostRecipeIngredient) error {
-	_, err := s.Db.Exec(context.Background(), postRecipeIngredientQuery, recipeId, payload.IngredientId, payload.AmountPerPortion, payload.Unit, payload.Market, payload.IsBio)
+	_, err := s.Db.Exec(context.Background(), postRecipeIngredientQuery, recipeId, payload.IngredientId, payload.AmountPerPortion, payload.UnitId, payload.MarketId, payload.IsBio)
 
 	if err != nil {
 		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Failed to post recipe_ingredient: %s", err)}

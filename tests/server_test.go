@@ -69,8 +69,8 @@ func TestPostRecipeSuccIngredients(t *testing.T) {
 	r := startServer()
 	w := httptest.NewRecorder()
 	body := `{"name": "Wantan","recipeIngredients": [{"ingredientId": 1,` +
-		`"amountPerPortion": 100,"unit": 1,"market": 1,"isBio": true},{"ingredientId": 2,` +
-		`"amountPerPortion": 200,"unit": 2,"market": 2,"isBio": false}]}`
+		`"amountPerPortion": 100,"unitId": 1,"marketId": 1,"isBio": true},{"ingredientId": 2,` +
+		`"amountPerPortion": 200,"unitId": 2,"marketId": 2,"isBio": false}]}`
 	req, _ := http.NewRequest("POST", "/recipes", bytes.NewBuffer([]byte(body)))
 
 	r.R.ServeHTTP(w, req)
@@ -100,8 +100,8 @@ func TestPostRecipeIngredientSucc(t *testing.T) {
 	req, _ := http.NewRequest("POST", "/recipes/2/ingredients", bytes.NewBuffer([]byte(`{
 		"ingredientId": 2,
 		"amount": 1,
-		"unit": 1,
-		"market": 1,
+		"unitId": 1,
+		"marketId": 1,
 		"isBio": true
 	}`)))
 

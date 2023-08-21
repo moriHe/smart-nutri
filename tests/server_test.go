@@ -80,6 +80,7 @@ func TestPostRecipeSuccIngredients(t *testing.T) {
 	assert.Equal(t, `{"data":"Added recipe"}`, w.Body.String())
 }
 
+// TODO: Add bad request tests for missing ingriedientId, amountPerPortion etc
 func TestPostRecipeBadReq(t *testing.T) {
 	r := startServer()
 	w := httptest.NewRecorder()

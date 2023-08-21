@@ -1,12 +1,12 @@
 package types
 
 type RecipeIngredient struct {
-	Id               int    `json:"id"`
-	Name             string `json:"name"`
-	AmountPerPortion string `json:"amountPerPortion"`
-	Unit             string `json:"unit"`
-	Market           string `json:"market"`
-	IsBio            bool   `json:"isBio"`
+	Id               int     `json:"id"`
+	Name             string  `json:"name"`
+	AmountPerPortion float32 `json:"amountPerPortion"`
+	Unit             string  `json:"unit"`
+	Market           string  `json:"market"`
+	IsBio            bool    `json:"isBio"`
 }
 
 // Posts new ingredient to existing recipe

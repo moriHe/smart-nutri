@@ -47,7 +47,7 @@ func (s *PostgresStorage) GetAllRecipes() (*[]types.ShallowRecipe, error) {
 
 func (s *PostgresStorage) GetRecipeById(id string) (*types.FullRecipe, error) {
 
-	recipe := types.FullRecipe{Ingredients: []types.RecipeIngredient{}}
+	recipe := types.FullRecipe{RecipeIngredients: []types.RecipeIngredient{}}
 
 	err := s.Db.QueryRow(context.Background(), "select id, name from recipes where id=$1", id).Scan(&recipe.Id, &recipe.Name)
 
@@ -55,20 +55,25 @@ func (s *PostgresStorage) GetRecipeById(id string) (*types.FullRecipe, error) {
 		return nil, &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Bad Request: No recipe found with id %s", id)}
 	}
 
-	recipeIngredientsQuery := "select recipes_ingredients.id, recipes_ingredients.ingredient_id, name from recipes_ingredients join ingredients on recipes_ingredients.ingredient_id = ingredients.id where recipes_ingredients.recipe_id = $1"
+	recipeIngredientsQuery := "select recipes_ingredients.id, ingredients.name, amount_per_portion, " +
+		"units.name, markets.name, is_bio from recipes_ingredients " +
+		"join ingredients on recipes_ingredients.ingredient_id = ingredients.id " +
+		"join units on recipes_ingredients.unit = units.id " +
+		"join markets on recipes_ingredients.market = markets.id " +
+		"where recipes_ingredients.recipe_id = $1"
 	rows, _ := s.Db.Query(context.Background(), recipeIngredientsQuery, id)
 	defer rows.Close()
 
 	for rows.Next() {
 		var ingredient types.RecipeIngredient
 
-		err = rows.Scan(&ingredient.Id, &ingredient.IngredientId, &ingredient.Name)
+		err = rows.Scan(&ingredient.Id, &ingredient.Name, &ingredient.AmountPerPortion, &ingredient.Unit, &ingredient.Market, &ingredient.IsBio)
 
 		if err != nil {
 			return nil, &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Scan recipe_ingredients table failed: %s", err)}
 		}
 
-		recipe.Ingredients = append(recipe.Ingredients, ingredient)
+		recipe.RecipeIngredients = append(recipe.RecipeIngredients, ingredient)
 	}
 
 	return &recipe, nil

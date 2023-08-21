@@ -33,9 +33,12 @@ func TestGetRecipeByIdSucc(t *testing.T) {
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/recipes/1", nil)
 	r.R.ServeHTTP(w, req)
-
+	res := `{"data":{"id":1,"name":"Spaghetti","recipeIngredients":` +
+		`[{"id":1,"name":"Tomaten","amountPerPortion":"100","unit":"GRAM","market":` +
+		`"Rewe","isBio":true},{"id":2,"name":"Knoblauch","amountPerPortion":"200",` +
+		`"unit":"GRAM","market":"Rewe","isBio":false}]}}`
 	assert.Equal(t, 200, w.Code)
-	assert.Equal(t, `{"data":{"id":1,"name":"Spaghetti","ingredients":[{"id":1,"ingredientId":1,"name":"Tomaten"},{"id":2,"ingredientId":2,"name":"Knoblauch"}]}}`, w.Body.String())
+	assert.Equal(t, res, w.Body.String())
 
 }
 

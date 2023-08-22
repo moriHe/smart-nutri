@@ -7,11 +7,12 @@ import (
 	"os"
 	"testing"
 
+	"github.com/gin-gonic/gin"
 	"github.com/go-playground/assert"
 	"github.com/moriHe/smart-nutri/api"
 )
 
-func startServer() *api.Server {
+func startServer() *gin.Engine {
 	r := api.StartGinServer(Db, os.Getenv("DOCKER_TEST_SERVER_URL"))
 	return r
 }
@@ -21,7 +22,7 @@ func TestGetAllRecipesSucc(t *testing.T) {
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/familys/1/recipes", nil)
-	r.R.ServeHTTP(w, req)
+	r.ServeHTTP(w, req)
 
 	assert.Equal(t, 200, w.Code)
 	assert.Equal(t, `{"data":[{"id":1,"name":"Spaghetti"}]}`, w.Body.String())
@@ -32,7 +33,7 @@ func TestGetRecipeByIdSucc(t *testing.T) {
 	// TODO Return all fields
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/recipes/1", nil)
-	r.R.ServeHTTP(w, req)
+	r.ServeHTTP(w, req)
 	res := `{"data":{"id":1,"name":"Spaghetti","defaultPortions":1,"recipeIngredients":` +
 		`[{"id":1,"name":"Tomaten","amountPerPortion":100,"unit":"GRAM","market":` +
 		`"Rewe","isBio":true},{"id":2,"name":"Knoblauch","amountPerPortion":200,` +
@@ -46,7 +47,7 @@ func TestGetRecipeByIdBadReq(t *testing.T) {
 	r := startServer()
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/recipes/1000", nil)
-	r.R.ServeHTTP(w, req)
+	r.ServeHTTP(w, req)
 
 	assert.Equal(t, 400, w.Code)
 	assert.Equal(t, `{"error":{"status":400,"message":"Bad Request: No recipe found with id 1000"}}`, w.Body.String())
@@ -59,7 +60,7 @@ func TestPostRecipeSuccNoIngredients(t *testing.T) {
 		"name": "Wantan"
 	}`)))
 
-	r.R.ServeHTTP(w, req)
+	r.ServeHTTP(w, req)
 
 	assert.Equal(t, 200, w.Code)
 	assert.Equal(t, `{"data":"Added recipe"}`, w.Body.String())
@@ -73,7 +74,7 @@ func TestPostRecipeSuccIngredients(t *testing.T) {
 		`"amountPerPortion": 200,"unitId": 2,"marketId": 2,"isBio": false}]}`
 	req, _ := http.NewRequest("POST", "/familys/1/recipes", bytes.NewBuffer([]byte(body)))
 
-	r.R.ServeHTTP(w, req)
+	r.ServeHTTP(w, req)
 
 	assert.Equal(t, 200, w.Code)
 	// TODO: Return payload in response
@@ -89,7 +90,7 @@ func TestPostRecipeBadReq(t *testing.T) {
 		"hello": "world"
 	}`)))
 
-	r.R.ServeHTTP(w, req)
+	r.ServeHTTP(w, req)
 
 	assert.Equal(t, 400, w.Code)
 	assert.Equal(t, `{"error":{"status":400,"message":"No recipe name specified"}}`, w.Body.String())
@@ -106,7 +107,7 @@ func TestPostRecipeIngredientSucc(t *testing.T) {
 		"isBio": true
 	}`)))
 
-	r.R.ServeHTTP(w, req)
+	r.ServeHTTP(w, req)
 
 	assert.Equal(t, 200, w.Code)
 	assert.Equal(t, `{"data":"Added recipe ingredient"}`, w.Body.String())
@@ -120,7 +121,7 @@ func TestPostRecipeIngredientBadReq(t *testing.T) {
 		"ingredientId": 2
 	}`)))
 
-	r.R.ServeHTTP(w, req)
+	r.ServeHTTP(w, req)
 	// TODO: Reset db after each test
 	assert.Equal(t, 400, w.Code)
 	assert.Equal(t, `{"error":{"status":400,"message":"Failed to post recipe_ingredient: ERROR: insert or update on table \"recipes_ingredients\" violates foreign key constraint \"recipes_ingredients_recipe_id_fkey\" (SQLSTATE 23503)"}}`, w.Body.String())
@@ -133,7 +134,7 @@ func TestPatchRecipeNameSucc(t *testing.T) {
 		"name": "Beyond Burger"
 	}`)))
 
-	r.R.ServeHTTP(w, req)
+	r.ServeHTTP(w, req)
 
 	assert.Equal(t, 200, w.Code)
 	assert.Equal(t, `{"data":"Recipe name updated"}`, w.Body.String())
@@ -146,7 +147,7 @@ func TestPatchRecipeNameBadReqNoName(t *testing.T) {
 		"hello": "world"
 	}`)))
 
-	r.R.ServeHTTP(w, req)
+	r.ServeHTTP(w, req)
 
 	assert.Equal(t, 400, w.Code)
 	assert.Equal(t, `{"error":{"status":400,"message":"No recipe name specified"}}`, w.Body.String())
@@ -159,7 +160,7 @@ func TestPatchRecipeNameBadReqNoId(t *testing.T) {
 		"name": "Pasta"
 	}`)))
 
-	r.R.ServeHTTP(w, req)
+	r.ServeHTTP(w, req)
 
 	assert.Equal(t, 400, w.Code)
 	assert.Equal(t, `{"error":{"status":400,"message":"Recipe does not exist"}}`, w.Body.String())
@@ -170,7 +171,7 @@ func TestDeleteRecipeSucc(t *testing.T) {
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("DELETE", "/recipes/2", nil)
 
-	r.R.ServeHTTP(w, req)
+	r.ServeHTTP(w, req)
 
 	assert.Equal(t, 200, w.Code)
 	assert.Equal(t, `{"data":"Recipe deleted"}`, w.Body.String())
@@ -181,7 +182,7 @@ func TestDeleteRecipeBadReq(t *testing.T) {
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("DELETE", "/recipes/1000", nil)
 
-	r.R.ServeHTTP(w, req)
+	r.ServeHTTP(w, req)
 
 	assert.Equal(t, 400, w.Code)
 	assert.Equal(t, `{"error":{"status":400,"message":"Recipe does not exist"}}`, w.Body.String())
@@ -192,7 +193,7 @@ func TestDeleteRecipeIngredientSucc(t *testing.T) {
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("DELETE", "/recipes/recipeingredient/1", nil)
 
-	r.R.ServeHTTP(w, req)
+	r.ServeHTTP(w, req)
 
 	assert.Equal(t, 200, w.Code)
 	assert.Equal(t, `{"data":"Recipe ingredient deleted"}`, w.Body.String())
@@ -202,7 +203,7 @@ func TestDeleteRecipeIngredientBadReq(t *testing.T) {
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("DELETE", "/recipes/recipeingredient/1000", nil)
 
-	r.R.ServeHTTP(w, req)
+	r.ServeHTTP(w, req)
 
 	assert.Equal(t, 400, w.Code)
 	assert.Equal(t, `{"error":{"status":400,"message":"Recipe ingredient does not exist"}}`, w.Body.String())

@@ -71,7 +71,7 @@ func TestPostRecipeSuccIngredients(t *testing.T) {
 	body := `{"name": "Wantan","recipeIngredients": [{"ingredientId": 1,` +
 		`"amountPerPortion": 100,"unitId": 1,"marketId": 1,"isBio": true},{"ingredientId": 2,` +
 		`"amountPerPortion": 200,"unitId": 2,"marketId": 2,"isBio": false}]}`
-	req, _ := http.NewRequest("POST", "/recipes", bytes.NewBuffer([]byte(body)))
+	req, _ := http.NewRequest("POST", "/familys/1/recipes", bytes.NewBuffer([]byte(body)))
 
 	r.R.ServeHTTP(w, req)
 
@@ -81,10 +81,11 @@ func TestPostRecipeSuccIngredients(t *testing.T) {
 }
 
 // TODO: Add bad request tests for missing ingriedientId, amountPerPortion etc
+// TODO: Also add test family id not correct
 func TestPostRecipeBadReq(t *testing.T) {
 	r := startServer()
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("POST", "/recipes", bytes.NewBuffer([]byte(`{
+	req, _ := http.NewRequest("POST", "/familys/1/recipes", bytes.NewBuffer([]byte(`{
 		"hello": "world"
 	}`)))
 
@@ -97,7 +98,7 @@ func TestPostRecipeBadReq(t *testing.T) {
 func TestPostRecipeIngredientSucc(t *testing.T) {
 	r := startServer()
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("POST", "/recipes/2/ingredients", bytes.NewBuffer([]byte(`{
+	req, _ := http.NewRequest("POST", "/recipes/2/recipeingredient", bytes.NewBuffer([]byte(`{
 		"ingredientId": 2,
 		"amount": 1,
 		"unitId": 1,
@@ -115,7 +116,7 @@ func TestPostRecipeIngredientBadReq(t *testing.T) {
 	r := startServer()
 	w := httptest.NewRecorder()
 
-	req, _ := http.NewRequest("POST", "/recipes/1000/ingredients", bytes.NewBuffer([]byte(`{
+	req, _ := http.NewRequest("POST", "/recipes/1000/recipeingredient", bytes.NewBuffer([]byte(`{
 		"ingredientId": 2
 	}`)))
 
@@ -189,7 +190,7 @@ func TestDeleteRecipeBadReq(t *testing.T) {
 func TestDeleteRecipeIngredientSucc(t *testing.T) {
 	r := startServer()
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("DELETE", "/recipes/ingredients/1", nil)
+	req, _ := http.NewRequest("DELETE", "/recipes/recipeingredient/1", nil)
 
 	r.R.ServeHTTP(w, req)
 
@@ -199,7 +200,7 @@ func TestDeleteRecipeIngredientSucc(t *testing.T) {
 func TestDeleteRecipeIngredientBadReq(t *testing.T) {
 	r := startServer()
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("DELETE", "/recipes/ingredients/1000", nil)
+	req, _ := http.NewRequest("DELETE", "/recipes/recipeingredient/1000", nil)
 
 	r.R.ServeHTTP(w, req)
 

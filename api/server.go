@@ -20,10 +20,10 @@ func StartGinServer(store storage.Storage, url string) *Server {
 	router.GET("/familys/:familyId/recipes", server.HandleGetAllRecipes)
 	router.GET("/recipes/:id", server.HandleGetRecipeById)
 	router.POST("/familys/:familyId/recipes", server.HandlePostRecipe)
-	router.POST("/recipes/:id/ingredients", server.HandlePostRecipeIngredient)
+	router.POST("/recipes/:id/recipeingredient", server.HandlePostRecipeIngredient)
 	router.PATCH("/recipes/:id", server.HandlePatchRecipeName)
 	router.DELETE("/recipes/:id", server.HandleDeleteRecipe)
-	router.DELETE("/recipes/ingredients/:id", server.HandleDeleteRecipeIngredient)
+	router.DELETE("/recipes/recipeingredient/:id", server.HandleDeleteRecipeIngredient)
 	router.Run(url)
 	return server
 

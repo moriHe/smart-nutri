@@ -20,11 +20,11 @@ func TestGetAllRecipesSucc(t *testing.T) {
 	r := startServer()
 
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/recipes", nil)
+	req, _ := http.NewRequest("GET", "/familys/1/recipes", nil)
 	r.R.ServeHTTP(w, req)
 
 	assert.Equal(t, 200, w.Code)
-	assert.Equal(t, `{"data":[{"id":1,"name":"Spaghetti"},{"id":2,"name":"Pizza"}]}`, w.Body.String())
+	assert.Equal(t, `{"data":[{"id":1,"name":"Spaghetti"}]}`, w.Body.String())
 }
 
 func TestGetRecipeByIdSucc(t *testing.T) {
@@ -55,7 +55,7 @@ func TestGetRecipeByIdBadReq(t *testing.T) {
 func TestPostRecipeSuccNoIngredients(t *testing.T) {
 	r := startServer()
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("POST", "/recipes", bytes.NewBuffer([]byte(`{
+	req, _ := http.NewRequest("POST", "/familys/1/recipes", bytes.NewBuffer([]byte(`{
 		"name": "Wantan"
 	}`)))
 

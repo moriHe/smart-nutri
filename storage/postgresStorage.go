@@ -25,8 +25,8 @@ func NewPostgresStorage(url string) *PostgresStorage {
 	return &PostgresStorage{Db: db}
 }
 
-func (s *PostgresStorage) GetAllRecipes() (*[]types.ShallowRecipe, error) {
-	rows, _ := s.Db.Query(context.Background(), "select id, name from recipes")
+func (s *PostgresStorage) GetAllRecipes(familyId string) (*[]types.ShallowRecipe, error) {
+	rows, _ := s.Db.Query(context.Background(), "select id, name from recipes where family_id=$1", familyId)
 
 	defer rows.Close()
 
@@ -82,7 +82,7 @@ func (s *PostgresStorage) GetRecipeById(id string) (*types.FullRecipe, error) {
 var postRecipeIngredientQuery = "insert into recipes_ingredients(recipe_id, " +
 	"ingredient_id, amount_per_portion, unit, market, is_bio) values ($1, $2, $3, $4, $5, $6)"
 
-func (s *PostgresStorage) PostRecipe(payload types.PostRecipe) error {
+func (s *PostgresStorage) PostRecipe(familyId string, payload types.PostRecipe) error {
 	var recipeId int
 	if payload.Name == "" {
 		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("No recipe name specified")}
@@ -92,7 +92,7 @@ func (s *PostgresStorage) PostRecipe(payload types.PostRecipe) error {
 		portions = 1
 	}
 
-	err := s.Db.QueryRow(context.Background(), "insert into recipes (name, portions) values ($1, $2) returning id", payload.Name, portions).Scan(&recipeId)
+	err := s.Db.QueryRow(context.Background(), "insert into recipes (family_id, name, portions) values ($1, $2, $3) returning id", familyId, payload.Name, portions).Scan(&recipeId)
 
 	if err != nil {
 		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Step 1: Failed to create recipe: %s", err)}

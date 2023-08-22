@@ -13,12 +13,12 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
-	"github.com/moriHe/smart-nutri/storage"
+	"github.com/moriHe/smart-nutri/storage/postgres"
 	"github.com/ory/dockertest/v3"
 	"github.com/ory/dockertest/v3/docker"
 )
 
-var Db *storage.PostgresStorage
+var Db *postgres.Storage
 
 func TestMain(m *testing.M) {
 	err := godotenv.Load("../.env")
@@ -70,7 +70,7 @@ func TestMain(m *testing.M) {
 		if err != nil {
 			return err
 		}
-		Db = &storage.PostgresStorage{Db: pool}
+		Db = &postgres.Storage{Db: pool}
 		return Db.Db.Ping(context.Background())
 	}); err != nil {
 		log.Fatalf("Could not connect to docker: %s", err)

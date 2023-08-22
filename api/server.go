@@ -17,13 +17,13 @@ func StartGinServer(store storage.Storage, url string) *Server {
 	router := gin.Default()
 	server := &Server{store: store, R: router}
 
-	router.GET("/recipes", server.HandleGetAllRecipes)
+	router.GET("/familys/:familyId/recipes", server.HandleGetAllRecipes)
 	router.GET("/recipes/:id", server.HandleGetRecipeById)
-	router.POST("/recipes", server.HandlePostRecipe)
-	router.POST("/recipes/:id/ingredients", server.HandlePostRecipeIngredient)
+	router.POST("/familys/:familyId/recipes", server.HandlePostRecipe)
+	router.POST("/recipes/:id/recipeingredient", server.HandlePostRecipeIngredient)
 	router.PATCH("/recipes/:id", server.HandlePatchRecipeName)
 	router.DELETE("/recipes/:id", server.HandleDeleteRecipe)
-	router.DELETE("/recipes/ingredients/:id", server.HandleDeleteRecipeIngredient)
+	router.DELETE("/recipes/recipeingredient/:id", server.HandleDeleteRecipeIngredient)
 	router.Run(url)
 	return server
 
@@ -56,7 +56,8 @@ func handleResponse[T any](c *gin.Context, successResponse T, err error) {
 }
 
 func (s *Server) HandleGetAllRecipes(c *gin.Context) {
-	recipes, err := s.store.GetAllRecipes()
+	familyId := c.Param("familyId")
+	recipes, err := s.store.GetAllRecipes(familyId)
 	handleResponse[*[]types.ShallowRecipe](c, recipes, err)
 }
 
@@ -69,12 +70,13 @@ func (s *Server) HandleGetRecipeById(c *gin.Context) {
 }
 
 func (s *Server) HandlePostRecipe(c *gin.Context) {
+	familyId := c.Param("familyId")
 	var payload types.PostRecipe
 
 	if err := c.BindJSON(&payload); err != nil {
 		errorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Payload malformed"})
 	} else {
-		handleResponse[string](c, "Added recipe", s.store.PostRecipe(payload))
+		handleResponse[string](c, "Added recipe", s.store.PostRecipe(familyId, payload))
 	}
 }
 

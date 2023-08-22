@@ -49,7 +49,7 @@ func (s *PostgresStorage) GetRecipeById(id string) (*types.FullRecipe, error) {
 
 	recipe := types.FullRecipe{RecipeIngredients: []types.RecipeIngredient{}}
 
-	err := s.Db.QueryRow(context.Background(), "select id, name, portions from recipes where id=$1", id).Scan(&recipe.Id, &recipe.Name, &recipe.Portions)
+	err := s.Db.QueryRow(context.Background(), "select id, name, default_portions from recipes where id=$1", id).Scan(&recipe.Id, &recipe.Name, &recipe.DefaultPortions)
 
 	if err != nil {
 		return nil, &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Bad Request: No recipe found with id %s", id)}
@@ -87,12 +87,12 @@ func (s *PostgresStorage) PostRecipe(familyId string, payload types.PostRecipe) 
 	if payload.Name == "" {
 		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("No recipe name specified")}
 	}
-	portions := payload.Portions
-	if portions == 0 {
-		portions = 1
+	defaultPortions := payload.DefaultPortions
+	if defaultPortions == 0 {
+		defaultPortions = 1
 	}
 
-	err := s.Db.QueryRow(context.Background(), "insert into recipes (family_id, name, portions) values ($1, $2, $3) returning id", familyId, payload.Name, portions).Scan(&recipeId)
+	err := s.Db.QueryRow(context.Background(), "insert into recipes (family_id, name, default_portions) values ($1, $2, $3) returning id", familyId, payload.Name, defaultPortions).Scan(&recipeId)
 
 	if err != nil {
 		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Step 1: Failed to create recipe: %s", err)}

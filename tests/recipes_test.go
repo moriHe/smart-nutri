@@ -62,8 +62,8 @@ func TestPostRecipeSuccIngredients(t *testing.T) {
 	r := startServer()
 	w := httptest.NewRecorder()
 	body := `{"name": "Wantan","recipeIngredients": [{"ingredientId": 1,` +
-		`"amountPerPortion": 100,"unitId": 1,"marketId": 1,"isBio": true},{"ingredientId": 2,` +
-		`"amountPerPortion": 200,"unitId": 2,"marketId": 2,"isBio": false}]}`
+		`"amountPerPortion": 100,"unit": "GRAM","marketId": 1,"isBio": true},{"ingredientId": 2,` +
+		`"amountPerPortion": 200,"unit": "MILLILITER","marketId": 2,"isBio": false}]}`
 	req, _ := http.NewRequest("POST", "/familys/1/recipes", bytes.NewBuffer([]byte(body)))
 
 	r.ServeHTTP(w, req)
@@ -94,7 +94,7 @@ func TestPostRecipeIngredientSucc(t *testing.T) {
 	req, _ := http.NewRequest("POST", "/recipes/2/recipeingredient", bytes.NewBuffer([]byte(`{
 		"ingredientId": 2,
 		"amount": 1,
-		"unitId": 1,
+		"unit": "GRAM",
 		"marketId": 1,
 		"isBio": true
 	}`)))
@@ -110,13 +110,14 @@ func TestPostRecipeIngredientBadReq(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	req, _ := http.NewRequest("POST", "/recipes/1000/recipeingredient", bytes.NewBuffer([]byte(`{
-		"ingredientId": 2
+		"ingredientId": 2,
+		"unit": "GRAM"
 	}`)))
 
 	r.ServeHTTP(w, req)
 	// TODO: Reset db after each test
 	assert.Equal(t, 400, w.Code)
-	assert.Equal(t, `{"error":{"status":400,"message":"Failed to post recipe_ingredient: ERROR: insert or update on table \"recipes_ingredients\" violates foreign key constraint \"recipes_ingredients_recipe_id_fkey\" (SQLSTATE 23503)"}}`, w.Body.String())
+	assert.Equal(t, `{"error":{"status":400,"message":"Step 2: Failed to post recipe_ingredient: ERROR: insert or update on table \"recipes_ingredients\" violates foreign key constraint \"recipes_ingredients_recipe_id_fkey\" (SQLSTATE 23503)"}}`, w.Body.String())
 }
 
 func TestPatchRecipeNameSucc(t *testing.T) {

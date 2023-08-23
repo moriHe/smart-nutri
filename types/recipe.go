@@ -9,8 +9,6 @@ type RecipeIngredient struct {
 	IsBio            bool    `json:"isBio"`
 }
 
-// Posts new ingredient to existing recipe
-
 type ShallowRecipe struct {
 	Id   int    `json:"id"`
 	Name string `json:"name"`

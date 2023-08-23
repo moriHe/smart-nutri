@@ -109,6 +109,7 @@ func (s *Storage) PostRecipeIngredient(recipeId string, payload types.PostRecipe
 	err := s.Db.QueryRow(context.Background(), "select (id) from units where units.name = $1", payload.Unit).Scan(&unitId)
 
 	if err != nil {
+		// TODO: Should probably be a Bad Request or check if no unitId then bad request. I think queryRow throws error if nothing found
 		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Step 1: Failed to create recipe_ingredient: %s", err)}
 	}
 	_, err = s.Db.Exec(context.Background(), postRecipeIngredientQuery, recipeId, payload.IngredientId, payload.AmountPerPortion, unitId, payload.MarketId, payload.IsBio)

@@ -34,8 +34,8 @@ func (s *Storage) GetAllRecipes(familyId string) (*[]types.ShallowRecipe, error)
 func (s *Storage) GetRecipeById(id string) (*types.FullRecipe, error) {
 
 	recipe := types.FullRecipe{RecipeIngredients: []types.RecipeIngredient{}}
-
-	err := s.Db.QueryRow(context.Background(), "select id, name, default_portions from recipes where id=$1", id).Scan(&recipe.Id, &recipe.Name, &recipe.DefaultPortions)
+	query := "select recipes.id, name, default_portions, meal from recipes join meals on recipes.default_meal = meals.id where recipes.id = $1"
+	err := s.Db.QueryRow(context.Background(), query, id).Scan(&recipe.Id, &recipe.Name, &recipe.DefaultPortions, &recipe.DefaultMeal)
 
 	if err != nil {
 		return nil, &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Bad Request: No recipe found with id %s", id)}

@@ -20,6 +20,7 @@ type FullRecipe struct {
 	Id                int                `json:"id"`
 	Name              string             `json:"name"`
 	DefaultPortions   float32            `json:"defaultPortions"`
+	DefaultMeal       string             `json:"defaultMeal"`
 	RecipeIngredients []RecipeIngredient `json:"recipeIngredients"`
 }
 type PostRecipeIngredient struct {
@@ -32,6 +33,7 @@ type PostRecipeIngredient struct {
 type PostRecipe struct {
 	Name              string                 `json:"name"`
 	DefaultPortions   float32                `json:"defaultPortions"`
+	DefaultMeal       int                    `json:"defaultMeal"`
 	RecipeIngredients []PostRecipeIngredient `json:"recipeIngredients"`
 }
 

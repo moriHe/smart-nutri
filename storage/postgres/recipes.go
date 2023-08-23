@@ -86,21 +86,35 @@ func (s *Storage) PostRecipe(familyId string, payload types.PostRecipe) error {
 
 	for i := 0; i < len(payload.RecipeIngredients); i++ {
 		recipeIngredient := payload.RecipeIngredients[i]
-		_, err := s.Db.Exec(context.Background(), postRecipeIngredientQuery, recipeId, recipeIngredient.IngredientId, recipeIngredient.AmountPerPortion, recipeIngredient.UnitId, recipeIngredient.MarketId, recipeIngredient.IsBio)
+		var unitId int
+		err := s.Db.QueryRow(context.Background(), "select (id) from units where units.name = $1", recipeIngredient.Unit).Scan(&unitId)
 
 		if err != nil {
 			s.DeleteRecipe(strconv.Itoa(recipeId))
-			return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Step 2: Failed to create recipe: %s", err)}
+			return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Step 2a: Failed to create recipe: %s", err)}
+		}
+
+		_, err = s.Db.Exec(context.Background(), postRecipeIngredientQuery, recipeId, recipeIngredient.IngredientId, recipeIngredient.AmountPerPortion, unitId, recipeIngredient.MarketId, recipeIngredient.IsBio)
+
+		if err != nil {
+			s.DeleteRecipe(strconv.Itoa(recipeId))
+			return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Step 2b: Failed to create recipe: %s", err)}
 		}
 	}
 	return nil
 }
 
 func (s *Storage) PostRecipeIngredient(recipeId string, payload types.PostRecipeIngredient) error {
-	_, err := s.Db.Exec(context.Background(), postRecipeIngredientQuery, recipeId, payload.IngredientId, payload.AmountPerPortion, payload.UnitId, payload.MarketId, payload.IsBio)
+	var unitId int
+	err := s.Db.QueryRow(context.Background(), "select (id) from units where units.name = $1", payload.Unit).Scan(&unitId)
 
 	if err != nil {
-		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Failed to post recipe_ingredient: %s", err)}
+		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Step 1: Failed to create recipe_ingredient: %s", err)}
+	}
+	_, err = s.Db.Exec(context.Background(), postRecipeIngredientQuery, recipeId, payload.IngredientId, payload.AmountPerPortion, unitId, payload.MarketId, payload.IsBio)
+
+	if err != nil {
+		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Step 2: Failed to post recipe_ingredient: %s", err)}
 	}
 	return nil
 }

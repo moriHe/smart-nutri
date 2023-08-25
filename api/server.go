@@ -17,6 +17,7 @@ func StartGinServer(store storage.Storage, url string) *gin.Engine {
 	server := &Server{store: store}
 
 	server.recipeRoutes(router)
+	server.mealPlanRoutes(router)
 	router.Run(url)
 
 	return router

@@ -44,7 +44,7 @@ func (s *Storage) GetMealPlanItem(id string) (*types.FullMealPlanItem, error) {
 		"recipes_ingredients.ingredient_id = ingredients.id left join units on " +
 		"recipes_ingredients.unit = units.id  left join markets on recipes_ingredients.market = markets.id " +
 		"where mealplans.id = $1 " +
-		"group by mealplans.id, mealplans.date, meals.meal, mealplans.portions, recipes.id, recipes.name;"
+		"group by mealplans.id, meals.meal, recipes.id;"
 
 	err := s.Db.QueryRow(context.Background(), query, id).Scan(&test.Id, &test.Date, &test.Meal, &test.Portions, &test.Recipe.Recipeid, &test.Recipe.Name, &test.Recipe.RecipeIngredients)
 

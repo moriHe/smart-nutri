@@ -9,12 +9,18 @@ type ShallowMealPlanItem struct {
 }
 
 // FullRecipe needs amount needs to be multiplied by portions
+type MealPlanItemRecipe struct {
+	Recipeid          int
+	Name              string
+	RecipeIngredients []RecipeIngredient
+}
+
 type FullMealPlanItem struct {
-	Id       int        `json:"id"`
-	Date     string     `json:"date"`
-	Recipe   FullRecipe `json:"Recipe"`
-	Meal     string     `json:"meal"`
-	Portions float32    `json:"portions"`
+	Id       string
+	Date     string
+	Meal     string
+	Portions float32
+	Recipe   MealPlanItemRecipe
 }
 
 type PostMealPlanItem struct {

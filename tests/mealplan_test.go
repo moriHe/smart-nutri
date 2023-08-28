@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"bytes"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -61,4 +62,38 @@ func TestGetMeaplanItemBadReq(t *testing.T) {
 
 	assert.Equal(t, 400, w.Code)
 	assert.Equal(t, `{"error":{"status":400,"message":"Bad Request: no rows in result set"}}`, w.Body.String())
+}
+
+// TODO Check if item is posted correctly to db
+func TestPostMealplanItemSucc(t *testing.T) {
+	r := startServer()
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("POST", "/familys/1/mealplan", bytes.NewBuffer([]byte(`{
+		"recipeId": 2,
+		"date": "2023-08-22",
+		"meal": "DINNER",
+		"portions": 2
+	}`)))
+	r.ServeHTTP(w, req)
+
+	assert.Equal(t, 200, w.Code)
+	assert.Equal(t, `{"data":"Added mealplan item"}`, w.Body.String())
+}
+
+// TODO: Test other missing payloads
+// TODO: Add proper error messages
+func TestPostMealplanItemBadReq(t *testing.T) {
+	r := startServer()
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("POST", "/familys/1/mealplan", bytes.NewBuffer([]byte(`{
+		"date": "2023-08-22",
+		"meal": "DINNER",
+		"portions": 2
+	}`)))
+	r.ServeHTTP(w, req)
+
+	assert.Equal(t, 400, w.Code)
+	assert.Equal(t, `{"error":{"status":400,"message":"Step 2: Failed to create mealplan item: ERROR: insert or update on table \"mealplans\" violates foreign key constraint \"mealplans_recipe_id_fkey\" (SQLSTATE 23503)"}}`, w.Body.String())
 }

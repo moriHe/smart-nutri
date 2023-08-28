@@ -70,7 +70,7 @@ func (s *Storage) PostMealPlanItem(familyId string, payload types.PostMealPlanIt
 	_, err = s.Db.Exec(context.Background(), "insert into mealplans (family_id, recipe_id, date, meal, portions) values ($1, $2, $3, $4, $5)", &familyId, &payload.RecipeId, &payload.Date, &mealId, &payload.Portions)
 
 	if err != nil {
-		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Step 2: Failed to create mealplan item: %s", err)}
+		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Step 2: Failed to create mealplan item: %s", err)}
 	}
 
 	return nil

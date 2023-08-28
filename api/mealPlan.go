@@ -2,21 +2,28 @@ package api
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/moriHe/smart-nutri/types"
 )
 
 func (s *Server) mealPlanRoutes(r *gin.Engine) {
-	r.GET("/familys/:familyId/mealPlan/:date", s.handleGetMealPlan)
+	r.GET("/familys/:familyId/mealplan/:date", s.handleGetMealPlan)
 	r.GET("/mealPlan/item/:id", s.handleGetMealPlanItem)
-	r.POST("/familys/:familyId/mealPlan", s.handlePostMealPlanItem)
+	r.POST("/familys/:familyId/meaplan", s.handlePostMealPlanItem)
 	r.DELETE("/mealPlan/item/:id", s.handleDeleteMealPlanItem)
 }
 
 func (s *Server) handleGetMealPlan(c *gin.Context) {
 	familyId := c.Param("familyId")
 	date := c.Param("date")
+	_, err := time.Parse("2006-01-02", date)
+
+	if err != nil {
+		errorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Invalid Date. Use format YYYY-MM-DD"})
+		return
+	}
 
 	mealPlan, err := s.store.GetMealPlan(familyId, date)
 	handleResponse[*[]types.ShallowMealPlanItem](c, mealPlan, err)

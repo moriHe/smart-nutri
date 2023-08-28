@@ -92,5 +92,7 @@ INSERT INTO recipes_ingredients (recipe_id, ingredient_id, amount_per_portion, u
 (1, 2, 200, 1, 1, false);
 SELECT setval(pg_get_serial_sequence('recipes_ingredients', 'id'), max(id)) FROM recipes_ingredients;
 
-INSERT INTO mealplans (id, family_id, recipe_id, date, meal, portions) VALUES (1, 1, 1, TO_DATE('2023/08/22', 'YYYY/MM/DD'), 3, 2);
+INSERT INTO mealplans (id, family_id, recipe_id, date, meal, portions) VALUES 
+(1, 1, 1, TO_DATE('2023/08/22', 'YYYY/MM/DD'), 3, 2),
+(2, 1, 2, TO_DATE('2023/08/22', 'YYYY/MM/DD'), 1, 1);
 SELECT setval(pg_get_serial_sequence('mealplans', 'id'), max(id)) FROM mealplans;

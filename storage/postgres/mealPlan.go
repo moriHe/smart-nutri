@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -75,10 +76,16 @@ func (s *Storage) PostMealPlanItem(familyId string, payload types.PostMealPlanIt
 	return nil
 }
 
-func (s *Storage) PatchMealPlanItem(id string, payload types.PatchMealPlanItem) error {
-	return nil
-}
-
 func (s *Storage) DeleteMealPlanItem(id string) error {
+	item, err := s.Db.Exec(context.Background(), "delete from mealplans where mealplans.id = $1", id)
+
+	if err != nil {
+		return errors.New(fmt.Sprintf("Unable to delete mealplan item: %v\n", err))
+	}
+
+	if item.RowsAffected() == 0 {
+		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("Mealplan item does not exist")}
+	}
+
 	return nil
 }

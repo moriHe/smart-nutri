@@ -11,8 +11,7 @@ func (s *Server) mealPlanRoutes(r *gin.Engine) {
 	r.GET("/familys/:familyId/mealPlan/:date", s.handleGetMealPlan)
 	r.GET("/mealPlan/item/:id", s.handleGetMealPlanItem)
 	r.POST("/familys/:familyId/mealPlan", s.handlePostMealPlanItem)
-	r.PATCH("/mealPlan/item/:id", s.handlePatchRecipeName)
-	r.DELETE("/mealPlan/item/:id", s.handleDeleteRecipe)
+	r.DELETE("/mealPlan/item/:id", s.handleDeleteMealPlanItem)
 }
 
 func (s *Server) handleGetMealPlan(c *gin.Context) {
@@ -38,6 +37,12 @@ func (s *Server) handlePostMealPlanItem(c *gin.Context) {
 	if err := c.BindJSON(&payload); err != nil {
 		errorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Payload malformed"})
 	} else {
-		handleResponse[string](c, "Added recipe", s.store.PostMealPlanItem(familyId, payload))
+		handleResponse[string](c, "Added mealplan item", s.store.PostMealPlanItem(familyId, payload))
 	}
+}
+
+func (s *Server) handleDeleteMealPlanItem(c *gin.Context) {
+	id := c.Param("id")
+
+	handleResponse[string](c, "Deleted mealplan item", s.store.DeleteMealPlanItem(id))
 }

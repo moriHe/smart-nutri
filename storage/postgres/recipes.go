@@ -138,7 +138,7 @@ func (s *Storage) PatchRecipeName(recipeId string, payload types.PatchRecipeName
 
 func (s *Storage) DeleteRecipe(recipeId string) error {
 	_, err1 := s.Db.Exec(context.Background(), "delete from recipes_ingredients where recipe_id =$1", recipeId)
-
+	// rows affected
 	if err1 != nil {
 		fmt.Fprintf(os.Stderr, "Unable to delete recipe row: %v\n", err1)
 		return errors.New("deleteRecipe error")

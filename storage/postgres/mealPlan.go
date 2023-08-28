@@ -60,6 +60,18 @@ func (s *Storage) GetMealPlanItem(id string) (*types.FullMealPlanItem, error) {
 }
 
 func (s *Storage) PostMealPlanItem(familyId string, payload types.PostMealPlanItem) error {
+	var mealId int
+	err := s.Db.QueryRow(context.Background(), "select (id) from meals where meals.meal = $1", payload.Meal).Scan(&mealId)
+	if err != nil {
+		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Step 1: Failed to find meal name: %s", err)}
+	}
+
+	_, err = s.Db.Exec(context.Background(), "insert into mealplans (family_id, recipe_id, date, meal, portions) values ($1, $2, $3, $4, $5)", &familyId, &payload.RecipeId, &payload.Date, &mealId, &payload.Portions)
+
+	if err != nil {
+		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Step 2: Failed to create mealplan item: %s", err)}
+	}
+
 	return nil
 }
 

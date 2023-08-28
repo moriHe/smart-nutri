@@ -5,11 +5,16 @@ import (
 )
 
 type Storage interface {
-	GetAllRecipes(string) (*[]types.ShallowRecipe, error)
-	GetRecipeById(string) (*types.FullRecipe, error)
-	PostRecipe(string, types.PostRecipe) error
-	PostRecipeIngredient(string, types.PostRecipeIngredient) error
-	PatchRecipeName(string, types.PatchRecipeName) error
-	DeleteRecipe(string) error
-	DeleteRecipeIngredient(string) error
+	GetAllRecipes(familyId string) (*[]types.ShallowRecipe, error)
+	GetRecipeById(recipeId string) (*types.FullRecipe, error)
+	PostRecipe(familyId string, payload types.PostRecipe) error
+	PostRecipeIngredient(recipeId string, payload types.PostRecipeIngredient) error
+	PatchRecipeName(recipeId string, payload types.PatchRecipeName) error
+	DeleteRecipe(recipeId string) error
+	DeleteRecipeIngredient(recipeIngredientId string) error
+
+	GetMealPlan(familyId string, date string) (*[]types.ShallowMealPlanItem, error)
+	GetMealPlanItem(id string) (*types.FullMealPlanItem, error)
+	PostMealPlanItem(familyId string, payload types.PostMealPlanItem) error
+	DeleteMealPlanItem(id string) error
 }

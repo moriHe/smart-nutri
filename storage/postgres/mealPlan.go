@@ -10,7 +10,7 @@ import (
 )
 
 func (s *Storage) GetMealPlan(familyId string, date string) (*[]types.ShallowMealPlanItem, error) {
-	query := "select mealplans.id, recipes.name, cast(date as text), meals.meal from mealplans " +
+	query := "select mealplans.id, recipes.name, cast(date as text), portions, meals.meal from mealplans " +
 		"join recipes on mealplans.recipe_id = recipes.id join meals on mealplans.meal = meals.id " +
 		"where mealplans.family_id = $1 and mealplans.date = $2"
 	rows, _ := s.Db.Query(context.Background(), query, familyId, date)
@@ -20,7 +20,7 @@ func (s *Storage) GetMealPlan(familyId string, date string) (*[]types.ShallowMea
 
 	for rows.Next() {
 		var mealPlanItem types.ShallowMealPlanItem
-		err := rows.Scan(&mealPlanItem.Id, &mealPlanItem.RecipeName, &mealPlanItem.Date, &mealPlanItem.Meal)
+		err := rows.Scan(&mealPlanItem.Id, &mealPlanItem.RecipeName, &mealPlanItem.Date, &mealPlanItem.Portions, &mealPlanItem.Meal)
 
 		if err != nil {
 			return nil, &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Scan Get mealPlanItems failed: %s", err)}
@@ -77,13 +77,19 @@ func (s *Storage) PostMealPlanItem(familyId string, payload types.PostMealPlanIt
 }
 
 func (s *Storage) DeleteMealPlanItem(id string) error {
-	item, err := s.Db.Exec(context.Background(), "delete from mealplans where mealplans.id = $1", id)
+	shoppingListItem, err := s.Db.Exec(context.Background(), "delete from mealplans_shopping_list where mealplan_id = $1", id)
 
 	if err != nil {
-		return errors.New(fmt.Sprintf("Unable to delete mealplan item: %v\n", err))
+		return errors.New(fmt.Sprintf("Unable to delete mealplan item 1: %v\n", err))
 	}
 
-	if item.RowsAffected() == 0 {
+	mealplanItem, err := s.Db.Exec(context.Background(), "delete from mealplans where mealplans.id = $1", id)
+
+	if err != nil {
+		return errors.New(fmt.Sprintf("Unable to delete mealplan item 2: %v\n", err))
+	}
+
+	if shoppingListItem.RowsAffected() == 0 || mealplanItem.RowsAffected() == 0 {
 		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("Mealplan item does not exist")}
 	}
 

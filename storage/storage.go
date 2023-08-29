@@ -17,4 +17,8 @@ type Storage interface {
 	GetMealPlanItem(id string) (*types.FullMealPlanItem, error)
 	PostMealPlanItem(familyId string, payload types.PostMealPlanItem) error
 	DeleteMealPlanItem(id string) error
+
+	GetMealPlanItemsShoppingList(familyId string) (*[]types.ShoppingListMealplanItem, error)
+	PostMealPlanItemShoppingList(familyId string, mealplanId string, recipesIngredientsId string) error
+	DeleteMealPlanItemShoppingList(id string) error
 }

@@ -8,7 +8,7 @@ import (
 	"github.com/moriHe/smart-nutri/types"
 )
 
-var getQuery = "select mealplans_shopping_list.id, mealplans.id, recipes.name, cast(mealplans.date as text), meals.meal, recipes_ingredients.id, " +
+var getQuery = "select mealplans_shopping_list.id, mealplans.id, recipes.name, cast(mealplans.date as text), mealplans.portions, meals.meal, recipes_ingredients.id, " +
 	"ingredients.name, recipes_ingredients.amount_per_portion, units.name, markets.name, recipes_ingredients.is_bio from mealplans_shopping_list " +
 	"left join mealplans on mealplan_id = mealplans.id left join recipes on mealplans.recipe_id = recipes.id left join recipes_ingredients on " +
 	"recipes_ingredients_id = recipes_ingredients.id left join meals on mealplans.meal = meals.id left join units on recipes_ingredients.unit = units.id " +
@@ -28,6 +28,7 @@ func (s *Storage) GetMealPlanItemsShoppingList(familyId string) (*[]types.Shoppi
 			&item.MealplanItem.Id,
 			&item.MealplanItem.RecipeName,
 			&item.MealplanItem.Date,
+			&item.MealplanItem.Portions,
 			&item.MealplanItem.Meal,
 			&item.RecipeIngredient.Id,
 			&item.RecipeIngredient.Name,

@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS mealplans_shopping_list;
 DROP TABLE IF EXISTS recipes_ingredients;
 DROP TABLE IF EXISTS mealplans;
 DROP TABLE IF EXISTS recipes;

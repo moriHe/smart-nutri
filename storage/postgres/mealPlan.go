@@ -77,14 +77,19 @@ func (s *Storage) PostMealPlanItem(familyId string, payload types.PostMealPlanIt
 }
 
 func (s *Storage) DeleteMealPlanItem(id string) error {
-	// TODO: Delete from shopping list
-	item, err := s.Db.Exec(context.Background(), "delete from mealplans where mealplans.id = $1", id)
+	shoppingListItem, err := s.Db.Exec(context.Background(), "delete from mealplans_shopping_list where mealplan_id = $1", id)
 
 	if err != nil {
-		return errors.New(fmt.Sprintf("Unable to delete mealplan item: %v\n", err))
+		return errors.New(fmt.Sprintf("Unable to delete mealplan item 1: %v\n", err))
 	}
 
-	if item.RowsAffected() == 0 {
+	mealplanItem, err := s.Db.Exec(context.Background(), "delete from mealplans where mealplans.id = $1", id)
+
+	if err != nil {
+		return errors.New(fmt.Sprintf("Unable to delete mealplan item 2: %v\n", err))
+	}
+
+	if shoppingListItem.RowsAffected() == 0 || mealplanItem.RowsAffected() == 0 {
 		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("Mealplan item does not exist")}
 	}
 

@@ -137,9 +137,28 @@ func (s *Storage) PatchRecipeName(recipeId string, payload types.PatchRecipeName
 }
 
 func (s *Storage) DeleteRecipe(recipeId string) error {
-	_, err := s.Db.Exec(context.Background(), "delete from mealplans where recipe_id = $1", recipeId)
+
+	rows, err := s.Db.Query(context.Background(), "select id from mealplans where recipe_id = $1", recipeId)
 	if err != nil {
-		return errors.New("delete mealplan recipe error")
+		return errors.New("delete mealplan recipe error 1")
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var mealplanId int
+		err := rows.Scan(&mealplanId)
+		if err != nil {
+			return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Delete recipe failed 1: %s", err)}
+		}
+		_, err = s.Db.Exec(context.Background(), "delete from mealplans_shopping_list where mealplan_id = $1", mealplanId)
+		if err != nil {
+			return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Delete recipe failed 2: %s", err)}
+		}
+	}
+
+	_, err = s.Db.Exec(context.Background(), "delete from mealplans where recipe_id = $1", recipeId)
+	if err != nil {
+		return errors.New("delete mealplan recipe error 2")
 
 	}
 	_, err = s.Db.Exec(context.Background(), "delete from recipes_ingredients where recipe_id = $1", recipeId)
@@ -163,7 +182,13 @@ func (s *Storage) DeleteRecipe(recipeId string) error {
 }
 
 func (s *Storage) DeleteRecipeIngredient(recipeIngredientId string) error {
-	// TODO: Delete from shopping list
+	_, err := s.Db.Exec(context.Background(), "delete from mealplans_shopping_list where recipes_ingredients_id = $1", recipeIngredientId)
+
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Unable to delete recipe row: %v\n", err)
+		return errors.New("delete recipe ingredient because of shopping list error")
+	}
+
 	recipeIngredient, err := s.Db.Exec(context.Background(), "delete from recipes_ingredients where recipes_ingredients.id = $1", recipeIngredientId)
 
 	if err != nil {

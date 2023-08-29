@@ -163,6 +163,7 @@ func (s *Storage) DeleteRecipe(recipeId string) error {
 }
 
 func (s *Storage) DeleteRecipeIngredient(recipeIngredientId string) error {
+	// TODO: Delete from shopping list
 	recipeIngredient, err := s.Db.Exec(context.Background(), "delete from recipes_ingredients where recipes_ingredients.id = $1", recipeIngredientId)
 
 	if err != nil {

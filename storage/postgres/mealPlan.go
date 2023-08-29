@@ -77,6 +77,7 @@ func (s *Storage) PostMealPlanItem(familyId string, payload types.PostMealPlanIt
 }
 
 func (s *Storage) DeleteMealPlanItem(id string) error {
+	// TODO: Delete from shopping list
 	item, err := s.Db.Exec(context.Background(), "delete from mealplans where mealplans.id = $1", id)
 
 	if err != nil {

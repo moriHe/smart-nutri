@@ -1,8 +1,6 @@
 package api
 
 import (
-	"fmt"
-
 	"github.com/gin-gonic/gin"
 	"github.com/moriHe/smart-nutri/types"
 )
@@ -30,6 +28,5 @@ func (s *Server) handlePostMealPlanItemShoppingList(c *gin.Context) {
 
 func (s *Server) handleDeleteMealPlanItemShoppingList(c *gin.Context) {
 	id := c.Param("id")
-	err := s.store.DeleteMealPlanItemShoppingList(id)
-	fmt.Println(err)
+	handleResponse[string](c, "Deleted shopping list item", s.store.DeleteMealPlanItemShoppingList(id))
 }

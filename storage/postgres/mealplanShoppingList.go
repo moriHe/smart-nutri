@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -58,5 +59,15 @@ func (s *Storage) PostMealPlanItemShoppingList(familyId string, mealplanId strin
 
 // TODO: Portions needs to be in mealplanItem
 func (s *Storage) DeleteMealPlanItemShoppingList(id string) error {
+	item, err := s.Db.Exec(context.Background(), "delete from mealplans_shopping_list where mealplans_shopping_list.id = $1", id)
+
+	if err != nil {
+		return errors.New(fmt.Sprintf("Unable to delete shopping list item: %v\n", err))
+	}
+
+	if item.RowsAffected() == 0 {
+		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("Shopping list item does not exist")}
+	}
+
 	return nil
 }

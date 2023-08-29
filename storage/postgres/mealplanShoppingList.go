@@ -55,6 +55,7 @@ func (s *Storage) PostMealPlanItemShoppingList(familyId string, mealplanId strin
 	return nil
 }
 
+// TODO: Portions needs to be in mealplanItem
 func (s *Storage) DeleteMealPlanItemShoppingList(id string) error {
 	return nil
 }

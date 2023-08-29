@@ -2,10 +2,11 @@ package types
 
 // TODO: Mealplan endpoints
 type ShallowMealPlanItem struct {
-	Id         int    `json:"id"`
-	RecipeName string `json:"recipeName"`
-	Date       string `json:"date"`
-	Meal       string `json:"meal"`
+	Id         int     `json:"id"`
+	RecipeName string  `json:"recipeName"`
+	Date       string  `json:"date"`
+	Portions   float32 `json:"portions"`
+	Meal       string  `json:"meal"`
 }
 
 // FullRecipe needs amount needs to be multiplied by portions

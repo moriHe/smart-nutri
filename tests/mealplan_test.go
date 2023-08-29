@@ -17,7 +17,7 @@ func TestGetMeaplanSuccHasMealplans(t *testing.T) {
 	r.ServeHTTP(w, req)
 
 	assert.Equal(t, 200, w.Code)
-	assert.Equal(t, `{"data":[{"id":1,"recipeName":"Spaghetti","date":"2023-08-22","meal":"DINNER"},{"id":2,"recipeName":"Pizza","date":"2023-08-22","meal":"BREAKFAST"}]}`, w.Body.String())
+	assert.Equal(t, `{"data":[{"id":1,"recipeName":"Spaghetti","date":"2023-08-22","portions":2,"meal":"DINNER"},{"id":2,"recipeName":"Pizza","date":"2023-08-22","portions":1,"meal":"BREAKFAST"}]}`, w.Body.String())
 }
 
 func TestGetMealplanSuccNoMeaplans(t *testing.T) {

@@ -53,6 +53,13 @@ CREATE TABLE IF NOT EXISTS recipes_ingredients(
     is_bio BOOLEAN NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS mealplans_shopping_list(
+    id SERIAL NOT NULL PRIMARY KEY,
+    family_id INTEGER NOT NULL REFERENCES familys (id),
+    mealplan_id INTEGER NOT NULL REFERENCES mealplans (id),
+    recipes_ingredients_id INTEGER NOT NULL REFERENCES recipes_ingredients (id)
+);
+
 -- Static Data
 
 INSERT INTO ingredients ("id", "name", "synonym", "category") VALUES

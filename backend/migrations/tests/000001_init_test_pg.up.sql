@@ -29,7 +29,6 @@ CREATE TABLE IF NOT EXISTS mealplans(
 CREATE TABLE IF NOT EXISTS ingredients(
     id SERIAL NOT NULL PRIMARY KEY,
     name TEXT NOT NULL,
-    synonym TEXT,
     category TEXT
 );
 

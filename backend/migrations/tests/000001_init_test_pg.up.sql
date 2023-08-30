@@ -29,7 +29,6 @@ CREATE TABLE IF NOT EXISTS mealplans(
 CREATE TABLE IF NOT EXISTS ingredients(
     id SERIAL NOT NULL PRIMARY KEY,
     name TEXT NOT NULL,
-    synonym TEXT,
     category TEXT
 );
 
@@ -57,7 +56,9 @@ CREATE TABLE IF NOT EXISTS mealplans_shopping_list(
     id SERIAL NOT NULL PRIMARY KEY,
     family_id INTEGER NOT NULL REFERENCES familys (id),
     mealplan_id INTEGER NOT NULL REFERENCES mealplans (id),
-    recipes_ingredients_id INTEGER NOT NULL REFERENCES recipes_ingredients (id)
+    recipes_ingredients_id INTEGER NOT NULL REFERENCES recipes_ingredients (id),
+    market INTEGER NOT NULL REFERENCES markets (id),
+    is_bio BOOLEAN NOT NULL
 );
 
 --Static Data
@@ -104,7 +105,7 @@ INSERT INTO mealplans (id, family_id, recipe_id, date, meal, portions) VALUES
 (2, 1, 2, TO_DATE('2023/08/22', 'YYYY/MM/DD'), 1, 1);
 SELECT setval(pg_get_serial_sequence('mealplans', 'id'), max(id)) FROM mealplans;
 
-INSERT INTO mealplans_shopping_list(id, family_id, mealplan_id, recipes_ingredients_id) VALUES
-(1, 1, 1, 1),
-(2, 1, 2, 2);
+INSERT INTO mealplans_shopping_list(id, family_id, mealplan_id, recipes_ingredients_id, market, is_bio) VALUES
+(1, 1, 1, 1, 1, true),
+(2, 1, 2, 2, 2, false);
 SELECT setval(pg_get_serial_sequence('mealplans_shopping_list', 'id'), max(id)) FROM mealplans_shopping_list;

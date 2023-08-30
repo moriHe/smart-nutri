@@ -1,5 +1,12 @@
 package types
 
+type RecipeIngredientShoppingList struct {
+	Id               int     `json:"id"`
+	Name             string  `json:"name"`
+	AmountPerPortion float32 `json:"amountPerPortion"`
+	Unit             string  `json:"unit"`
+}
+
 type RecipeIngredient struct {
 	Id               int     `json:"id"`
 	Name             string  `json:"name"`

@@ -16,15 +16,14 @@ class Recipe {
   }
 }
 
-Future<Recipe> fetchRecipes() async {
+Future<List<Recipe>> fetchRecipes() async {
   final response =
       await get(Uri.parse("http://localhost:8080/familys/1/recipes"));
 
   if (response.statusCode == 200) {
-    Map<String, dynamic> body = json.decode(response.body);
-    List<dynamic> list = body["data"];
-    Recipe recipe = Recipe.fromJson(list[0]);
-    return recipe;
+    List<dynamic> data = jsonDecode(response.body)["data"];
+    List<Recipe> list = data.map((data) => Recipe.fromJson(data)).toList();
+    return list;
   } else {
     throw Exception("Failed to load recipes");
   }

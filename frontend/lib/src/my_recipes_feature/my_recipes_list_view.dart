@@ -3,12 +3,14 @@ import 'package:frontend/src/api/recipes.dart';
 import 'package:frontend/src/my_recipes_feature/recipe_details_view.dart';
 
 class _MyRecipesState extends State<MyRecipesListView> {
-  late Future<List<Recipe>> futureRecipes;
+  late Future<List<ShallowRecipe>> futureRecipes;
+  late Future<FullRecipe> futureRecipe;
 
   @override
   void initState() {
     super.initState();
     futureRecipes = fetchRecipes();
+    futureRecipe = fetchRecipe(1);
   }
 
   @override
@@ -16,7 +18,7 @@ class _MyRecipesState extends State<MyRecipesListView> {
     return Scaffold(
       appBar: AppBar(title: const Text("Meine Rezepte")),
       body: Center(
-        child: FutureBuilder<List<Recipe>>(
+        child: FutureBuilder<List<ShallowRecipe>>(
           future: futureRecipes,
           builder: (context, snapshot) {
             if (snapshot.hasData) {

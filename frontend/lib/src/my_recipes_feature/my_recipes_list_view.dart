@@ -4,13 +4,11 @@ import 'package:frontend/src/my_recipes_feature/recipe_details_view.dart';
 
 class _MyRecipesState extends State<MyRecipesListView> {
   late Future<List<ShallowRecipe>> futureRecipes;
-  late Future<FullRecipe> futureRecipe;
 
   @override
   void initState() {
     super.initState();
     futureRecipes = fetchRecipes();
-    futureRecipe = fetchRecipe(1);
   }
 
   @override
@@ -29,21 +27,20 @@ class _MyRecipesState extends State<MyRecipesListView> {
                       itemBuilder: (BuildContext context, int index) {
                         return Center(
                             child: GestureDetector(
-                                onTap: () => Navigator.restorablePushNamed(
-                                    context, RecipeDetailsView.routeName),
+                                onTap: () => Navigator.pushNamed(
+                                    context, RecipeDetailsView.routeName,
+                                    arguments: RecipeDetailsViewArguments(
+                                        snapshot.data![index].id)),
                                 child: Card(
-                                  margin: const EdgeInsets.only(
-                                      right: 20.0,
-                                      left: 20.0,
-                                      top: 10.0,
-                                      bottom: 10.0),
-                                  child: Column(children: [
-                                    ListTile(
+                                    margin: const EdgeInsets.only(
+                                        right: 20.0,
+                                        left: 20.0,
+                                        top: 10.0,
+                                        bottom: 10.0),
+                                    child: ListTile(
                                         title: Center(
                                       child: Text(snapshot.data![index].name),
-                                    ))
-                                  ]),
-                                )));
+                                    )))));
                       }));
             } else if (snapshot.hasError) {
               return Text('${snapshot.error}');

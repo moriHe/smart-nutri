@@ -94,3 +94,13 @@ Future<FullRecipe> fetchRecipe(int id) async {
     throw Exception("Failed to load recipe");
   }
 }
+
+Future<void> deleteRecipeIngredient(int id) async {
+  final response = await delete(
+      Uri.parse("http://localhost:8080/recipes/recipeingredient/$id"));
+  if (response.statusCode == 200) {
+    return;
+  } else {
+    throw Exception("Failed to delete recipe");
+  }
+}

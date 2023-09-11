@@ -17,7 +17,53 @@ class _MyRecipesState extends State<MyRecipesListView> {
       appBar: AppBar(title: const Text("Meine Rezepte")),
       floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  scrollable: true,
+                  title: const Text('Login'),
+                  content: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Form(
+                      child: Column(
+                        children: <Widget>[
+                          TextFormField(
+                            decoration: const InputDecoration(
+                              labelText: 'Name',
+                              icon: Icon(Icons.account_box),
+                            ),
+                          ),
+                          TextFormField(
+                            decoration: const InputDecoration(
+                              labelText: 'Email',
+                              icon: Icon(Icons.email),
+                            ),
+                          ),
+                          TextFormField(
+                            decoration: const InputDecoration(
+                              labelText: 'Message',
+                              icon: Icon(Icons.message),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  actions: [
+                    TextButton(
+                        style: TextButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.all(16.0),
+                            textStyle: const TextStyle(fontSize: 20)),
+                        onPressed: () {},
+                        child: const Text("Hinzufügen"))
+                  ],
+                );
+              });
+        },
         backgroundColor: Colors.green,
         child: const Icon(Icons.add),
       ),

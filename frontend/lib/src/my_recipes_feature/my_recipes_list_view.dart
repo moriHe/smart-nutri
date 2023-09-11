@@ -15,6 +15,12 @@ class _MyRecipesState extends State<MyRecipesListView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Meine Rezepte")),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        backgroundColor: Colors.green,
+        child: const Icon(Icons.add),
+      ),
       body: Center(
         child: FutureBuilder<List<ShallowRecipe>>(
           future: futureRecipes,

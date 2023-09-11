@@ -10,6 +10,13 @@ class RecipeDetailsViewArguments {
   RecipeDetailsViewArguments(this.recipeId);
 }
 
+/* TODO: Add following endpoints
+	r.POST("/familys/:familyId/recipes", s.handlePostRecipe)
+	r.POST("/recipes/:id/recipeingredient", s.handlePostRecipeIngredient)
+	r.PATCH("/recipes/:id", s.handlePatchRecipeName)
+	r.DELETE("/recipes/:id", s.handleDeleteRecipe)
+*/
+
 class _MyRecipesState extends State<RecipeDetailsView> {
   late Future<FullRecipe> futureRecipe;
   @override

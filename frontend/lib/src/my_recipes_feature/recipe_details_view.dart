@@ -11,7 +11,6 @@ class RecipeDetailsViewArguments {
 }
 
 /* TODO: Add following endpoints
-	r.POST("/familys/:familyId/recipes", s.handlePostRecipe)
 	r.POST("/recipes/:id/recipeingredient", s.handlePostRecipeIngredient)
 	r.PATCH("/recipes/:id", s.handlePatchRecipeName)
 	r.DELETE("/recipes/:id", s.handleDeleteRecipe)

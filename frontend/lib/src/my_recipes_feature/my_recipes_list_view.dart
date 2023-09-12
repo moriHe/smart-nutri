@@ -110,6 +110,9 @@ class _MyRecipesState extends State<MyRecipesListView> {
                                   (key) => meals[key] == mealsDropDownValue,
                                   orElse: () => "NONE"));
                           if (context.mounted) {
+                            setState(() {
+                              futureRecipes = fetchRecipes();
+                            });
                             Navigator.pop(context);
                             Navigator.pushNamed(
                                 context, RecipeDetailsView.routeName,

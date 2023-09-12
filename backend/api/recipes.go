@@ -36,7 +36,7 @@ func (s *Server) handlePostRecipe(c *gin.Context) {
 	var payload types.PostRecipe
 
 	if err := c.BindJSON(&payload); err != nil {
-		errorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Payload malformed"})
+		errorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: err.Error()})
 	} else {
 		handleResponse[string](c, "Added recipe", s.store.PostRecipe(familyId, payload))
 	}

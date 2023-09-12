@@ -38,7 +38,7 @@ type PostRecipeIngredient struct {
 type PostRecipe struct {
 	Name              string                 `json:"name"`
 	DefaultPortions   float32                `json:"defaultPortions"`
-	DefaultMeal       int                    `json:"defaultMeal"`
+	DefaultMeal       string                 `json:"defaultMeal"`
 	RecipeIngredients []PostRecipeIngredient `json:"recipeIngredients"`
 }
 

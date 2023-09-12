@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/src/api/recipes.dart';
+import 'package:frontend/src/my_recipes_feature/meals.dart';
 import 'package:frontend/src/my_recipes_feature/recipe_details_view.dart';
+
+List<String> listOfValue = ['1', '2', '3', '4', '5'];
 
 class _MyRecipesState extends State<MyRecipesListView> {
   late Future<List<ShallowRecipe>> futureRecipes;
+  String mealsDropDownValue = mealsKeys.first;
+  final recipeNameController = TextEditingController();
+  final defaultPortionsController = TextEditingController();
 
   @override
   void initState() {
@@ -12,12 +18,19 @@ class _MyRecipesState extends State<MyRecipesListView> {
   }
 
   @override
+  void dispose() {
+    recipeNameController.dispose();
+    defaultPortionsController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Meine Rezepte")),
       floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
+        onPressed: () async {
           showDialog(
               context: context,
               builder: (BuildContext context) {
@@ -30,22 +43,48 @@ class _MyRecipesState extends State<MyRecipesListView> {
                       child: Column(
                         children: <Widget>[
                           TextFormField(
+                            controller: recipeNameController,
                             decoration: const InputDecoration(
                               labelText: 'Name',
-                              icon: Icon(Icons.account_box),
+                              icon: Icon(Icons.article_outlined),
                             ),
                           ),
                           TextFormField(
+                            controller: defaultPortionsController,
+                            keyboardType: TextInputType.number,
                             decoration: const InputDecoration(
-                              labelText: 'Email',
-                              icon: Icon(Icons.email),
+                              labelText: 'Portionen',
+                              icon: Icon(Icons.brunch_dining_outlined),
                             ),
                           ),
-                          TextFormField(
-                            decoration: const InputDecoration(
-                              labelText: 'Message',
-                              icon: Icon(Icons.message),
-                            ),
+                          const SizedBox(
+                            height: 25.0,
+                          ),
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.wb_sunny_outlined,
+                                color: Colors.grey,
+                              ),
+                              const SizedBox(width: 16.0),
+                              DropdownMenu<String>(
+                                label: const Text("Mahlzeit"),
+                                initialSelection: meals[mealsKeys.first],
+                                onSelected: (String? value) {
+                                  // This is called when the user selects an item.
+                                  setState(() {
+                                    mealsDropDownValue = value!;
+                                  });
+                                },
+                                dropdownMenuEntries: mealsKeys
+                                    .map<DropdownMenuEntry<String>>(
+                                        (String value) {
+                                  return DropdownMenuEntry<String>(
+                                      value: meals[value]!,
+                                      label: meals[value]!);
+                                }).toList(),
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -58,11 +97,33 @@ class _MyRecipesState extends State<MyRecipesListView> {
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.all(16.0),
                             textStyle: const TextStyle(fontSize: 20)),
-                        onPressed: () {},
+                        onPressed: () async {
+                          double? defaultPortions =
+                              double.tryParse(defaultPortionsController.text);
+                          if (defaultPortions == null) {
+                            return;
+                          }
+                          await postRecipe(
+                              recipeNameController.text,
+                              defaultPortions,
+                              meals.keys.firstWhere(
+                                  (key) => meals[key] == mealsDropDownValue,
+                                  orElse: () => "NONE"));
+                          if (context.mounted) {
+                            setState(() {
+                              futureRecipes = fetchRecipes();
+                            });
+                            Navigator.pop(context);
+                          }
+                        },
                         child: const Text("Hinzufügen"))
                   ],
                 );
-              });
+              }).then((value) {
+            mealsDropDownValue = mealsKeys.first;
+            recipeNameController.text = "";
+            defaultPortionsController.text = "";
+          });
         },
         backgroundColor: Colors.green,
         child: const Icon(Icons.add),

@@ -49,7 +49,9 @@ func TestPostRecipeSuccNoIngredients(t *testing.T) {
 	r := startServer()
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/familys/1/recipes", bytes.NewBuffer([]byte(`{
-		"name": "Wantan"
+		"name": "Wantan",
+		"defaultPortions": 1.5,
+		"defaultMeal": "DINNER"
 	}`)))
 
 	r.ServeHTTP(w, req)
@@ -61,7 +63,7 @@ func TestPostRecipeSuccNoIngredients(t *testing.T) {
 func TestPostRecipeSuccIngredients(t *testing.T) {
 	r := startServer()
 	w := httptest.NewRecorder()
-	body := `{"name": "Wantan","recipeIngredients": [{"ingredientId": 1,` +
+	body := `{"name": "Wantan","defaultPortions":1.5,"defaultMeal":"DINNER","recipeIngredients": [{"ingredientId": 1,` +
 		`"amountPerPortion": 100,"unit": "GRAM","marketId": 1,"isBio": true},{"ingredientId": 2,` +
 		`"amountPerPortion": 200,"unit": "MILLILITER","marketId": 2,"isBio": false}]}`
 	req, _ := http.NewRequest("POST", "/familys/1/recipes", bytes.NewBuffer([]byte(body)))
@@ -79,7 +81,9 @@ func TestPostRecipeBadReq(t *testing.T) {
 	r := startServer()
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/familys/1/recipes", bytes.NewBuffer([]byte(`{
-		"hello": "world"
+		"hello": "world",
+		"defaultPortions": 1.5,
+		"defaultMeal": "DINNER"
 	}`)))
 
 	r.ServeHTTP(w, req)

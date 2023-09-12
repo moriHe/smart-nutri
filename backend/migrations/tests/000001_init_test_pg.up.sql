@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS familys(
 
 CREATE TABLE IF NOT EXISTS meals(
     id SERIAL NOT NULL PRIMARY KEY,
-    meal TEXT NOT NULL
+    meal TEXT
 );
 
 CREATE TABLE IF NOT EXISTS recipes(
@@ -81,7 +81,7 @@ INSERT INTO units ("id", "name") VALUES
 (4, 'TEASPOON');
 SELECT setval(pg_get_serial_sequence('units', 'id'), max(id)) FROM units;
 
-INSERT INTO meals (id, meal) VALUES (1, 'BREAKFAST'), (2, 'LUNCH'), (3, 'DINNER');
+INSERT INTO meals (id, meal) VALUES (1, 'BREAKFAST'), (2, 'LUNCH'), (3, 'DINNER'), (4, 'NONE');
 SELECT setval(pg_get_serial_sequence('meals', 'id'), max(id)) FROM meals;
 
 -- Generate sample data as in init_pg

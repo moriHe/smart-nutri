@@ -104,3 +104,23 @@ Future<void> deleteRecipeIngredient(int id) async {
     throw Exception("Failed to delete recipe");
   }
 }
+
+Future<void> postRecipe(
+    String name, double defaultPortions, String meal) async {
+  final response = await post(
+      Uri.parse("http://localhost:8080/familys/1/recipes"),
+      headers: <String, String>{
+        "Content-Type": "application/json; charset=UTF-8"
+      },
+      body: jsonEncode(<String, dynamic>{
+        "name": name,
+        "defaultPortions": defaultPortions,
+        "defaultMeal": meal,
+      }));
+
+  if (response.statusCode == 200) {
+    return;
+  } else {
+    throw Exception("Failed to post recipe");
+  }
+}

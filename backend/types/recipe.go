@@ -1,5 +1,9 @@
 package types
 
+type Id struct {
+	Id int `json:"id"`
+}
+
 type RecipeIngredientShoppingList struct {
 	Id               int     `json:"id"`
 	Name             string  `json:"name"`

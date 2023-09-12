@@ -38,7 +38,8 @@ func (s *Server) handlePostRecipe(c *gin.Context) {
 	if err := c.BindJSON(&payload); err != nil {
 		errorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: err.Error()})
 	} else {
-		handleResponse[string](c, "Added recipe", s.store.PostRecipe(familyId, payload))
+		response, err := s.store.PostRecipe(familyId, payload)
+		handleResponse[*types.Id](c, response, err)
 	}
 }
 

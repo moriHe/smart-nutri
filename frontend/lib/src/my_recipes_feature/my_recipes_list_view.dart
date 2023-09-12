@@ -103,17 +103,18 @@ class _MyRecipesState extends State<MyRecipesListView> {
                           if (defaultPortions == null) {
                             return;
                           }
-                          await postRecipe(
+                          final recipeId = await postRecipe(
                               recipeNameController.text,
                               defaultPortions,
                               meals.keys.firstWhere(
                                   (key) => meals[key] == mealsDropDownValue,
                                   orElse: () => "NONE"));
                           if (context.mounted) {
-                            setState(() {
-                              futureRecipes = fetchRecipes();
-                            });
                             Navigator.pop(context);
+                            Navigator.pushNamed(
+                                context, RecipeDetailsView.routeName,
+                                arguments:
+                                    RecipeDetailsViewArguments(recipeId));
                           }
                         },
                         child: const Text("Hinzufügen"))

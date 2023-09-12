@@ -57,7 +57,7 @@ func TestPostRecipeSuccNoIngredients(t *testing.T) {
 	r.ServeHTTP(w, req)
 
 	assert.Equal(t, 200, w.Code)
-	assert.Equal(t, `{"data":"Added recipe"}`, w.Body.String())
+	assert.Equal(t, `{"data":{"id":3}}`, w.Body.String())
 }
 
 func TestPostRecipeSuccIngredients(t *testing.T) {
@@ -72,7 +72,7 @@ func TestPostRecipeSuccIngredients(t *testing.T) {
 
 	assert.Equal(t, 200, w.Code)
 	// TODO: Return payload in response
-	assert.Equal(t, `{"data":"Added recipe"}`, w.Body.String())
+	assert.Equal(t, `{"data":{"id":4}}`, w.Body.String())
 }
 
 // TODO: Add bad request tests for missing ingriedientId, amountPerPortion etc

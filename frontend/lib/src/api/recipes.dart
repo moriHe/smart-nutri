@@ -105,8 +105,19 @@ Future<void> deleteRecipeIngredient(int id) async {
   }
 }
 
-Future<void> postRecipe(
-    String name, double defaultPortions, String meal) async {
+class RecipeId {
+  final int id;
+
+  const RecipeId({
+    required this.id,
+  });
+// required this.recipeIngredients
+  factory RecipeId.fromJson(Map<String, dynamic> json) {
+    return RecipeId(id: json["id"]);
+  }
+}
+
+Future<int> postRecipe(String name, double defaultPortions, String meal) async {
   final response = await post(
       Uri.parse("http://localhost:8080/familys/1/recipes"),
       headers: <String, String>{
@@ -119,7 +130,7 @@ Future<void> postRecipe(
       }));
 
   if (response.statusCode == 200) {
-    return;
+    return jsonDecode(response.body)["data"]["id"];
   } else {
     throw Exception("Failed to post recipe");
   }

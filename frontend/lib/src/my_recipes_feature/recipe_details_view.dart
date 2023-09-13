@@ -3,11 +3,12 @@ import 'package:frontend/src/api/recipes.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:frontend/src/my_recipes_feature/meals.dart';
 import 'package:frontend/src/my_recipes_feature/units.dart';
+import 'package:frontend/src/search_feature/search_view.dart';
 
-class RecipeDetailsViewArguments {
+class RecipeIdArguments {
   final int recipeId;
 
-  RecipeDetailsViewArguments(this.recipeId);
+  RecipeIdArguments(this.recipeId);
 }
 
 /* TODO: Add following endpoints
@@ -28,6 +29,13 @@ class _MyRecipesState extends State<RecipeDetailsView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Mein Rezept")),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.green,
+        onPressed: () => Navigator.pushNamed(context, SearchView.routeName,
+            arguments: RecipeIdArguments(widget.recipeId)),
+        child: const Icon(Icons.add),
+      ),
       body: Center(
         child: FutureBuilder<FullRecipe>(
           future: futureRecipe,

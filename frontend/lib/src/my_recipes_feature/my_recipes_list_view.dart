@@ -116,8 +116,7 @@ class _MyRecipesState extends State<MyRecipesListView> {
                             Navigator.pop(context);
                             Navigator.pushNamed(
                                 context, RecipeDetailsView.routeName,
-                                arguments:
-                                    RecipeDetailsViewArguments(recipeId));
+                                arguments: RecipeIdArguments(recipeId));
                           }
                         },
                         child: const Text("Hinzufügen"))
@@ -146,7 +145,7 @@ class _MyRecipesState extends State<MyRecipesListView> {
                             child: GestureDetector(
                                 onTap: () => Navigator.pushNamed(
                                     context, RecipeDetailsView.routeName,
-                                    arguments: RecipeDetailsViewArguments(
+                                    arguments: RecipeIdArguments(
                                         snapshot.data![index].id)),
                                 child: Card(
                                     margin: const EdgeInsets.only(

@@ -100,7 +100,15 @@ func (s *Storage) PostRecipe(familyId string, payload types.PostRecipe) (*types.
 			return nil, &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Step 2a: Failed to create recipe: %s", err)}
 		}
 
-		_, err = s.Db.Exec(context.Background(), postRecipeIngredientQuery, recipeId, recipeIngredient.IngredientId, recipeIngredient.AmountPerPortion, unitId, recipeIngredient.MarketId, recipeIngredient.IsBio)
+		var marketId int
+		err = s.Db.QueryRow(context.Background(), "select (id) from markets where markets.name = $1", recipeIngredient.Market).Scan(&marketId)
+
+		if err != nil {
+			s.DeleteRecipe(strconv.Itoa(recipeId))
+			return nil, &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Step 2a: Failed to create recipe: %s", err)}
+		}
+
+		_, err = s.Db.Exec(context.Background(), postRecipeIngredientQuery, recipeId, recipeIngredient.IngredientId, recipeIngredient.AmountPerPortion, unitId, marketId, recipeIngredient.IsBio)
 
 		if err != nil {
 			s.DeleteRecipe(strconv.Itoa(recipeId))
@@ -116,9 +124,16 @@ func (s *Storage) PostRecipeIngredient(recipeId string, payload types.PostRecipe
 
 	if err != nil {
 		// TODO: Should probably be a Bad Request or check if no unitId then bad request. I think queryRow throws error if nothing found
-		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Step 1: Failed to create recipe_ingredient: %s", err)}
+		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Step 1a: Failed to create recipe_ingredient: %s", err)}
 	}
-	_, err = s.Db.Exec(context.Background(), postRecipeIngredientQuery, recipeId, payload.IngredientId, payload.AmountPerPortion, unitId, payload.MarketId, payload.IsBio)
+
+	var marketId int
+	err = s.Db.QueryRow(context.Background(), "select (id) from markets where markets.name = $1", payload.Market).Scan(&marketId)
+	if err != nil {
+		// TODO: Should probably be a Bad Request or check if no unitId then bad request. I think queryRow throws error if nothing found
+		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Step 1b: Failed to create recipe_ingredient: %s", err)}
+	}
+	_, err = s.Db.Exec(context.Background(), postRecipeIngredientQuery, recipeId, payload.IngredientId, payload.AmountPerPortion, unitId, marketId, payload.IsBio)
 
 	if err != nil {
 		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Step 2: Failed to post recipe_ingredient: %s", err)}

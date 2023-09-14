@@ -60,12 +60,13 @@ func TestPostRecipeSuccNoIngredients(t *testing.T) {
 	assert.Equal(t, `{"data":{"id":3}}`, w.Body.String())
 }
 
+// TODO TestPostRecipeSuccIngredients fails running indivudually since it builds up on TestPostRecipeSuccNoIngredients
 func TestPostRecipeSuccIngredients(t *testing.T) {
 	r := startServer()
 	w := httptest.NewRecorder()
 	body := `{"name": "Wantan","defaultPortions":1.5,"defaultMeal":"DINNER","recipeIngredients": [{"ingredientId": 1,` +
-		`"amountPerPortion": 100,"unit": "GRAM","marketId": 1,"isBio": true},{"ingredientId": 2,` +
-		`"amountPerPortion": 200,"unit": "MILLILITER","marketId": 2,"isBio": false}]}`
+		`"amountPerPortion": 100,"unit": "GRAM","market": "Rewe","isBio": true},{"ingredientId": 2,` +
+		`"amountPerPortion": 200,"unit": "MILLILITER","market": "NONE","isBio": false}]}`
 	req, _ := http.NewRequest("POST", "/familys/1/recipes", bytes.NewBuffer([]byte(body)))
 
 	r.ServeHTTP(w, req)
@@ -97,9 +98,9 @@ func TestPostRecipeIngredientSucc(t *testing.T) {
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/recipes/2/recipeingredient", bytes.NewBuffer([]byte(`{
 		"ingredientId": 2,
-		"amount": 1,
+		"amountPerPortion": 1,
 		"unit": "GRAM",
-		"marketId": 1,
+		"market": "Rewe",
 		"isBio": true
 	}`)))
 
@@ -115,7 +116,8 @@ func TestPostRecipeIngredientBadReq(t *testing.T) {
 
 	req, _ := http.NewRequest("POST", "/recipes/1000/recipeingredient", bytes.NewBuffer([]byte(`{
 		"ingredientId": 2,
-		"unit": "GRAM"
+		"unit": "GRAM",
+		"market": "NONE"
 	}`)))
 
 	r.ServeHTTP(w, req)

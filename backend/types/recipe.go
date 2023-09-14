@@ -36,7 +36,7 @@ type PostRecipeIngredient struct {
 	IngredientId     int     `json:"ingredientId"`
 	AmountPerPortion float32 `json:"amountPerPortion"`
 	Unit             string  `json:"unit"`
-	MarketId         int     `json:"marketId"`
+	Market           string  `json:"market"`
 	IsBio            bool    `json:"isBio"`
 }
 type PostRecipe struct {

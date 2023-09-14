@@ -71,7 +71,8 @@ INSERT INTO markets ("id", "name") VALUES
 (3, 'Bio Company'),
 (4, 'Wochenmarkt'),
 (5, 'Aldi'),
-(6, 'Lidl');
+(6, 'Lidl'),
+(7, 'NONE');
 SELECT setval(pg_get_serial_sequence('markets', 'id'), max(id)) FROM markets;
 
 INSERT INTO units ("id", "name") VALUES

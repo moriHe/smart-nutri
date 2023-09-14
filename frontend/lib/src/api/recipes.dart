@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:frontend/src/search_feature/search_view.dart';
 import 'package:http/http.dart';
 
 class ShallowRecipe {
@@ -131,6 +132,28 @@ Future<int> postRecipe(String name, double defaultPortions, String meal) async {
 
   if (response.statusCode == 200) {
     return jsonDecode(response.body)["data"]["id"];
+  } else {
+    throw Exception("Failed to post recipe");
+  }
+}
+
+Future<void> postRecipeIngredient(
+    int recipeId, PostRecipeIngredientBody body) async {
+  final response = await post(
+      Uri.parse("http://localhost:8080/recipes/$recipeId/recipeingredient"),
+      headers: <String, String>{
+        "Content-Type": "application/json; charset=UTF-8"
+      },
+      body: jsonEncode(<String, dynamic>{
+        "ingredientId": body.ingredientId,
+        "amountPerPortion": body.amountPerPortion,
+        "unit": body.unit,
+        "market": body.market,
+        "isBio": body.isBio
+      }));
+
+  if (response.statusCode == 200) {
+    return;
   } else {
     throw Exception("Failed to post recipe");
   }

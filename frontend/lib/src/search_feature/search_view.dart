@@ -1,9 +1,21 @@
 import 'package:algolia_helper_flutter/algolia_helper_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:frontend/src/api/recipes.dart';
 import 'package:frontend/src/my_recipes_feature/markets.dart';
 import 'package:frontend/src/my_recipes_feature/units.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+
+class PostRecipeIngredientBody {
+  final int ingredientId;
+  final double amountPerPortion;
+  final String unit;
+  final String market;
+  final bool isBio;
+
+  PostRecipeIngredientBody(this.ingredientId, this.amountPerPortion, this.unit,
+      this.market, this.isBio);
+}
 
 class Product {
   final String name;
@@ -51,11 +63,6 @@ Stream<SearchMetadata> get _searchMetadata =>
 Stream<HitsPage> get _searchPage =>
     _productsSearcher.responses.map(HitsPage.fromResponse);
 
-/*
-IngredientId     int     `json:"ingredientId"`
-	market         int     `json:"market"`
-	IsBio            bool    `json:"isBio"`
-*/
 class _SearchViewState extends State<SearchView> {
   final amountPerPortionController = TextEditingController();
   String unitsDropDownValue = unitsKeys.first;
@@ -166,7 +173,7 @@ class _SearchViewState extends State<SearchView> {
                                                     ],
                                                   ),
                                                   const SizedBox(
-                                                    height: 25.0,
+                                                    height: 30.0,
                                                   ),
                                                   TextFormField(
                                                     controller:
@@ -229,22 +236,25 @@ class _SearchViewState extends State<SearchView> {
                                                             .recycling_outlined,
                                                         color: Colors.grey,
                                                       ),
-                                                      const SizedBox(
-                                                          width: 30.0),
-                                                      Transform.scale(
-                                                          scale: 2.0,
-                                                          child: Switch(
-                                                              // This bool value toggles the switch.
-                                                              value: isBio,
-                                                              activeColor:
-                                                                  Colors.green,
-                                                              onChanged:
-                                                                  (bool value) {
-                                                                // This is called when the user toggles the switch.
-                                                                setState(() {
-                                                                  isBio = value;
-                                                                });
-                                                              }))
+                                                      SizedBox(
+                                                        width: 150,
+                                                        child: FittedBox(
+                                                            fit: BoxFit.fill,
+                                                            child: Switch(
+                                                                // This bool value toggles the switch.
+                                                                value: isBio,
+                                                                activeColor:
+                                                                    Colors
+                                                                        .green,
+                                                                onChanged: (bool
+                                                                    value) {
+                                                                  // This is called when the user toggles the switch.
+                                                                  setState(() {
+                                                                    isBio =
+                                                                        value;
+                                                                  });
+                                                                })),
+                                                      )
                                                     ],
                                                   )
                                                 ],
@@ -261,7 +271,38 @@ class _SearchViewState extends State<SearchView> {
                                                       16.0),
                                                   textStyle: const TextStyle(
                                                       fontSize: 20)),
-                                              onPressed: () async {},
+                                              onPressed: () async {
+                                                double? amountPerPortion =
+                                                    double.tryParse(
+                                                        amountPerPortionController
+                                                            .text);
+                                                if (amountPerPortion == null) {
+                                                  return;
+                                                }
+
+                                                await postRecipeIngredient(
+                                                    widget.recipeId,
+                                                    PostRecipeIngredientBody(
+                                                        55,
+                                                        amountPerPortion,
+                                                        units.keys.firstWhere(
+                                                            (key) =>
+                                                                units[key] ==
+                                                                unitsDropDownValue,
+                                                            // TODO: Handle default value be present when modal opens instead of this
+                                                            orElse: () =>
+                                                                "GRAM"),
+                                                        markets.keys.firstWhere(
+                                                            (key) =>
+                                                                markets[key] ==
+                                                                marketsDropDownValue,
+                                                            orElse: () =>
+                                                                "NONE"),
+                                                        isBio));
+                                                if (context.mounted) {
+                                                  Navigator.pop(context);
+                                                }
+                                              },
                                               child: const Text("Hinzufügen"))
                                         ],
                                       );

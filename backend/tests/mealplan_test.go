@@ -50,7 +50,7 @@ func TestGetMealplanItemSucc(t *testing.T) {
 	r.ServeHTTP(w, req)
 
 	assert.Equal(t, 200, w.Code)
-	assert.Equal(t, `{"data":{"id":"1","date":"2023-08-22","meal":"DINNER","portions":2,"recipe":{"id":1,"name":"Spaghetti","recipeIngredients":[{"id":1,"name":"Tomaten","amountPerPortion":100,"unit":"GRAM","market":"Rewe","isBio":true},{"id":2,"name":"Knoblauch","amountPerPortion":200,"unit":"GRAM","market":"Rewe","isBio":false}]}}}`, w.Body.String())
+	assert.Equal(t, `{"data":{"id":"1","date":"2023-08-22","meal":"DINNER","portions":2,"recipe":{"id":1,"name":"Spaghetti","recipeIngredients":[{"id":1,"name":"Tomaten","amountPerPortion":100,"unit":"GRAM","market":"REWE","isBio":true},{"id":2,"name":"Knoblauch","amountPerPortion":200,"unit":"GRAM","market":"REWE","isBio":false}]}}}`, w.Body.String())
 }
 
 func TestGetMealplanItemBadReq(t *testing.T) {

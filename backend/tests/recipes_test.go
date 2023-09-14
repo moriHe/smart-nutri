@@ -28,8 +28,8 @@ func TestGetRecipeByIdSucc(t *testing.T) {
 	r.ServeHTTP(w, req)
 	res := `{"data":{"id":1,"name":"Spaghetti","defaultPortions":1,"defaultMeal":"BREAKFAST","recipeIngredients":` +
 		`[{"id":1,"name":"Tomaten","amountPerPortion":100,"unit":"GRAM","market":` +
-		`"Rewe","isBio":true},{"id":2,"name":"Knoblauch","amountPerPortion":200,` +
-		`"unit":"GRAM","market":"Rewe","isBio":false}]}}`
+		`"REWE","isBio":true},{"id":2,"name":"Knoblauch","amountPerPortion":200,` +
+		`"unit":"GRAM","market":"REWE","isBio":false}]}}`
 	assert.Equal(t, 200, w.Code)
 	assert.Equal(t, res, w.Body.String())
 
@@ -65,7 +65,7 @@ func TestPostRecipeSuccIngredients(t *testing.T) {
 	r := startServer()
 	w := httptest.NewRecorder()
 	body := `{"name": "Wantan","defaultPortions":1.5,"defaultMeal":"DINNER","recipeIngredients": [{"ingredientId": 1,` +
-		`"amountPerPortion": 100,"unit": "GRAM","market": "Rewe","isBio": true},{"ingredientId": 2,` +
+		`"amountPerPortion": 100,"unit": "GRAM","market": "REWE","isBio": true},{"ingredientId": 2,` +
 		`"amountPerPortion": 200,"unit": "MILLILITER","market": "NONE","isBio": false}]}`
 	req, _ := http.NewRequest("POST", "/familys/1/recipes", bytes.NewBuffer([]byte(body)))
 
@@ -100,7 +100,7 @@ func TestPostRecipeIngredientSucc(t *testing.T) {
 		"ingredientId": 2,
 		"amountPerPortion": 1,
 		"unit": "GRAM",
-		"market": "Rewe",
+		"market": "REWE",
 		"isBio": true
 	}`)))
 

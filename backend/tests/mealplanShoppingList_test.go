@@ -15,9 +15,9 @@ func TestGetMealplanItemsShoppingListSuccHasItems(t *testing.T) {
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/familys/1/mealplan/shopping-list", nil)
 	r.ServeHTTP(w, req)
-	response := `{"data":[{"id":1,"market":"Rewe","isBio":true,"mealplanItem":{"id":1,"recipeName":"Spaghetti","date":"2023-08-22","` +
+	response := `{"data":[{"id":1,"market":"REWE","isBio":true,"mealplanItem":{"id":1,"recipeName":"Spaghetti","date":"2023-08-22","` +
 		`portions":2,"meal":"DINNER"},"recipeIngredient":{"id":1,"name":"Tomaten","amountPerPortion":100,"unit":"GRAM"}},{"id":2,"market":` +
-		`"Edeka","isBio":false,"mealplanItem":{"id":2,"recipeName":"Pizza","date":"2023-08-22","portions":1,"meal":"BREAKFAST"},"recipeIngredient":` +
+		`"EDEKA","isBio":false,"mealplanItem":{"id":2,"recipeName":"Pizza","date":"2023-08-22","portions":1,"meal":"BREAKFAST"},"recipeIngredient":` +
 		`{"id":2,"name":"Knoblauch","amountPerPortion":200,"unit":"GRAM"}}]}`
 	assert.Equal(t, 200, w.Code)
 	assert.Equal(t, response, w.Body.String())
@@ -39,7 +39,7 @@ func TestPostMealplanItemShoppingListSucc(t *testing.T) {
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/familys/1/mealplan/1/shopping-list", bytes.NewBuffer([]byte(`{
-		"market": "Rewe",
+		"market": "REWE",
 		"isBio": true,
 		"recipeIngredientId": 1
 	}`)))
@@ -53,7 +53,7 @@ func TestPostMealplanItemShoppingListBadReq(t *testing.T) {
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/familys/1000/mealplan/1000/shopping-list", bytes.NewBuffer([]byte(`{
-		"market": "Rewe",
+		"market": "REWE",
 		"isBio": true,
 		"recipeIngredientId": 1000
 	}`)))

@@ -1214,12 +1214,12 @@ INSERT INTO "public"."ingredients" ("id", "name", "category") VALUES
 SELECT setval(pg_get_serial_sequence('ingredients', 'id'), max(id)) FROM ingredients;
 
 INSERT INTO markets ("id", "name") VALUES
-(1, 'Rewe'),
-(2, 'Edeka'),
-(3, 'Bio Company'),
-(4, 'Wochenmarkt'),
-(5, 'Aldi'),
-(6, 'Lidl'),
+(1, 'REWE'),
+(2, 'EDEKA'),
+(3, 'BIO_COMPANY'),
+(4, 'WEEKLY_MARKET'),
+(5, 'ALDI'),
+(6, 'LIDL'),
 (7, 'NONE');
 SELECT setval(pg_get_serial_sequence('markets', 'id'), max(id)) FROM markets;
 

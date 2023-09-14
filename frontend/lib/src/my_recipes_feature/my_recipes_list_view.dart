@@ -36,7 +36,7 @@ class _MyRecipesState extends State<MyRecipesListView> {
               builder: (BuildContext context) {
                 return AlertDialog(
                   scrollable: true,
-                  title: const Text('Login'),
+                  title: const Text('Details'),
                   content: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Form(

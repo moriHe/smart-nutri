@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:frontend/src/api/recipes.dart';
 import 'package:frontend/src/my_recipes_feature/markets.dart';
+import 'package:frontend/src/my_recipes_feature/recipe_details_view.dart';
 import 'package:frontend/src/my_recipes_feature/units.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
@@ -316,40 +317,46 @@ class _SearchViewState extends State<SearchView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(title: const Text("Nahrungsmittel")),
-        body: Center(
-            child: Column(children: [
-          SizedBox(
-              height: 44,
-              child: TextField(
-                controller: _searchTextController,
-                decoration: const InputDecoration(
-                  border: InputBorder.none,
-                  hintText: 'Enter a search term',
-                  prefixIcon: Icon(Icons.search),
-                ),
-              )),
-          StreamBuilder<SearchMetadata>(
-            stream: _searchMetadata,
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return const SizedBox.shrink();
-              }
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text('${snapshot.data!.nbHits} hits'),
-              );
-            },
-          ),
-          Expanded(child: _hits(context))
-        ])));
+    return WillPopScope(
+        child: Scaffold(
+            appBar: AppBar(title: const Text("Nahrungsmittel")),
+            body: Center(
+                child: Column(children: [
+              SizedBox(
+                  height: 44,
+                  child: TextField(
+                    controller: _searchTextController,
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Enter a search term',
+                      prefixIcon: Icon(Icons.search),
+                    ),
+                  )),
+              StreamBuilder<SearchMetadata>(
+                stream: _searchMetadata,
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return const SizedBox.shrink();
+                  }
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text('${snapshot.data!.nbHits} hits'),
+                  );
+                },
+              ),
+              Expanded(child: _hits(context))
+            ]))),
+        onWillPop: () async {
+          widget.callback();
+          return true;
+        });
   }
 }
 
 class SearchView extends StatefulWidget {
   final int recipeId;
-  const SearchView({super.key, required this.recipeId});
+  final RefetchRecipe callback;
+  const SearchView({super.key, required this.recipeId, required this.callback});
 
   @override
   State<SearchView> createState() => _SearchViewState();

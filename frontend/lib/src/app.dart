@@ -71,8 +71,9 @@ class MyApp extends StatelessWidget {
                   case SettingsView.routeName:
                     return SettingsView(controller: settingsController);
                   case SearchView.routeName:
-                    final args = settings.arguments as RecipeIdArguments;
-                    return SearchView(recipeId: args.recipeId);
+                    final args = settings.arguments as SearchViewArguments;
+                    return SearchView(
+                        recipeId: args.recipeId, callback: args.callback);
                   case RecipeDetailsView.routeName:
                     final args = settings.arguments as RecipeIdArguments;
                     return RecipeDetailsView(recipeId: args.recipeId);

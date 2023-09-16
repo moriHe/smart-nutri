@@ -22,6 +22,5 @@ void main() async {
   // SettingsView.
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (context) => RecipesProvider()),
-    ChangeNotifierProvider(create: (context) => RecipeProvider())
   ], child: MyApp(settingsController: settingsController)));
 }

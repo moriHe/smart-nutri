@@ -32,13 +32,15 @@ class _MyRecipesState extends State<RecipeDetailsView> {
   @override
   void initState() {
     super.initState();
-    final recipeProvider = Provider.of<RecipeProvider>(context, listen: false);
-    recipeProvider.getRecipe(widget.recipeId);
+    final recipesProvider =
+        Provider.of<RecipesProvider>(context, listen: false);
+    recipesProvider.getRecipe(widget.recipeId);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<RecipeProvider>(builder: (context, recipeProvider, child) {
+    return Consumer<RecipesProvider>(
+        builder: (context, recipesProvider, child) {
       return Scaffold(
         appBar: AppBar(title: const Text("Mein Rezept")),
         floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
@@ -46,14 +48,14 @@ class _MyRecipesState extends State<RecipeDetailsView> {
           backgroundColor: Colors.green,
           onPressed: () => Navigator.pushNamed(context, SearchView.routeName,
               arguments: SearchViewArguments(widget.recipeId,
-                  () => recipeProvider.getRecipe(widget.recipeId))),
+                  () => recipesProvider.getRecipe(widget.recipeId))),
           child: const Icon(Icons.add),
         ),
         body: Center(
           child: FutureBuilder<FullRecipe>(
-            future: recipeProvider.futureRecipe,
+            future: recipesProvider.futureRecipe,
             builder: (context, snapshot) {
-              if (snapshot.hasData) {
+              if (snapshot.hasData && recipesProvider.futureRecipe != null) {
                 return Center(
                   child: Column(children: [
                     Text(snapshot.data!.name),
@@ -189,7 +191,8 @@ class _MyRecipesState extends State<RecipeDetailsView> {
                                     onPressed: (BuildContext context) async {
                                       await deleteRecipeIngredient(snapshot
                                           .data!.recipeIngredients[index].id);
-                                      recipeProvider.getRecipe(widget.recipeId);
+                                      recipesProvider
+                                          .getRecipe(widget.recipeId);
                                     },
                                   )
                                 ],

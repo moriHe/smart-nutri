@@ -20,11 +20,12 @@ class PostRecipeIngredientBody {
 
 class Product {
   final String name;
+  final int id;
 
-  Product(this.name);
+  Product(this.name, this.id);
 
   static Product fromJson(Map<String, dynamic> json) {
-    return Product(json['name']);
+    return Product(json['name'], json["id"]);
   }
 }
 
@@ -183,7 +184,7 @@ class _SearchViewState extends State<SearchView> {
                                                         TextInputType.number,
                                                     decoration:
                                                         const InputDecoration(
-                                                      labelText: 'Portionen',
+                                                      labelText: 'Menge',
                                                       icon: Icon(Icons
                                                           .brunch_dining_outlined),
                                                     ),
@@ -277,6 +278,7 @@ class _SearchViewState extends State<SearchView> {
                                                     double.tryParse(
                                                         amountPerPortionController
                                                             .text);
+
                                                 if (amountPerPortion == null) {
                                                   return;
                                                 }
@@ -284,7 +286,7 @@ class _SearchViewState extends State<SearchView> {
                                                 await postRecipeIngredient(
                                                     widget.recipeId,
                                                     PostRecipeIngredientBody(
-                                                        55,
+                                                        item.id,
                                                         amountPerPortion,
                                                         units.keys.firstWhere(
                                                             (key) =>
@@ -307,7 +309,12 @@ class _SearchViewState extends State<SearchView> {
                                               child: const Text("Hinzufügen"))
                                         ],
                                       );
-                                    });
+                                    }).then((_) {
+                                  amountPerPortionController.text = "";
+                                  unitsDropDownValue = unitsKeys.first;
+                                  marketsDropDownValue = marketsKeys.first;
+                                  isBio = false;
+                                });
                               },
                               child: Card(child: Text(item.name)),
                             )))

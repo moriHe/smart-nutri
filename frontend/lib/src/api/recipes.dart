@@ -31,6 +31,11 @@ Future<List<ShallowRecipe>> fetchRecipes() async {
   }
 }
 
+Future<int> deleteRecipe(int id) async {
+  final response = await delete(Uri.parse("http://localhost:8080/recipes/$id"));
+  return response.statusCode;
+}
+
 class FullRecipe {
   final int id;
   final String name;

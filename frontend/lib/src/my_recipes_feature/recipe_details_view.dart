@@ -60,6 +60,17 @@ class _MyRecipesState extends State<RecipeDetailsView> {
                     Text(
                         "${snapshot.data!.defaultPortions.toString()} Portionen"),
                     Text(meals[snapshot.data!.defaultMeal] ?? ""),
+                    TextButton(
+                        onPressed: () async {
+                          final wasRemoved = await Provider.of<RecipesProvider>(
+                                  context,
+                                  listen: false)
+                              .removeRecipe(widget.recipeId);
+                          if (wasRemoved && context.mounted) {
+                            Navigator.pop(context);
+                          }
+                        },
+                        child: const Text("Löschen")),
                     Expanded(
                       child: ListView.builder(
                           itemCount: snapshot.data!.recipeIngredients.length,

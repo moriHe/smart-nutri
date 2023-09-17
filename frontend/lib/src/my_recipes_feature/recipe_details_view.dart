@@ -22,12 +22,6 @@ class RecipeIdArguments {
   RecipeIdArguments(this.recipeId);
 }
 
-/* TODO: Add following endpoints
-	r.POST("/recipes/:id/recipeingredient", s.handlePostRecipeIngredient)
-	r.PATCH("/recipes/:id", s.handlePatchRecipeName)
-	r.DELETE("/recipes/:id", s.handleDeleteRecipe)
-*/
-
 class _MyRecipesState extends State<RecipeDetailsView> {
   @override
   void initState() {

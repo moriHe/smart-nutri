@@ -142,7 +142,7 @@ class _MyRecipesState extends State<MyRecipesListView> {
             child: FutureBuilder<List<ShallowRecipe>>(
               future: recipesProvider.futureRecipes,
               builder: (context, snapshot) {
-                if (snapshot.hasData) {
+                if (snapshot.hasData && recipesProvider.futureRecipes != null) {
                   return Center(
                       child: ListView.builder(
                           padding: const EdgeInsets.only(top: 50.0),

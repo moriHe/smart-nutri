@@ -32,9 +32,11 @@ class _MyRecipesState extends State<RecipeDetailsView> {
   @override
   void initState() {
     super.initState();
-    final recipesProvider =
-        Provider.of<RecipesProvider>(context, listen: false);
-    recipesProvider.getRecipe(widget.recipeId);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final recipesProvider =
+          Provider.of<RecipesProvider>(context, listen: false);
+      recipesProvider.getRecipe(widget.recipeId);
+    });
   }
 
   @override

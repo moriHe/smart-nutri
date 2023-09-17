@@ -68,20 +68,26 @@ func (s *Storage) GetRecipeById(id string) (*types.FullRecipe, error) {
 var postRecipeIngredientQuery = "insert into recipes_ingredients(recipe_id, " +
 	"ingredient_id, amount_per_portion, unit, market, is_bio) values ($1, $2, $3, $4, $5, $6)"
 
-func (s *Storage) PostRecipe(familyId string, payload types.PostRecipe) error {
+func (s *Storage) PostRecipe(familyId string, payload types.PostRecipe) (*types.Id, error) {
+	var defaultMealId int
+	err := s.Db.QueryRow(context.Background(), "select (id) from meals where meals.meal = $1", payload.DefaultMeal).Scan(&defaultMealId)
+	if err != nil {
+		// TODO: Should probably be a Bad Request or check if no unitId then bad request. I think queryRow throws error if nothing found
+		return nil, &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Step 1: Failed to find meals name: %s", err)}
+	}
 	var recipeId int
 	if payload.Name == "" {
-		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("No recipe name specified")}
+		return nil, &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("No recipe name specified")}
 	}
 	defaultPortions := payload.DefaultPortions
 	if defaultPortions == 0 {
 		defaultPortions = 1
 	}
 
-	err := s.Db.QueryRow(context.Background(), "insert into recipes (family_id, name, default_portions) values ($1, $2, $3) returning id", familyId, payload.Name, defaultPortions).Scan(&recipeId)
+	err = s.Db.QueryRow(context.Background(), "insert into recipes (family_id, name, default_portions, default_meal) values ($1, $2, $3, $4) returning id", familyId, payload.Name, defaultPortions, defaultMealId).Scan(&recipeId)
 
 	if err != nil {
-		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Step 1: Failed to create recipe: %s", err)}
+		return nil, &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Step 1: Failed to create recipe: %s", err)}
 	}
 
 	for i := 0; i < len(payload.RecipeIngredients); i++ {
@@ -91,17 +97,25 @@ func (s *Storage) PostRecipe(familyId string, payload types.PostRecipe) error {
 
 		if err != nil {
 			s.DeleteRecipe(strconv.Itoa(recipeId))
-			return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Step 2a: Failed to create recipe: %s", err)}
+			return nil, &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Step 2a: Failed to create recipe: %s", err)}
 		}
 
-		_, err = s.Db.Exec(context.Background(), postRecipeIngredientQuery, recipeId, recipeIngredient.IngredientId, recipeIngredient.AmountPerPortion, unitId, recipeIngredient.MarketId, recipeIngredient.IsBio)
+		var marketId int
+		err = s.Db.QueryRow(context.Background(), "select (id) from markets where markets.name = $1", recipeIngredient.Market).Scan(&marketId)
 
 		if err != nil {
 			s.DeleteRecipe(strconv.Itoa(recipeId))
-			return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Step 2b: Failed to create recipe: %s", err)}
+			return nil, &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Step 2a: Failed to create recipe: %s", err)}
+		}
+
+		_, err = s.Db.Exec(context.Background(), postRecipeIngredientQuery, recipeId, recipeIngredient.IngredientId, recipeIngredient.AmountPerPortion, unitId, marketId, recipeIngredient.IsBio)
+
+		if err != nil {
+			s.DeleteRecipe(strconv.Itoa(recipeId))
+			return nil, &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Step 2b: Failed to create recipe: %s", err)}
 		}
 	}
-	return nil
+	return &types.Id{Id: recipeId}, nil
 }
 
 func (s *Storage) PostRecipeIngredient(recipeId string, payload types.PostRecipeIngredient) error {
@@ -110,9 +124,16 @@ func (s *Storage) PostRecipeIngredient(recipeId string, payload types.PostRecipe
 
 	if err != nil {
 		// TODO: Should probably be a Bad Request or check if no unitId then bad request. I think queryRow throws error if nothing found
-		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Step 1: Failed to create recipe_ingredient: %s", err)}
+		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Step 1a: Failed to create recipe_ingredient: %s", err)}
 	}
-	_, err = s.Db.Exec(context.Background(), postRecipeIngredientQuery, recipeId, payload.IngredientId, payload.AmountPerPortion, unitId, payload.MarketId, payload.IsBio)
+
+	var marketId int
+	err = s.Db.QueryRow(context.Background(), "select (id) from markets where markets.name = $1", payload.Market).Scan(&marketId)
+	if err != nil {
+		// TODO: Should probably be a Bad Request or check if no unitId then bad request. I think queryRow throws error if nothing found
+		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Step 1b: Failed to create recipe_ingredient: %s", err)}
+	}
+	_, err = s.Db.Exec(context.Background(), postRecipeIngredientQuery, recipeId, payload.IngredientId, payload.AmountPerPortion, unitId, marketId, payload.IsBio)
 
 	if err != nil {
 		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Step 2: Failed to post recipe_ingredient: %s", err)}

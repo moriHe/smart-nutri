@@ -3,6 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:frontend/src/my_recipes_feature/my_recipes_list_view.dart';
 import 'package:frontend/src/my_recipes_feature/recipe_details_view.dart';
+import 'package:frontend/src/search_feature/search_view.dart';
 
 import 'settings/settings_controller.dart';
 import 'settings/settings_view.dart';
@@ -62,15 +63,20 @@ class MyApp extends StatelessWidget {
 
           // Define a function to handle named routes in order to support
           // Flutter web url navigation and deep linking.
-          onGenerateRoute: (RouteSettings routeSettings) {
+          onGenerateRoute: (RouteSettings settings) {
             return MaterialPageRoute<void>(
-              settings: routeSettings,
+              settings: settings,
               builder: (BuildContext context) {
-                switch (routeSettings.name) {
+                switch (settings.name) {
                   case SettingsView.routeName:
                     return SettingsView(controller: settingsController);
+                  case SearchView.routeName:
+                    final args = settings.arguments as SearchViewArguments;
+                    return SearchView(
+                        recipeId: args.recipeId, callback: args.callback);
                   case RecipeDetailsView.routeName:
-                    return const RecipeDetailsView();
+                    final args = settings.arguments as RecipeIdArguments;
+                    return RecipeDetailsView(recipeId: args.recipeId);
                   case MyRecipesListView.routeName:
                   default:
                     return const MyRecipesListView();

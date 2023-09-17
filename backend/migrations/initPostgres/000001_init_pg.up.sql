@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS familys(
 
 CREATE TABLE IF NOT EXISTS meals(
     id SERIAL NOT NULL PRIMARY KEY,
-    meal TEXT NOT NULL
+    meal TEXT
 );
 
 CREATE TABLE IF NOT EXISTS recipes(
@@ -1214,12 +1214,13 @@ INSERT INTO "public"."ingredients" ("id", "name", "category") VALUES
 SELECT setval(pg_get_serial_sequence('ingredients', 'id'), max(id)) FROM ingredients;
 
 INSERT INTO markets ("id", "name") VALUES
-(1, 'Rewe'),
-(2, 'Edeka'),
-(3, 'Bio Company'),
-(4, 'Wochenmarkt'),
-(5, 'Aldi'),
-(6, 'Lidl');
+(1, 'REWE'),
+(2, 'EDEKA'),
+(3, 'BIO_COMPANY'),
+(4, 'WEEKLY_MARKET'),
+(5, 'ALDI'),
+(6, 'LIDL'),
+(7, 'NONE');
 SELECT setval(pg_get_serial_sequence('markets', 'id'), max(id)) FROM markets;
 
 INSERT INTO units ("id", "name") VALUES
@@ -1229,7 +1230,7 @@ INSERT INTO units ("id", "name") VALUES
 (4, 'TEASPOON');
 SELECT setval(pg_get_serial_sequence('units', 'id'), max(id)) FROM units;
 
-INSERT INTO meals (id, meal) VALUES (1, 'BREAKFAST'), (2, 'LUNCH'), (3, 'DINNER');
+INSERT INTO meals (id, meal) VALUES (1, 'BREAKFAST'), (2, 'LUNCH'), (3, 'DINNER'), (4, 'NONE');
 SELECT setval(pg_get_serial_sequence('meals', 'id'), max(id)) FROM meals;
 
 -- Generate some sample data

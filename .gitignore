@@ -1,1 +1,7 @@
 .env
+ios/
+android/
+windows/
+web/
+macos/
+linux/

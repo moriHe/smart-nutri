@@ -28,8 +28,8 @@ func TestGetRecipeByIdSucc(t *testing.T) {
 	r.ServeHTTP(w, req)
 	res := `{"data":{"id":1,"name":"Spaghetti","defaultPortions":1,"defaultMeal":"BREAKFAST","recipeIngredients":` +
 		`[{"id":1,"name":"Tomaten","amountPerPortion":100,"unit":"GRAM","market":` +
-		`"Rewe","isBio":true},{"id":2,"name":"Knoblauch","amountPerPortion":200,` +
-		`"unit":"GRAM","market":"Rewe","isBio":false}]}}`
+		`"REWE","isBio":true},{"id":2,"name":"Knoblauch","amountPerPortion":200,` +
+		`"unit":"GRAM","market":"REWE","isBio":false}]}}`
 	assert.Equal(t, 200, w.Code)
 	assert.Equal(t, res, w.Body.String())
 
@@ -49,28 +49,31 @@ func TestPostRecipeSuccNoIngredients(t *testing.T) {
 	r := startServer()
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/familys/1/recipes", bytes.NewBuffer([]byte(`{
-		"name": "Wantan"
+		"name": "Wantan",
+		"defaultPortions": 1.5,
+		"defaultMeal": "DINNER"
 	}`)))
 
 	r.ServeHTTP(w, req)
 
 	assert.Equal(t, 200, w.Code)
-	assert.Equal(t, `{"data":"Added recipe"}`, w.Body.String())
+	assert.Equal(t, `{"data":{"id":3}}`, w.Body.String())
 }
 
+// TODO TestPostRecipeSuccIngredients fails running indivudually since it builds up on TestPostRecipeSuccNoIngredients
 func TestPostRecipeSuccIngredients(t *testing.T) {
 	r := startServer()
 	w := httptest.NewRecorder()
-	body := `{"name": "Wantan","recipeIngredients": [{"ingredientId": 1,` +
-		`"amountPerPortion": 100,"unit": "GRAM","marketId": 1,"isBio": true},{"ingredientId": 2,` +
-		`"amountPerPortion": 200,"unit": "MILLILITER","marketId": 2,"isBio": false}]}`
+	body := `{"name": "Wantan","defaultPortions":1.5,"defaultMeal":"DINNER","recipeIngredients": [{"ingredientId": 1,` +
+		`"amountPerPortion": 100,"unit": "GRAM","market": "REWE","isBio": true},{"ingredientId": 2,` +
+		`"amountPerPortion": 200,"unit": "MILLILITER","market": "NONE","isBio": false}]}`
 	req, _ := http.NewRequest("POST", "/familys/1/recipes", bytes.NewBuffer([]byte(body)))
 
 	r.ServeHTTP(w, req)
 
 	assert.Equal(t, 200, w.Code)
 	// TODO: Return payload in response
-	assert.Equal(t, `{"data":"Added recipe"}`, w.Body.String())
+	assert.Equal(t, `{"data":{"id":4}}`, w.Body.String())
 }
 
 // TODO: Add bad request tests for missing ingriedientId, amountPerPortion etc
@@ -79,7 +82,9 @@ func TestPostRecipeBadReq(t *testing.T) {
 	r := startServer()
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/familys/1/recipes", bytes.NewBuffer([]byte(`{
-		"hello": "world"
+		"hello": "world",
+		"defaultPortions": 1.5,
+		"defaultMeal": "DINNER"
 	}`)))
 
 	r.ServeHTTP(w, req)
@@ -93,9 +98,9 @@ func TestPostRecipeIngredientSucc(t *testing.T) {
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/recipes/2/recipeingredient", bytes.NewBuffer([]byte(`{
 		"ingredientId": 2,
-		"amount": 1,
+		"amountPerPortion": 1,
 		"unit": "GRAM",
-		"marketId": 1,
+		"market": "REWE",
 		"isBio": true
 	}`)))
 
@@ -111,7 +116,8 @@ func TestPostRecipeIngredientBadReq(t *testing.T) {
 
 	req, _ := http.NewRequest("POST", "/recipes/1000/recipeingredient", bytes.NewBuffer([]byte(`{
 		"ingredientId": 2,
-		"unit": "GRAM"
+		"unit": "GRAM",
+		"market": "NONE"
 	}`)))
 
 	r.ServeHTTP(w, req)

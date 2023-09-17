@@ -14,9 +14,11 @@ class _MyRecipesState extends State<MyRecipesListView> {
   @override
   void initState() {
     super.initState();
-    final recipesProvider =
-        Provider.of<RecipesProvider>(context, listen: false);
-    recipesProvider.getRecipes();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final recipesProvider =
+          Provider.of<RecipesProvider>(context, listen: false);
+      recipesProvider.getRecipes();
+    });
   }
 
   @override
@@ -24,6 +26,12 @@ class _MyRecipesState extends State<MyRecipesListView> {
     recipeNameController.dispose();
     defaultPortionsController.dispose();
     super.dispose();
+  }
+
+  void _navigateToRecipeDetails(int recipeId) {
+    Navigator.of(context).pop();
+    Navigator.of(context).pushNamed(RecipeDetailsView.routeName,
+        arguments: RecipeIdArguments(recipeId));
   }
 
   @override
@@ -115,10 +123,7 @@ class _MyRecipesState extends State<MyRecipesListView> {
                                       orElse: () => "NONE"));
                               if (context.mounted) {
                                 recipesProvider.getRecipes();
-                                Navigator.pop(context);
-                                Navigator.pushNamed(
-                                    context, RecipeDetailsView.routeName,
-                                    arguments: RecipeIdArguments(recipeId));
+                                _navigateToRecipeDetails(recipeId);
                               }
                             },
                             child: const Text("Hinzufügen"))

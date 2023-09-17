@@ -20,10 +20,8 @@ class RecipesProvider with ChangeNotifier, DiagnosticableTreeMixin {
     int responseCode = await deleteRecipe(id);
     if (responseCode == 200) {
       getRecipes();
-      return true;
-    }
-    if (responseCode == 200) {
       notifyListeners();
+
       return true;
     }
     return false;

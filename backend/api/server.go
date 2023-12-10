@@ -3,6 +3,7 @@ package api
 import (
 	"net/http"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/moriHe/smart-nutri/storage"
 	"github.com/moriHe/smart-nutri/types"
@@ -16,9 +17,18 @@ func StartGinServer(store storage.Storage, url string) *gin.Engine {
 	router := gin.Default()
 	server := &Server{store: store}
 
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"*"} // Update with your Angular app's origin
+	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE"}
+	config.AllowHeaders = []string{"Content-Type", "Authorization"}
+
+	// Use the CORS middleware
+	router.Use(cors.New(config))
+
 	server.recipeRoutes(router)
 	server.mealPlanRoutes(router)
 	server.mealplanShoppingListRoutes(router)
+
 	router.Run(url)
 
 	return router

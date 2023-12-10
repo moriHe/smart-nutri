@@ -1,3 +1,9 @@
-<main>
+<main class="m-5">
     <h2>Meine Rezepte</h2>
+    <section class="flex">
+        <div class="w-20" *ngFor="let recipe of recipes">
+            <span>{{recipe.name}}</span>
+        </div>
+    </section>
+   
 </main>

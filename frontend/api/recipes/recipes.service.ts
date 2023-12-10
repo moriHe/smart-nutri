@@ -1,24 +1,24 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Api } from 'api';
 import { Observable, map } from 'rxjs';
+import { Recipe } from './recipes.interface';
 
-export type Recipe = {
-  id: number,
-  name: string
-}
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class RecipesService {
   getRecipes(): Observable<Recipe[]> {
-    return this.http.get<{data: Recipe[]}>("http://localhost:8080/familys/1/recipes").pipe(
+    return this.api.fetchRecipes().pipe(
       map((response: {data: Recipe[]}) => response.data)
     );
   }
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private api: Api
   ) {}
 
 }

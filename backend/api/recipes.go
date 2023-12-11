@@ -9,6 +9,7 @@ import (
 
 func (s *Server) recipeRoutes(r *gin.Engine) {
 	r.GET("/familys/:familyId/recipes", s.handleGetAllRecipes)
+	// todo familyId
 	r.GET("/recipes/:id", s.handleGetRecipeById)
 	r.POST("/familys/:familyId/recipes", s.handlePostRecipe)
 	r.POST("/recipes/:id/recipeingredient", s.handlePostRecipeIngredient)

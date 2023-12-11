@@ -1,7 +1,11 @@
 <section class="p-5">
     <h2>Meine Rezepte</h2>
     <section class="flex gap-5">
-        <div class="flex flex-col h-64 transition duration-300 hover:shadow-lg shadow-md cursor-pointer select-none" *ngFor="let recipe of recipes">
+        <div 
+        *ngFor="let recipe of recipes"
+        (click)="openRecipe(recipe.id)" 
+        class="flex flex-col h-64 transition duration-300 hover:shadow-lg shadow-md cursor-pointer select-none"
+        >
             <img src="/assets/recipe-placeholder.jpg" />
             <div class="flex flex-col justify-center flex-grow">
                 <p class="text-center">{{recipe.name}}</p>
@@ -10,3 +14,5 @@
     </section>
    
 </section>
+
+<!-- /recipes/:id -->

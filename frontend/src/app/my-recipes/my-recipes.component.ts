@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { Recipe } from 'api/recipes/recipes.interface';
 import { RecipesService } from 'api/recipes/recipes.service';
 
@@ -8,8 +9,6 @@ import { RecipesService } from 'api/recipes/recipes.service';
   styleUrls: ['./my-recipes.component.css']
 })
 export class MyRecipesComponent {
-  constructor(private recipesService: RecipesService) { }
-
   recipes: Recipe[] = []
 
   ngOnInit(): void {
@@ -18,5 +17,12 @@ export class MyRecipesComponent {
     })
     
   }
+
+  openRecipe(id: number) {
+    this.router.navigateByUrl(`rezept/${id}`)
+  }
+
+  constructor(private recipesService: RecipesService, private router: Router) { }
+
 }
 

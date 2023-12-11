@@ -3,7 +3,7 @@ module.exports = {
   content: ["./src/**/*.{html,ts}"],
   theme: {
     extend: {
-      minHeight: {
+      height: {
         "90vh": "90vh",
       },
     },

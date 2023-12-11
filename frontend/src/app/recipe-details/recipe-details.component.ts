@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Recipe } from 'api/recipes/recipes.interface';
+import { FullRecipe } from 'api/recipes/recipes.interface';
 import { RecipesService } from 'api/recipes/recipes.service';
 
 @Component({
@@ -9,12 +9,12 @@ import { RecipesService } from 'api/recipes/recipes.service';
   styleUrls: ['./recipe-details.component.css']
 })
 export class RecipeDetailsComponent {
-  recipe?: Recipe
+  recipe?: FullRecipe
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       const id = params['id']
-      this.recipesService.getRecipe(id).subscribe((response: Recipe) => {
+      this.recipesService.getRecipe(id).subscribe((response: FullRecipe) => {
         console.log(response)
         this.recipe = response
       });

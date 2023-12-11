@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { Recipe } from 'api/recipes/recipes.interface';
+import { ShallowRecipe } from 'api/recipes/recipes.interface';
 import { RecipesService } from 'api/recipes/recipes.service';
 
 @Component({
@@ -9,10 +9,10 @@ import { RecipesService } from 'api/recipes/recipes.service';
   styleUrls: ['./my-recipes.component.css']
 })
 export class MyRecipesComponent {
-  recipes: Recipe[] = []
+  recipes: ShallowRecipe[] = []
 
   ngOnInit(): void {
-    this.recipesService.getRecipes().subscribe((response: Recipe[]) => {
+    this.recipesService.getRecipes().subscribe((response: ShallowRecipe[]) => {
       this.recipes = response
     })
     

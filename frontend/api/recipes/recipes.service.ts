@@ -16,6 +16,10 @@ export class RecipesService {
     );
   }
 
+  getRecipe(id: number): Observable<Recipe>{
+    return this.api.fetchRecipe(id).pipe(map((response: {data: Recipe}) => response.data))
+  }
+
   constructor(
     private http: HttpClient,
     private api: Api

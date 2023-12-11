@@ -1,6 +1,7 @@
 <section class="p-5">
     <ng-container *ngIf="recipe">
         <h2>{{recipe.name}}</h2>
-        <p>{{mealsService.MealDisplay[recipe.defaultMeal]}}</p>
+        <p>Mahlzeit: {{mealsService.MealDisplay[recipe.defaultMeal]}}</p>
+        <p>Portionen: {{recipe.defaultPortions}}</p>
     </ng-container>
 </section>

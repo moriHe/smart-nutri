@@ -12,10 +12,25 @@ export enum Meals {
   'DINNER' = 'DINNER'
 }
 
-type Markets = 'NONE' |'REWE' | 'EDEKA' | 'BIO_COMPANY' | 'WEEKLY_MARKET' | 'ALDI' | 'LIDL'
-type Units = 'GRAM' | 'MILLILITER' | 'TABLESPOON' | 'TEASPOON'
+export enum Markets {
+  'NONE' = 'NONE',
+  'REWE' = 'REWE',
+  'EDEKA' = 'EDEKA',
+  'BIO_COMPANY' = 'BIO_COMPANY',
+  'WEEKLY_MARKET' = 'WEEKLY_MARKET',
+  'ALDI' = 'ALDI',
+  'LIDL' = 'LIDL'
+}
 
-interface RecipeIngredients {
+
+export enum Units {
+  'GRAM' = 'GRAM',
+  'MILLILITER' = 'MILLILITER',
+  'TABLESPOON' = 'TABLESPOON',
+  'TEASPOON' = 'TEASPOON'
+}
+
+interface RecipeIngredient {
   id: number,
   amountPerPortion: number,
   isBio: boolean,
@@ -26,5 +41,5 @@ interface RecipeIngredients {
 export interface FullRecipe extends ShallowRecipe {
   defaultMeal: Meals,
   defaultPortions: number,
-  recipeIngredients: RecipeIngredients
+  recipeIngredients: RecipeIngredient[]
 }

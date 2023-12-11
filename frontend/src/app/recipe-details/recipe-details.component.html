@@ -3,5 +3,13 @@
         <h2>{{recipe.name}}</h2>
         <p>Mahlzeit: {{mealsService.MealDisplay[recipe.defaultMeal]}}</p>
         <p>Portionen: {{recipe.defaultPortions}}</p>
+        <div 
+        *ngFor="let ingredient of recipe.recipeIngredients"
+        >
+        <p>{{ingredient.name}}</p>
+        <p>Bio: </p>
+        <p>Markt: {{marketsService.MarketDisplay[ingredient.market]}}</p>
+        <p>Einheit: {{unitsService.UnitDisplay[ingredient.unit]}}</p>
+        </div>
     </ng-container>
 </section>

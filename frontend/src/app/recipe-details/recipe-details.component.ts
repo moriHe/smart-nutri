@@ -2,7 +2,9 @@ import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FullRecipe } from 'api/recipes/recipes.interface';
 import { RecipesService } from 'api/recipes/recipes.service';
+import { MarketsService } from 'services/markets.service';
 import { MealsService } from 'services/meals.service';
+import { UnitsService } from 'services/units.service';
 
 @Component({
   selector: 'app-recipe-details',
@@ -25,7 +27,9 @@ export class RecipeDetailsComponent {
   constructor(
     private route: ActivatedRoute,
     private recipesService: RecipesService, 
-    public mealsService: MealsService
+    public mealsService: MealsService,
+    public unitsService: UnitsService,
+    public marketsService: MarketsService
     ) { }
 
 }

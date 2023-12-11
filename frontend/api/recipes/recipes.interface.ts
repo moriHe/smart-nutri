@@ -5,20 +5,26 @@ export interface ShallowRecipe {
 
 
 
-type DefaultMeal = 'NONE' | 'BREAKFAST' | 'LUNCH' | 'DINNER'
-type Market = 'NONE' |'REWE' | 'EDEKA' | 'BIO_COMPANY' | 'WEEKLY_MARKET' | 'ALDI' | 'LIDL'
-type Unit = 'GRAM' | 'MILLILITER' | 'TABLESPOON' | 'TEASPOON'
+export enum Meals {
+  'NONE' = 'NONE',
+  'BREAKFAST' = 'BREAKFAST',
+  'LUNCH' = 'LUNCH',
+  'DINNER' = 'DINNER'
+}
+
+type Markets = 'NONE' |'REWE' | 'EDEKA' | 'BIO_COMPANY' | 'WEEKLY_MARKET' | 'ALDI' | 'LIDL'
+type Units = 'GRAM' | 'MILLILITER' | 'TABLESPOON' | 'TEASPOON'
 
 interface RecipeIngredients {
   id: number,
   amountPerPortion: number,
   isBio: boolean,
-  market: Market,
+  market: Markets,
   name: string,
-  unit: Unit
+  unit: Units
 }
 export interface FullRecipe extends ShallowRecipe {
-  defaultMeal: DefaultMeal,
+  defaultMeal: Meals,
   defaultPortions: number,
   recipeIngredients: RecipeIngredients
 }

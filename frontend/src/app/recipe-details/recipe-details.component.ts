@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FullRecipe } from 'api/recipes/recipes.interface';
 import { RecipesService } from 'api/recipes/recipes.service';
+import { MealsService } from 'services/meals.service';
 
 @Component({
   selector: 'app-recipe-details',
@@ -21,6 +22,10 @@ export class RecipeDetailsComponent {
     })
   }
 
-  constructor(private recipesService: RecipesService, private route: ActivatedRoute) { }
+  constructor(
+    private route: ActivatedRoute,
+    private recipesService: RecipesService, 
+    public mealsService: MealsService
+    ) { }
 
 }

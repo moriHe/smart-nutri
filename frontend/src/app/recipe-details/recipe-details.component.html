@@ -2,7 +2,7 @@
     <ng-container *ngIf="recipe">
         <div class="h-full p-5">
             <h2 class="text-center">{{recipe.name}}</h2>
-            <div class="flex w-full items-center my-10">
+            <div class="flex items-center my-10">
                 <div class="flex-grow h-[1px] bg-black">
                     <p class="text-xs text-slate-500 text-start">Mahlzeit: {{mealsService.MealDisplay[recipe.defaultMeal]}}</p>
                 </div>
@@ -16,10 +16,20 @@
         <div 
         *ngFor="let ingredient of recipe.recipeIngredients"
         >
-            <p>{{ingredient.name}}</p>
-            <p>Bio: {{ingredient.isBio}}</p>
-            <p>Markt: {{marketsService.MarketDisplay[ingredient.market]}}</p>
-            <p>Einheit: {{unitsService.UnitDisplay[ingredient.unit]}}</p>
+        <div class="flex items-center h-12 my-10 shadow-md py-2 px-5">
+            <p class="w-1/2">{{ingredient.name}}</p>
+            <div class="flex flex-grow">
+                <div class="basis-1/5">
+                    <p class="text-center px-2 border border-slate-100 rounded-md bg-slate-100">{{ingredient.amountPerPortion}} {{unitsService.UnitDisplay[ingredient.unit]}}</p>
+                </div>
+                <div class="basis-3/5">
+                    <p class="text-center">{{marketsService.MarketDisplay[ingredient.market]}}</p>
+                </div>
+                <div class="basis-1/5">
+                    <img *ngIf="ingredient.isBio" class="w-8 h-8 mx-auto" src="assets/organic.png" />
+                </div>
+            </div>
+        </div>
         </div>
     </div>
     </ng-container>

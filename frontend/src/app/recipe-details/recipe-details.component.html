@@ -1,15 +1,26 @@
-<section class="p-5">
+<section class="w-1/2 min-h-9/10 mx-auto shadow-paper border-x border-b">
     <ng-container *ngIf="recipe">
-        <h2>{{recipe.name}}</h2>
-        <p>Mahlzeit: {{mealsService.MealDisplay[recipe.defaultMeal]}}</p>
-        <p>Portionen: {{recipe.defaultPortions}}</p>
+        <div class="h-full p-5">
+            <h2 class="text-center">{{recipe.name}}</h2>
+            <div class="flex w-full items-center my-10">
+                <div class="flex-grow h-[1px] bg-black">
+                    <p class="text-xs text-slate-500 text-start">Mahlzeit: {{mealsService.MealDisplay[recipe.defaultMeal]}}</p>
+                </div>
+                <div class="w-42 h-32 rounded-full mx-[0] my-[10px] overflow-hidden">
+                    <img class="w-full h-full" src="/assets/recipe-placeholder.jpg" />
+                </div>
+                <div class="flex-grow h-[1px] bg-black">
+                    <p class="text-xs text-slate-500 text-end">Portionen: {{recipe.defaultPortions}}</p>
+                </div>
+            </div>
         <div 
         *ngFor="let ingredient of recipe.recipeIngredients"
         >
-        <p>{{ingredient.name}}</p>
-        <p>Bio: </p>
-        <p>Markt: {{marketsService.MarketDisplay[ingredient.market]}}</p>
-        <p>Einheit: {{unitsService.UnitDisplay[ingredient.unit]}}</p>
+            <p>{{ingredient.name}}</p>
+            <p>Bio: {{ingredient.isBio}}</p>
+            <p>Markt: {{marketsService.MarketDisplay[ingredient.market]}}</p>
+            <p>Einheit: {{unitsService.UnitDisplay[ingredient.unit]}}</p>
         </div>
+    </div>
     </ng-container>
 </section>

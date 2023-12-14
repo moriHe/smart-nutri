@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FullRecipe } from 'api/recipes/recipes.interface';
 import { RecipesService } from 'api/recipes/recipes.service';
 import { MarketsService } from 'services/markets.service';
@@ -24,8 +24,13 @@ export class RecipeDetailsComponent {
     })
   }
 
+  openSearch() {
+    this.router.navigateByUrl(`suche`)
+  }
+
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private recipesService: RecipesService, 
     public mealsService: MealsService,
     public unitsService: UnitsService,

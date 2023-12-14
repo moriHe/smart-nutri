@@ -1,10 +1,18 @@
 import { Injectable } from '@angular/core';
 import Typesense from 'typesense';
-import { SearchParams, SearchParamsWithPreset } from 'typesense/lib/Typesense/Documents';
+import { SearchParams, SearchParamsWithPreset, SearchResponse, SearchResponseHit } from 'typesense/lib/Typesense/Documents';
+
+export type Result = {
+  id: number,
+  name: string,
+  category: string
+}
 
 @Injectable({
   providedIn: 'root'
 })
+
+// If not working, check if in_memory collection has been deleted due to laptop restart
 export class TypesenseService {
   client = new Typesense.Client({
     'nodes': [{
@@ -27,7 +35,7 @@ export class TypesenseService {
       .documents()
       .search(searchParams)
     
-    return data.hits
+    return data.hits as SearchResponseHit<Result>[]
   }
 
   constructor() { }

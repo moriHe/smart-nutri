@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Response } from 'api';
 import { Meals, ShallowRecipe } from 'api/recipes/recipes.interface';
 import { RecipesService } from 'api/recipes/recipes.service';
 
@@ -34,10 +35,8 @@ export class MyRecipesComponent {
       defaultMeal: Meals.BREAKFAST,
       defaultPortions: 1,
       recipeIngredients: []
-    }).subscribe((status: number) => {
-      if (status === 200) {
-        console.log("worked")
-      }
+    }).subscribe((response: Response<{id: number}>) => {
+      this.router.navigateByUrl(`rezept/${response.data.id}`)
     })
   }
 

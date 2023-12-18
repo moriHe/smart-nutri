@@ -1,10 +1,10 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { FullRecipe, RecipeIngredientBody, RecipeIngredient, ShallowRecipe, RecipeBody } from "./recipes/recipes.interface";
-import { catchError } from "rxjs";
 
-interface Response<T> {
+export interface Response<T> {
     data: T
+    // todo return status from go. Not working right now
     status: number
 }
 
@@ -21,7 +21,7 @@ export class Api {
     }
 
     postRecipe(body: RecipeBody) {
-        return this.http.post<Response<string>>(`http://localhost:8080/familys/1/recipes`, body)
+        return this.http.post<Response<{id: number}>>(`http://localhost:8080/familys/1/recipes`, body)
     }
 
     postRecipeIngredient(recipeId: number, body: RecipeIngredientBody) {

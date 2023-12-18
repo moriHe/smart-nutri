@@ -46,3 +46,5 @@ export interface FullRecipe extends ShallowRecipe {
   defaultPortions: number,
   recipeIngredients: RecipeIngredient[]
 }
+
+export type RecipeBody = Omit<FullRecipe, "id">

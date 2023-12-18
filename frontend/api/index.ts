@@ -1,10 +1,11 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { FullRecipe, RecipeIngredientBody, RecipeIngredient, ShallowRecipe } from "./recipes/recipes.interface";
+import { FullRecipe, RecipeIngredientBody, RecipeIngredient, ShallowRecipe, RecipeBody } from "./recipes/recipes.interface";
 import { catchError } from "rxjs";
 
 interface Response<T> {
     data: T
+    status: number
 }
 
 @Injectable({
@@ -17,6 +18,10 @@ export class Api {
 
     fetchRecipe(id: number) {
         return this.http.get<Response<FullRecipe>>(`http://localhost:8080/recipes/${id}`)
+    }
+
+    postRecipe(body: RecipeBody) {
+        return this.http.post<Response<string>>(`http://localhost:8080/familys/1/recipes`, body)
     }
 
     postRecipeIngredient(recipeId: number, body: RecipeIngredientBody) {

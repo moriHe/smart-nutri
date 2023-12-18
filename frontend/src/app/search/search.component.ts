@@ -35,7 +35,7 @@ export class SearchComponent {
   addIngredient(ingredientId: number) {
     if (this.recipeId) {
       console.log(this.recipeId)
-      this.recipesService.postRecipeIngredient(this.recipeId, {
+      this.recipesService.addRecipeIngredient(this.recipeId, {
         ingredientId,
         amountPerPortion: 3,
         isBio: false,

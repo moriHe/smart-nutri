@@ -25,7 +25,9 @@ export class RecipeDetailsComponent {
   }
 
   openSearch() {
-    this.router.navigateByUrl(`suche`)
+    if (this.recipe) {
+      this.router.navigateByUrl(`suche/${this.recipe.id}`)
+    }
   }
 
   constructor(

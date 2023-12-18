@@ -3,7 +3,7 @@ import Typesense from 'typesense';
 import { SearchParams, SearchParamsWithPreset, SearchResponse, SearchResponseHit } from 'typesense/lib/Typesense/Documents';
 
 export type Result = {
-  id: number,
+  ingredientId: number,
   name: string,
   category: string
 }

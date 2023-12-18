@@ -30,14 +30,17 @@ export enum Units {
   'TEASPOON' = 'TEASPOON'
 }
 
-interface RecipeIngredient {
-  id: number,
+export interface RecipeIngredient {
+  ingredientId: number,
   amountPerPortion: number,
   isBio: boolean,
   market: Markets,
   name: string,
   unit: Units
 }
+
+export type RecipeIngredientBody = Omit<RecipeIngredient, "name">
+
 export interface FullRecipe extends ShallowRecipe {
   defaultMeal: Meals,
   defaultPortions: number,

@@ -9,6 +9,7 @@ import { HeroesComponent } from './heroes/heroes.component';
 import { MyRecipesComponent } from './my-recipes/my-recipes.component';
 import { RecipeDetailsComponent } from './recipe-details/recipe-details.component';
 import { SearchComponent } from './search/search.component';
+import { BaseButtonComponent } from './base-button/base-button.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { SearchComponent } from './search/search.component';
     HeroesComponent,
     MyRecipesComponent,
     RecipeDetailsComponent,
-    SearchComponent
+    SearchComponent,
+    BaseButtonComponent
   ],
   imports: [
     BrowserModule,

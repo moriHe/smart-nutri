@@ -1,8 +1,7 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Api } from 'api';
 import { Observable, map } from 'rxjs';
-import { FullRecipe, RecipeIngredientBody, RecipeIngredient, ShallowRecipe } from './recipes.interface';
+import { FullRecipe, RecipeIngredientBody, ShallowRecipe } from './recipes.interface';
 
 
 
@@ -24,9 +23,6 @@ export class RecipesService {
     return this.api.postRecipeIngredient(recipeId, body).pipe(map((response: {data: string}) => response.data))
   }
 
-  constructor(
-    private http: HttpClient,
-    private api: Api
-  ) {}
+  constructor(private api: Api) {}
 
 }

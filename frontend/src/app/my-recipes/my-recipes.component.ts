@@ -22,6 +22,10 @@ export class MyRecipesComponent {
     this.router.navigateByUrl(`rezept/${id}`)
   }
 
+  openAddRecipeModal() {
+    console.log("opened")
+  }
+
   constructor(private recipesService: RecipesService, private router: Router) { }
 
 }

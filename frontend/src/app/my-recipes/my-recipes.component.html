@@ -1,5 +1,8 @@
 <section class="p-5">
-    <h2 i18n>Meine Rezepte</h2>
+    <div class="flex justify-between">
+        <h2 i18n>Meine Rezepte</h2>
+        <app-base-button [onClickBaseBaseButton]="openAddRecipeModal.bind(this)"></app-base-button>
+    </div>
     <section class="grid sm:grid-cols-1 lg:grid-cols-5 gap-5">
         <div 
         *ngFor="let recipe of recipes"

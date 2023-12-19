@@ -1,3 +1,9 @@
+<form class="flex justify-center" [formGroup]="ingredientInput">
+    <mat-form-field class="w-2/5">
+        <mat-label for="query">Suche Zutat</mat-label>
+        <input id="query" formControlName="query" matInput>
+    </mat-form-field>
+</form>
 <section class="flex flex-wrap gap-10 justify-center select-none">
     <div
     *ngFor="let result of results"

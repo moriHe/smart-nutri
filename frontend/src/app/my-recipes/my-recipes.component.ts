@@ -22,8 +22,8 @@ export class MyRecipesComponent {
     this.recipesService.getRecipes().subscribe((response: ShallowRecipe[]) => {
       this.recipes = response
     })
-    
   }
+
 
   onAddRecipe() {
     if (!this.newRecipeForm.value.name) {

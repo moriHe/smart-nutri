@@ -6,6 +6,8 @@ import { ActivatedRoute } from '@angular/router';
 import { MarketsService } from 'services/markets.service';
 import { UnitsService } from 'services/units.service';
 import { Markets, Units } from 'api/recipes/recipes.interface';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { debounceTime, switchMap } from 'rxjs';
 
 
 
@@ -20,21 +22,38 @@ export class SearchComponent {
   recipeId?: number
   results: SearchResponseHit<Result>[] = []
 
+  ingredientInput!: FormGroup
+
   ngOnInit(): void {
     this.route.params.subscribe(params => {
      this.recipeId = params['recipeId']
     })
+
+    this.ingredientInput = this.formBuilder.group({
+      query: ""
+    })
+
+    this.typesenseService.search("*").then((res) => {
+      if (res) {
+        this.results = res
+      }
+     })
+
+    this.ingredientInput.get("query")?.valueChanges.pipe(
+      debounceTime(800),
+      switchMap((query: string) => this.typesenseService.search(query))
+    ).subscribe((res) => {
+      if (res) {
+        return this.results = res
+      }
+      return this.results = []
+    })
     
-   this.typesenseService.search("*").then((res) => {
-    if (res) {
-      this.results = res
-    }
-   })
+  
   }
 
   addIngredient(ingredientId: number) {
     if (this.recipeId) {
-      console.log(this.recipeId)
       this.recipesService.addRecipeIngredient(this.recipeId, {
         ingredientId,
         amountPerPortion: 3,
@@ -48,7 +67,8 @@ export class SearchComponent {
   constructor(
     private route: ActivatedRoute,
     private typesenseService: TypesenseService,
-    private recipesService: RecipesService
+    private recipesService: RecipesService,
+    private formBuilder: FormBuilder
     ) { }
 
 

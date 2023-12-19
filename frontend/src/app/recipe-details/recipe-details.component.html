@@ -11,13 +11,12 @@
                 </div>
                 <div class="flex-grow h-[1px] bg-black">
                     <p class="text-xs text-slate-500 text-end">Portionen: {{recipe.defaultPortions}}</p>
-                    <div class="relative mt-6 mr-5">
-                        <app-base-button 
-                            [onClickBaseBaseButton]="openSearch.bind(this)"
-                            baseButtonClass="absolute top-0 right-0 h-12 w-12"
-                            >
-                        </app-base-button>
-                    </div>
+                        <button
+                        (click)="openSearch()"
+                         mat-fab color="primary"
+                         >
+                            <mat-icon>add</mat-icon>
+                        </button>
                 </div>
             </div>
         <div 

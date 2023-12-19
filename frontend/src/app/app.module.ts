@@ -9,7 +9,6 @@ import { HeroesComponent } from './heroes/heroes.component';
 import { MyRecipesComponent } from './my-recipes/my-recipes.component';
 import { RecipeDetailsComponent } from './recipe-details/recipe-details.component';
 import { SearchComponent } from './search/search.component';
-import { BaseButtonComponent } from './base-button/base-button.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
@@ -25,8 +24,7 @@ import {MatButtonModule} from '@angular/material/button';
     HeroesComponent,
     MyRecipesComponent,
     RecipeDetailsComponent,
-    SearchComponent,
-    BaseButtonComponent
+    SearchComponent
   ],
   imports: [
     BrowserModule,

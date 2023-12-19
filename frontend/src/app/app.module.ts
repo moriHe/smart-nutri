@@ -15,6 +15,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
+import { SearchIngredientDialogComponent } from './search-ingredient-dialog/search-ingredient-dialog.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import {MatSelectModule} from '@angular/material/select';
+import {MatChipsModule} from '@angular/material/chips';
+
 
 
 @NgModule({
@@ -24,7 +29,8 @@ import {MatButtonModule} from '@angular/material/button';
     HeroesComponent,
     MyRecipesComponent,
     RecipeDetailsComponent,
-    SearchComponent
+    SearchComponent,
+    SearchIngredientDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -36,7 +42,10 @@ import {MatButtonModule} from '@angular/material/button';
     MatFormFieldModule,
     MatIconModule,
     MatButtonModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatDialogModule,
+    MatSelectModule,
+    MatChipsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

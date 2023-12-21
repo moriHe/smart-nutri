@@ -7,7 +7,7 @@ import { Markets, Units } from "api/recipes/recipes.interface";
 import { MarketsService } from "services/markets.service";
 import { UnitsService } from "services/units.service";
 
-export interface DialogData {
+interface RecipeIngredientDialogData {
   amountPerPortion: number,
   isBio: boolean,
   selectedMarket: Markets,
@@ -32,7 +32,7 @@ export class SearchIngredientDialogComponent {
 
   constructor(
     public dialogRef: MatDialogRef<SearchIngredientDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData,
+    @Inject(MAT_DIALOG_DATA) public data: RecipeIngredientDialogData,
     public marketsService: MarketsService,
     public unitsService: UnitsService
   ) {}

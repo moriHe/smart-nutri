@@ -1,0 +1,29 @@
+<h1 mat-dialog-title>Details</h1>
+<div mat-dialog-content>
+    <div>
+        <mat-form-field>
+          <mat-label>Name</mat-label>
+          <input matInput [(ngModel)]="data.name">
+        </mat-form-field>
+    </div>
+        <mat-form-field>
+            <mat-label>Mahlzeit</mat-label>
+            <mat-select [(ngModel)]="data.selectedMeal" name="meals">
+                <mat-option *ngFor="let meal of data.meals" [value]="meal">{{mealsService.MealDisplay[meal]}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+    <div>
+        <mat-form-field>
+          <mat-label>Menge</mat-label>
+          <input matInput [(ngModel)]="data.defaultPortions">
+        </mat-form-field>
+    </div>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">Abbrechen</button>
+  <button mat-button [mat-dialog-close]="{
+    name: data.name, 
+    selectedMeal: data.selectedMeal,
+    defaultPortions: data.defaultPortions
+    }" cdkFocusInitial>Speichern</button>
+</div>

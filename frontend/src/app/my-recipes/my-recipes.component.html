@@ -1,15 +1,9 @@
 <section class="p-5">
-    <div class="flex justify-between">
+    <div class="flex justify-between mb-3">
         <h2 i18n>Meine Rezepte</h2>
-            <form class="flex gap-10" [formGroup]="newRecipeForm" (ngSubmit)="onAddRecipe()">
-                <mat-form-field>
-                    <mat-label for="name">Neues Rezept</mat-label>
-                    <input id="name" formControlName="name" matInput>
-                </mat-form-field>
-                <button mat-fab color="primary" type="submit">
-                    <mat-icon>add</mat-icon>
-                </button>
-            </form>
+        <button mat-fab color="primary" (click)="openDialog()">
+            <mat-icon>add</mat-icon>
+        </button>
     </div>
     <section class="grid sm:grid-cols-1 lg:grid-cols-5 gap-5">
         <div 

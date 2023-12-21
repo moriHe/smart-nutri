@@ -20,6 +20,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import {MatSelectModule} from '@angular/material/select';
 import {MatChipsModule} from '@angular/material/chips';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { CreateRecipeDialogComponent } from './create-recipe-dialog/create-recipe-dialog.component';
 
 
 
@@ -31,7 +32,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     MyRecipesComponent,
     RecipeDetailsComponent,
     SearchComponent,
-    SearchIngredientDialogComponent
+    SearchIngredientDialogComponent,
+    CreateRecipeDialogComponent
   ],
   imports: [
     BrowserModule,

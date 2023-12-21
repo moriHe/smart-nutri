@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Response } from 'api';
 import { Meals, ShallowRecipe } from 'api/recipes/recipes.interface';
 import { RecipesService } from 'api/recipes/recipes.service';
+import { CreateRecipeDialogComponent } from '../create-recipe-dialog/create-recipe-dialog.component';
 
 @Component({
   selector: 'app-my-recipes',
@@ -13,6 +15,11 @@ import { RecipesService } from 'api/recipes/recipes.service';
 export class MyRecipesComponent {
   nameOfNewRecipe: string = ""
   recipes: ShallowRecipe[] = []
+
+  name!: string
+  selectedMeal: Meals = Meals.NONE
+  meals: Meals[] = Object.values(Meals)
+  defaultPortions: number = 1
 
   newRecipeForm = this.formBuilder.group({
     name: ""
@@ -25,33 +32,43 @@ export class MyRecipesComponent {
   }
 
 
-  onAddRecipe() {
-    if (!this.newRecipeForm.value.name) {
-      return
-    }
-
-    this.recipesService.addRecipe({
-      name: this.newRecipeForm.value.name,
-      defaultMeal: Meals.BREAKFAST,
-      defaultPortions: 1,
-      recipeIngredients: []
-    }).subscribe((response: Response<{id: number}>) => {
-      this.router.navigateByUrl(`rezept/${response.data.id}`)
-    })
-  }
-
   openRecipe(id: number) {
     this.router.navigateByUrl(`rezept/${id}`)
   }
 
-  openAddRecipeModal() {
+  openDialog(): void {
+    const dialogRef = this.dialog.open(CreateRecipeDialogComponent, {
+      data: {
+        name: this.name,
+        selectedMeal: this.selectedMeal,
+        meals: this.meals,
+        defaultPortions: this.defaultPortions
+      },
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(result)
+      if (result && result.name && result.defaultPortions) {
+        this.recipesService.addRecipe({
+          name: result.name,
+          defaultMeal: result.selectedMeal,
+          defaultPortions: Number(result.defaultPortions),
+          recipeIngredients: []
+        }).subscribe((response: Response<{id: number}>) => {
+          this.router.navigateByUrl(`rezept/${response.data.id}`)
+        })
+      }
+    })
+
   }
+
 
 
   constructor(
     private recipesService: RecipesService, 
     private router: Router,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    public dialog: MatDialog
     ) { }
 
 }

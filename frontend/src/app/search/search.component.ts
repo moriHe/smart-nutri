@@ -9,10 +9,6 @@ import { debounceTime, switchMap } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { SearchIngredientDialogComponent } from '../search-ingredient-dialog/search-ingredient-dialog.component';
 
-
-
-
-
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',

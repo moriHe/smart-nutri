@@ -19,6 +19,7 @@ import { SearchIngredientDialogComponent } from './search-ingredient-dialog/sear
 import { MatDialogModule } from '@angular/material/dialog';
 import {MatSelectModule} from '@angular/material/select';
 import {MatChipsModule} from '@angular/material/chips';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 
 
@@ -45,7 +46,8 @@ import {MatChipsModule} from '@angular/material/chips';
     ReactiveFormsModule,
     MatDialogModule,
     MatSelectModule,
-    MatChipsModule
+    MatChipsModule,
+    MatSnackBarModule
   ],
   providers: [],
   bootstrap: [AppComponent]

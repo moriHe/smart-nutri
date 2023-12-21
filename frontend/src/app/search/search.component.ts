@@ -8,6 +8,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { debounceTime, switchMap } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { SearchIngredientDialogComponent } from '../search-ingredient-dialog/search-ingredient-dialog.component';
+import { MatSnackBar, MatSnackBarRef, SimpleSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-search',
@@ -21,6 +22,8 @@ export class SearchComponent {
   ingredientInput!: FormGroup
 
   ingredientId!: number
+  ingredientName!: string
+
   amountPerPortion: number = 1
   isBio: boolean = false
   selectedMarket: Markets = Markets.NONE
@@ -56,8 +59,9 @@ export class SearchComponent {
   
   }
 
-  openDialog(ingredientId: number): void {
+  openDialog(ingredientId: number, ingredientName: string): void {
     this.ingredientId = ingredientId
+    this.ingredientName = ingredientName
     const dialogRef = this.dialog.open(SearchIngredientDialogComponent, {
       data: {
         amountPerPortion: this.amountPerPortion,
@@ -77,17 +81,47 @@ export class SearchComponent {
           isBio: result.isBio,
           market: result.selectedMarket,
           unit: result.selectedUnit
-        }).subscribe()
+        }).subscribe({
+          complete: () => {
+            this.openSnackbar({type: "SUCCESS"})
+          },
+          error: () => {
+            this.openSnackbar({type: "ERROR"})
+          }
+        })
       }
     });
   }
+
+  openSnackbar({type}: {type: "SUCCESS" | "ERROR"}) {
+    if (type === "SUCCESS") {
+      const snackBarRef: MatSnackBarRef<SimpleSnackBar> = this.snackbar.open(
+        `Hinzugefügt: ${this.ingredientName}`,
+         "Rückgängig", 
+         {
+        horizontalPosition: "start",
+        verticalPosition: "bottom",
+        duration: 3000
+        })
+        snackBarRef.onAction().subscribe(() => {
+          // delete here
+          console.log("test")
+        });
+    } else {
+      this.snackbar.open("Etwas ging schief.", "Ok", {
+        horizontalPosition: "start",
+        verticalPosition: "bottom"
+    })
+  }
+}
 
   constructor(
     private route: ActivatedRoute,
     private typesenseService: TypesenseService,
     private recipesService: RecipesService,
     private formBuilder: FormBuilder,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private snackbar: MatSnackBar
     ) { }
 
 }

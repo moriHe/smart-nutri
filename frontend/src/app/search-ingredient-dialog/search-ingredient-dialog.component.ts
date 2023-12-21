@@ -13,7 +13,7 @@ export interface DialogData {
   selectedMarket: Markets,
   markets: Markets[],
   selectedUnit: Units,
-  units: Units[]
+  units: Units[],
 }
 
 @Component({

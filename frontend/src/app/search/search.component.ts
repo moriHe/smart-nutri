@@ -24,6 +24,7 @@ export class SearchComponent {
 
   ingredientInput!: FormGroup
 
+  ingredientId!: number
   amountPerPortion: number = 1
   isBio: boolean = false
   selectedMarket: Markets = Markets.NONE
@@ -59,32 +60,29 @@ export class SearchComponent {
   
   }
 
-  addIngredient(ingredientId: number) {
-    if (this.recipeId) {
-      this.recipesService.addRecipeIngredient(this.recipeId, {
-        ingredientId,
-        amountPerPortion: 3,
-        isBio: false,
-        market: Markets.REWE,
-        unit: Units.GRAM
-      }).subscribe()
-    }
-  }
-
-  openDialog(): void {
+  openDialog(ingredientId: number): void {
+    this.ingredientId = ingredientId
     const dialogRef = this.dialog.open(SearchIngredientDialogComponent, {
       data: {
         amountPerPortion: this.amountPerPortion,
-         isBio: this.isBio, 
-         selectedMarket: this.selectedMarket, 
-         markets: this.markets, 
-         selectedUnit: this.selectedUnit,
-         units: this.units
+        isBio: this.isBio, 
+        selectedMarket: this.selectedMarket, 
+        markets: this.markets, 
+        selectedUnit: this.selectedUnit,
+        units: this.units
         },
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log(result)
+      if (this.recipeId && result) {
+        this.recipesService.addRecipeIngredient(this.recipeId, {
+          ingredientId: this.ingredientId,
+          amountPerPortion: Number(result.amountPerPortion),
+          isBio: result.isBio,
+          market: result.selectedMarket,
+          unit: result.selectedUnit
+        }).subscribe()
+      }
     });
   }
 

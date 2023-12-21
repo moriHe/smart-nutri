@@ -7,7 +7,7 @@
 <section class="flex flex-wrap gap-10 justify-center select-none">
     <div
     *ngFor="let result of results"
-    (click)="openDialog()" 
+    (click)="openDialog(result.document.ingredientId)" 
     class="flex items-center justify-center w-1/5 h-20 border border-1 rounded-lg text-xs cursor-pointer"
     >
         <p class="text-center">{{result.document.name}}</p>

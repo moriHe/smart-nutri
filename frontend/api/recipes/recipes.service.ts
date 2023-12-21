@@ -23,8 +23,12 @@ export class RecipesService {
     return this.api.postRecipe(body).pipe(map((response: Response<{id: number}>) => response))
   }
 
-  addRecipeIngredient(recipeId: number, body: RecipeIngredientBody): Observable<string>{
-    return this.api.postRecipeIngredient(recipeId, body).pipe(map((response: {data: string}) => response.data))
+  addRecipeIngredient(recipeId: number, body: RecipeIngredientBody): Observable<number>{
+    return this.api.postRecipeIngredient(recipeId, body).pipe(map((response: {data: number}) => response.data))
+  }
+
+  removeRecipeIngredient(recipeIngredientId: number): Observable<string>{
+    return this.api.deleteRecipeIngredient(recipeIngredientId).pipe(map((response: {data: string}) => response.data))
   }
 
   constructor(private api: Api) {}

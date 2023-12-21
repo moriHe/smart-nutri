@@ -82,8 +82,9 @@ export class SearchComponent {
           market: result.selectedMarket,
           unit: result.selectedUnit
         }).subscribe({
-          complete: () => {
-            this.openSnackbar({type: "SUCCESS"})
+          next: (response) => {
+            this.openSnackbar({type: "SUCCESS", recipeIngredientId: response})
+
           },
           error: () => {
             this.openSnackbar({type: "ERROR"})
@@ -93,7 +94,7 @@ export class SearchComponent {
     });
   }
 
-  openSnackbar({type}: {type: "SUCCESS" | "ERROR"}) {
+  openSnackbar({type, recipeIngredientId = 0}: {type: "SUCCESS" | "ERROR", recipeIngredientId?: number}) {
     if (type === "SUCCESS") {
       const snackBarRef: MatSnackBarRef<SimpleSnackBar> = this.snackbar.open(
         `Hinzugefügt: ${this.ingredientName}`,
@@ -104,8 +105,7 @@ export class SearchComponent {
         duration: 3000
         })
         snackBarRef.onAction().subscribe(() => {
-          // delete here
-          console.log("test")
+          this.recipesService.removeRecipeIngredient(recipeIngredientId).subscribe()
         });
     } else {
       this.snackbar.open("Etwas ging schief.", "Ok", {
@@ -121,7 +121,7 @@ export class SearchComponent {
     private recipesService: RecipesService,
     private formBuilder: FormBuilder,
     public dialog: MatDialog,
-    private snackbar: MatSnackBar
+    private snackbar: MatSnackBar,
     ) { }
 
 }

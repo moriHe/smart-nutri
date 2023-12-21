@@ -1,3 +1,6 @@
 # search component
 ## Do not allow 0 for amountPerUnit
 ## Rename amountPerPortion to amountPerUnit. Needs to be changed in backend too
+
+# Endpoints
+## all recipe endpoints need familys/familyId in there for permissions

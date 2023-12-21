@@ -25,7 +25,11 @@ export class Api {
     }
 
     postRecipeIngredient(recipeId: number, body: RecipeIngredientBody) {
-        return this.http.post<Response<string>>(`http://localhost:8080/recipes/${recipeId}/recipeingredient`, body)
+        return this.http.post<Response<number>>(`http://localhost:8080/recipes/${recipeId}/recipeingredient`, body)
+    }
+
+    deleteRecipeIngredient(ingredientId: number) {
+        return this.http.delete<Response<string>>(`http://localhost:8080/recipes/recipeingredient/${ingredientId}`)
     }
 
     constructor(

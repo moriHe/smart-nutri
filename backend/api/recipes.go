@@ -47,11 +47,12 @@ func (s *Server) handlePostRecipe(c *gin.Context) {
 func (s *Server) handlePostRecipeIngredient(c *gin.Context) {
 	recipeId := c.Param("id")
 	var payload types.PostRecipeIngredient
-
+	// TODO add test because of change  from err return to int, err return
 	if err := c.BindJSON(&payload); err != nil {
 		errorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Payload malformed"})
 	} else {
-		handleResponse[string](c, "Added recipe ingredient", s.store.PostRecipeIngredient(recipeId, payload))
+		id, err := s.store.PostRecipeIngredient(recipeId, payload)
+		handleResponse[*int](c, id, err)
 	}
 }
 

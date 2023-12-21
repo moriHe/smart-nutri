@@ -3,26 +3,26 @@
     <div class="flex justify-between gap-3">
         <mat-form-field class="w-2/3">
           <mat-label>Menge</mat-label>
-          <input matInput [(ngModel)]="data.amountPerPortion">
+          <input matInput [(ngModel)]="this.amountPerPortion">
         </mat-form-field>
         <mat-form-field class="w-1/3">
             <mat-label>Einheit</mat-label>
-            <mat-select [(ngModel)]="data.selectedUnit" name="units">
-                <mat-option *ngFor="let unit of data.units" [value]="unit">{{unitsService.UnitDisplay[unit]}}</mat-option>
+            <mat-select [(ngModel)]="this.selectedUnit" name="units">
+                <mat-option *ngFor="let unit of this.units" [value]="unit">{{unitsService.UnitDisplay[unit]}}</mat-option>
             </mat-select>
           </mat-form-field>
     </div>
     <div class="flex justify-between gap-3">
         <mat-form-field class="w-2/3">
           <mat-label>Markt</mat-label>
-          <mat-select [(ngModel)]="data.selectedMarket" name="markets">
-              <mat-option *ngFor="let market of data.markets" [value]="market">{{marketsService.MarketDisplay[market]}}</mat-option>
+          <mat-select [(ngModel)]="this.selectedMarket" name="markets">
+              <mat-option *ngFor="let market of this.markets" [value]="market">{{marketsService.MarketDisplay[market]}}</mat-option>
           </mat-select>
         </mat-form-field>
         <div class="flex flex-grow justify-center mt-3">
             <mat-chip-option 
             class=""
-            [selected]="data.isBio" 
+            [selected]="this.isBio" 
             (click)="toggleIsBio()"
             >
             Bio
@@ -33,9 +33,9 @@
 <div mat-dialog-actions>
   <button mat-button (click)="onNoClick()">Abbrechen</button>
   <button mat-button [mat-dialog-close]="{
-    amountPerPortion: data.amountPerPortion, 
-    selectedMarket: data.selectedMarket,
-    selectedUnit: data.selectedUnit,
-    isBio: data.isBio
+    amountPerPortion: this.amountPerPortion, 
+    selectedMarket: this.selectedMarket,
+    selectedUnit: this.selectedUnit,
+    isBio: this.isBio
     }" cdkFocusInitial>Speichern</button>
 </div>

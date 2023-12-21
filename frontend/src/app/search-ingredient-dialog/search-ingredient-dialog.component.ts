@@ -1,20 +1,8 @@
-import { Component, Inject } from "@angular/core";
-import {
-    MAT_DIALOG_DATA,
-    MatDialogRef,
-  } from '@angular/material/dialog';
+import { Component } from "@angular/core";
+import { MatDialogRef } from '@angular/material/dialog';
 import { Markets, Units } from "api/recipes/recipes.interface";
 import { MarketsService } from "services/markets.service";
 import { UnitsService } from "services/units.service";
-
-interface RecipeIngredientDialogData {
-  amountPerPortion: number,
-  isBio: boolean,
-  selectedMarket: Markets,
-  markets: Markets[],
-  selectedUnit: Units,
-  units: Units[],
-}
 
 @Component({
   selector: 'app-search-ingredient-dialog',
@@ -22,17 +10,23 @@ interface RecipeIngredientDialogData {
   styleUrls: ['./search-ingredient-dialog.component.css']
 })
 export class SearchIngredientDialogComponent {
+  amountPerPortion: number = 1
+  isBio: boolean = false
+  selectedMarket: Markets = Markets.NONE
+  markets: Markets[] = Object.values(Markets)
+  selectedUnit: Units = Units.GRAM
+  units: Units[] = Object.values(Units)
+
   onNoClick(): void {
     this.dialogRef.close();
   }
 
   toggleIsBio() {
-    this.data.isBio = !this.data.isBio
+    this.isBio = !this.isBio
   }
 
   constructor(
     public dialogRef: MatDialogRef<SearchIngredientDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: RecipeIngredientDialogData,
     public marketsService: MarketsService,
     public unitsService: UnitsService
   ) {}

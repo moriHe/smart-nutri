@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { FullRecipe, RecipeIngredientBody, RecipeIngredient, ShallowRecipe, RecipeBody } from "./recipes/recipes.interface";
+import { FullRecipe, RecipeIngredientBody, ShallowRecipe, RecipeBody } from "./recipes/recipes.interface";
 
 export interface Response<T> {
     data: T

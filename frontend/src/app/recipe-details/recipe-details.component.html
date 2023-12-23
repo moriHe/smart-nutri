@@ -53,8 +53,9 @@
             [style.display]="accordionItem.expanded ? '' : 'none'"
             >
             <mat-icon
-            class="cursor-pointer"
+             class="cursor-pointer"
              color="warn"
+             (click)="deleteIngredient(ingredient.id)"
              >delete_forever
              </mat-icon>
             </div>

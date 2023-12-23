@@ -29,6 +29,18 @@ export class RecipeDetailsComponent {
     }
   }
 
+  deleteIngredient(ingredientId: number) {
+    this.recipesService.removeRecipeIngredient(ingredientId).subscribe({
+      complete: () => {
+        if (this.recipe) {
+          this.recipesService.getRecipe(this.recipe.id).subscribe((response: FullRecipe) => {
+            this.recipe = response
+          })
+        }
+      }
+    })
+  }
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,

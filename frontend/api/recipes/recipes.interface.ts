@@ -31,7 +31,7 @@ export enum Units {
 }
 
 export interface RecipeIngredient {
-  ingredientId: number,
+  id: number,
   amountPerPortion: number,
   isBio: boolean,
   market: Markets,
@@ -39,7 +39,9 @@ export interface RecipeIngredient {
   unit: Units
 }
 
-export type RecipeIngredientBody = Omit<RecipeIngredient, "name">
+export type RecipeIngredientBody = Omit<RecipeIngredient, "name" | "id"> & {
+  ingredientId: number
+}
 
 export interface FullRecipe extends ShallowRecipe {
   defaultMeal: Meals,

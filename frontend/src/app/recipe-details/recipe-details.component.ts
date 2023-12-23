@@ -41,6 +41,16 @@ export class RecipeDetailsComponent {
     })
   }
 
+  deleteRecipe() {
+    if (this.recipe) {
+      this.recipesService.removeRecipe(this.recipe.id).subscribe({
+        complete: () => {
+          this.router.navigateByUrl("meine-rezepte")
+        }
+      })
+    }
+  }
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,

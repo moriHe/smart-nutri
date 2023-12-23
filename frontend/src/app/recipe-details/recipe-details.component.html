@@ -19,11 +19,22 @@
                         </button>
                 </div>
             </div>
-        <div 
+        <cdk-accordion 
         *ngFor="let ingredient of recipe.recipeIngredients"
         >
-        <div class="flex items-center h-12 my-10 shadow-md py-2 px-5">
-            <p class="w-1/2">{{ingredient.name}}</p>
+        <div 
+        class="mb-5"
+        [class]="accordionItem.expanded ? 'shadow-md' : ''"
+        >
+        <cdk-accordion-item 
+        #accordionItem="cdkAccordionItem"
+        >
+
+        <div 
+        (click)="accordionItem.toggle()"
+        class="flex h-16 items-center py-2 px-5 cursor-pointer" [class]="accordionItem.expanded ? '' : 'shadow-md'"
+        >
+          <p class="w-1/2">{{ingredient.name}}</p>
             <div class="flex flex-grow">
                 <div class="basis-1/5">
                     <p class="text-center px-2 border border-slate-100 rounded-md bg-slate-100">{{ingredient.amountPerPortion}} {{unitsService.UnitDisplay[ingredient.unit]}}</p>
@@ -36,7 +47,21 @@
                 </div>
             </div>
         </div>
-        </div>
+            <div
+            class="flex justify-center py-2 bg-slate-100"
+            role="region"
+            [style.display]="accordionItem.expanded ? '' : 'none'"
+            >
+            <mat-icon
+            class="cursor-pointer"
+             color="warn"
+             >delete_forever
+             </mat-icon>
+            </div>
+        </cdk-accordion-item >
+    </div>
+
+        </cdk-accordion>
     </div>
     </ng-container>
 </section>

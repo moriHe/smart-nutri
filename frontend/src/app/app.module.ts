@@ -21,6 +21,7 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatChipsModule} from '@angular/material/chips';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { CreateRecipeDialogComponent } from './create-recipe-dialog/create-recipe-dialog.component';
+import {CdkAccordionModule} from '@angular/cdk/accordion';
 
 
 
@@ -49,7 +50,8 @@ import { CreateRecipeDialogComponent } from './create-recipe-dialog/create-recip
     MatDialogModule,
     MatSelectModule,
     MatChipsModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    CdkAccordionModule
   ],
   providers: [],
   bootstrap: [AppComponent]

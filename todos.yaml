@@ -10,3 +10,6 @@
 ## all recipe endpoints need familys/familyId in there for permissions
 
 # postrecipeingredient needs ingredientId. should be id to be more consistent in frontend
+
+
+## wenn mealplans.id nicht in mealplans_shoppinglist.mealplanId vorhanden, ist gekauft

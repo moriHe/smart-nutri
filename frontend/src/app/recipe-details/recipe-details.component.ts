@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FullRecipe } from 'api/recipes/recipes.interface';
 import { RecipesService } from 'api/recipes/recipes.service';
@@ -45,6 +46,16 @@ export class RecipeDetailsComponent {
     if (this.recipe) {
       this.recipesService.removeRecipe(this.recipe.id).subscribe({
         complete: () => {
+          if (this.recipe) {
+          this.snackbar.open(
+            `Gelöscht: ${this.recipe!.name}`,
+             undefined, 
+             {
+            horizontalPosition: "start",
+            verticalPosition: "bottom",
+            duration: 1500
+            })
+          }
           this.router.navigateByUrl("meine-rezepte")
         }
       })
@@ -57,7 +68,8 @@ export class RecipeDetailsComponent {
     private recipesService: RecipesService, 
     public mealsService: MealsService,
     public unitsService: UnitsService,
-    public marketsService: MarketsService
+    public marketsService: MarketsService,
+    private snackbar: MatSnackBar,
     ) { }
 
 }

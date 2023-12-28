@@ -5,6 +5,8 @@ import (
 )
 
 type Storage interface {
+	PostUser(fireUid types.PostUser) error // should also return user id
+
 	GetAllRecipes(familyId string) (*[]types.ShallowRecipe, error)
 	GetRecipeById(recipeId string) (*types.FullRecipe, error)
 	PostRecipe(familyId string, payload types.PostRecipe) (*types.Id, error)

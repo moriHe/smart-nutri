@@ -22,6 +22,11 @@ import {MatChipsModule} from '@angular/material/chips';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { CreateRecipeDialogComponent } from './create-recipe-dialog/create-recipe-dialog.component';
 import {CdkAccordionModule} from '@angular/cdk/accordion';
+import { SignupComponent } from './signup/signup.component';
+import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
+import { getAuth, provideAuth } from '@angular/fire/auth';
+import { environment } from 'src/environments/environment.development';
+import { SignupSuccessComponent } from './signup-success/signup-success.component';
 
 
 
@@ -34,7 +39,9 @@ import {CdkAccordionModule} from '@angular/cdk/accordion';
     RecipeDetailsComponent,
     SearchComponent,
     SearchIngredientDialogComponent,
-    CreateRecipeDialogComponent
+    CreateRecipeDialogComponent,
+    SignupComponent,
+    SignupSuccessComponent
   ],
   imports: [
     BrowserModule,
@@ -51,7 +58,9 @@ import {CdkAccordionModule} from '@angular/cdk/accordion';
     MatSelectModule,
     MatChipsModule,
     MatSnackBarModule,
-    CdkAccordionModule
+    CdkAccordionModule,
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideAuth(() => getAuth()),
   ],
   providers: [],
   bootstrap: [AppComponent]

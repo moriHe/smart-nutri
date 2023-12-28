@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Result, TypesenseService } from '../typesense.service';
+import { Result, TypesenseService } from 'api/ingredient-search/typesense.service';
 import { SearchResponseHit } from 'typesense/lib/Typesense/Documents';
 import { RecipesService } from 'api/recipes/recipes.service';
 import { ActivatedRoute } from '@angular/router';

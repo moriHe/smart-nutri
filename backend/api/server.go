@@ -25,6 +25,7 @@ func StartGinServer(store storage.Storage, url string) *gin.Engine {
 	// Use the CORS middleware
 	router.Use(cors.New(config))
 
+	server.userRoutes(router)
 	server.recipeRoutes(router)
 	server.mealPlanRoutes(router)
 	server.mealplanShoppingListRoutes(router)

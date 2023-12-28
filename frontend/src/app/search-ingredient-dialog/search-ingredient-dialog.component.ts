@@ -3,7 +3,6 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { Markets, Units } from "api/recipes/recipes.interface";
 import { MarketsService } from "services/markets.service";
 import { UnitsService } from "services/units.service";
-
 @Component({
   selector: 'app-search-ingredient-dialog',
   templateUrl: './search-ingredient-dialog.component.html',

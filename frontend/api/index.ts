@@ -36,6 +36,12 @@ export class Api {
         return this.http.delete<Response<string>>(`http://localhost:8080/recipes/recipeingredient/${ingredientId}`)
     }
 
+    postUser(fireUid: string) {
+        return this.http.post<Response<{userId: number}>>("http://localhost:8080/user", {
+            fireUid
+        })
+    }
+
     constructor(
         private http: HttpClient
       ) {}

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
+import { Router } from '@angular/router';
 import { UserService } from 'api/user/user.service';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -19,7 +20,9 @@ export class SignupComponent {
     ui.start('#firebaseui-auth-container', {
       callbacks: {
         signInSuccessWithAuthResult: (result) => {
-          this.userService.addUser(result.user.uid).subscribe()
+          this.userService.addUser(result.user.uid).subscribe(() => {
+            this.router.navigate(['/willkommen']);
+          })
           return false
         }
       },
@@ -31,6 +34,7 @@ export class SignupComponent {
   }
 
   constructor(
+    private router: Router,
     private auth: Auth,
     private userService: UserService
     ) { }

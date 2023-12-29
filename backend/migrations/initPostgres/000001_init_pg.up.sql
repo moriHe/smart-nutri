@@ -3,6 +3,21 @@ CREATE TABLE IF NOT EXISTS familys(
     name TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS users(
+    id SERIAL NOT NULL PRIMARY KEY,
+    fire_uid TEXT NOT NULL,
+    active_family_id INTEGER REFERENCES familys (id)
+);
+
+
+
+CREATE TABLE IF NOT EXISTS user_family(
+    id SERIAL NOT NULL PRIMARY KEY,
+    family_id INTEGER NOT NULL REFERENCES familys (id),
+    user_id INTEGER NOT NULL REFERENCES users (id),
+    user_role TEXT NOT NULL 
+);
+
 CREATE TABLE IF NOT EXISTS meals(
     id SERIAL NOT NULL PRIMARY KEY,
     meal TEXT

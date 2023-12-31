@@ -1,6 +1,7 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { FullRecipe, RecipeIngredientBody, ShallowRecipe, RecipeBody } from "./recipes/recipes.interface";
+import { Auth, idToken, authState, User } from '@angular/fire/auth';
 
 export interface Response<T> {
     data: T
@@ -34,6 +35,10 @@ export class Api {
 
     deleteRecipeIngredient(ingredientId: number) {
         return this.http.delete<Response<string>>(`http://localhost:8080/recipes/recipeingredient/${ingredientId}`)
+    }
+
+    fetchUser(idToken: string) {
+        return this.http.get<Response<any>>(`http://localhost:8080/user/${idToken}`)
     }
 
     postUser(fireUid: string) {

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { UserService } from 'api/user/user.service';
 
 @Component({
   selector: 'app-header',
@@ -7,4 +8,9 @@ import { Component } from '@angular/core';
 })
 export class HeaderComponent {
 
+  onLogout() {
+    this.userService.logout()
+  }
+
+  constructor(private userService: UserService) {}
 }

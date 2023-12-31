@@ -39,3 +39,8 @@ export class SignupComponent {
     private userService: UserService
     ) { }
 }
+
+
+// TODO: Logout
+// TODO: Login
+// TODO: Bearer Token

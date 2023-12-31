@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -27,6 +27,9 @@ import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { environment } from 'src/environments/environment.development';
 import { SignupSuccessComponent } from './signup-success/signup-success.component';
+import { UserService } from 'api/user/user.service';
+import { LandingPageComponent } from './landing-page/landing-page.component';
+import { AuthInterceptor } from './auth.interceptor';
 
 
 
@@ -41,7 +44,8 @@ import { SignupSuccessComponent } from './signup-success/signup-success.componen
     SearchIngredientDialogComponent,
     CreateRecipeDialogComponent,
     SignupComponent,
-    SignupSuccessComponent
+    SignupSuccessComponent,
+    LandingPageComponent
   ],
   imports: [
     BrowserModule,
@@ -62,7 +66,13 @@ import { SignupSuccessComponent } from './signup-success/signup-success.componen
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAuth(() => getAuth()),
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

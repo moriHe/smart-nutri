@@ -8,5 +8,5 @@ import { map } from 'rxjs';
 export const fireAuthGuard: CanActivateFn = (route, state) => {
   const userService = inject(UserService)
   
-  return userService.isAuthRegisteredUser()
+  return userService.canActivate()
 };

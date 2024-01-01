@@ -16,10 +16,8 @@ export type DbUser = {
 export class UserService {
   private isInitializedSubject = new BehaviorSubject<boolean>(false);
   isInitialized$ = this.isInitializedSubject.asObservable();
-  
-  authState$ = authState(this.auth);
- 
-  user = this.authState$.pipe(
+   
+  user = authState(this.auth).pipe(
     take(1),
     switchMap((authUser) => {
     if (authUser) {
@@ -31,25 +29,18 @@ export class UserService {
       this.isInitializedSubject.next(true)
     }))
 
-  isAuthRegisteredUser() {
-    return this.authState$.pipe((map(user => {
-      if (user) {
-        return true
-      }
-      return this.router.createUrlTree([""])
-    })))
-  }
-
+    canActivate() {
+      return this.user.pipe((map(user => {
+        if (user) {
+          return true
+        }
+        return this.router.createUrlTree([""])
+      })))
+    }
 
 
   private userIdSubject = new BehaviorSubject<number | null>(null);
   userId$ = this.userIdSubject.asObservable();
-
-  idToken$ = idToken(this.auth);
-  // todo getUser (database)
-  // todo getIsLoggedIn from firebase
-  // use observable to get user id and if logged in 
-
   
   addUser(fireUid: string): Observable<{userId: number}> {
     return this.http.post<Response<{userId: number}>>("http://localhost:8080/user", {

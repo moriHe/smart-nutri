@@ -21,7 +21,7 @@ export class RecipesService {
   }
 
   getRecipe(id: number): Observable<FullRecipe>{
-    return this.recipesEndpointService.fetchRecipe(id)
+    return this.recipesEndpointService.fetchRecipe(id).pipe(map((response: Response<FullRecipe>) => response.data))
   }
 
   addRecipe(body: RecipeBody): Observable<Response<{id: number}> | null>{
@@ -29,15 +29,15 @@ export class RecipesService {
   }
 
   removeRecipe(id: number): Observable<string>{
-    return this.recipesEndpointService.deleteRecipe(id)
+    return this.recipesEndpointService.deleteRecipe(id).pipe(map((response: Response<string>) => response.data))
   }
 
   addRecipeIngredient(recipeId: number, body: RecipeIngredientBody): Observable<number>{
-    return this.recipesEndpointService.postRecipeIngredient(recipeId, body)
+    return this.recipesEndpointService.postRecipeIngredient(recipeId, body).pipe(map((response: Response<number>) => response.data))
   }
 
   removeRecipeIngredient(recipeIngredientId: number): Observable<string>{
-    return this.recipesEndpointService.deleteRecipeIngredient(recipeIngredientId)
+    return this.recipesEndpointService.deleteRecipeIngredient(recipeIngredientId).pipe(map((response: Response<string>) => response.data))
   }
 
   constructor(

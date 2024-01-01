@@ -26,7 +26,7 @@ export class RecipesEndpointsService {
 }
 
 fetchRecipe(id: number) {
-    return this.http.get<Response<FullRecipe>>(`http://localhost:8080/recipes/${id}`).pipe(map((response: Response<FullRecipe>) => response.data))
+    return this.http.get<Response<FullRecipe>>(`http://localhost:8080/recipes/${id}`)
 }
 
 postRecipe(body: RecipeBody) {
@@ -48,15 +48,15 @@ postRecipe(body: RecipeBody) {
 }
 
 deleteRecipe(id: number) {
-    return this.http.delete<Response<string>>(`http://localhost:8080/recipes/${id}`).pipe(map((response: Response<string>) => response.data))
+    return this.http.delete<Response<string>>(`http://localhost:8080/recipes/${id}`)
 }
 
 postRecipeIngredient(recipeId: number, body: RecipeIngredientBody) {
-    return this.http.post<Response<number>>(`http://localhost:8080/recipes/${recipeId}/recipeingredient`, body).pipe(map((response: Response<number>) => response.data))
+    return this.http.post<Response<number>>(`http://localhost:8080/recipes/${recipeId}/recipeingredient`, body)
 }
 
 deleteRecipeIngredient(ingredientId: number) {
-    return this.http.delete<Response<string>>(`http://localhost:8080/recipes/recipeingredient/${ingredientId}`).pipe(map((response: Response<string>) => response.data))
+    return this.http.delete<Response<string>>(`http://localhost:8080/recipes/recipeingredient/${ingredientId}`)
 }
 
 constructor(

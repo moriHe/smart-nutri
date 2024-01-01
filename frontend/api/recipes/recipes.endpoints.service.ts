@@ -2,13 +2,14 @@ import { Injectable } from "@angular/core";
 import { FullRecipe, RecipeBody, RecipeIngredientBody, ShallowRecipe } from "./recipes.interface";
 import { Response } from "api";
 import { HttpClient } from "@angular/common/http";
-import { UserService } from "api/user/user.service";
-import { map, of, switchMap } from "rxjs";
+import { DbUser, UserService } from "api/user/user.service";
+import { Observable, map, of, switchMap } from "rxjs";
 
 @Injectable({
   providedIn: 'root'
 })
 export class RecipesEndpointsService {
+
   fetchRecipes() {
     return this.userService.user.pipe(
         // Wait for user data to be available
@@ -20,8 +21,7 @@ export class RecipesEndpointsService {
             // Handle the case when user data is not available
             return of(null);
           }
-        }),
-        map((response: { data: ShallowRecipe[] } | null) => response ? response.data : [])
+        })
       );
 }
 

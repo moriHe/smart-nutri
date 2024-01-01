@@ -1,21 +1,38 @@
 package api
 
 import (
+	"context"
 	"net/http"
 
+	firebase "firebase.google.com/go/v4"
+	"firebase.google.com/go/v4/auth"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/moriHe/smart-nutri/storage"
 	"github.com/moriHe/smart-nutri/types"
+	"google.golang.org/api/option"
 )
 
 type Server struct {
 	store storage.Storage
+	Auth  *auth.Client
 }
 
-func StartGinServer(store storage.Storage, url string) *gin.Engine {
+func StartGinServer(store storage.Storage, url string) (*gin.Engine, error) {
 	router := gin.Default()
-	server := &Server{store: store}
+	opt := option.WithCredentialsFile("/Users/moritzhettich/prv/smart-nutri/backend/firebase-private-key.json")
+	app, err := firebase.NewApp(context.Background(), nil, opt)
+
+	if err != nil {
+		return nil, err
+	}
+
+	authClient, err := app.Auth(context.Background())
+	if err != nil {
+		return nil, err
+	}
+
+	server := &Server{store: store, Auth: authClient}
 
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{"*"} // Update with your Angular app's origin
@@ -32,7 +49,7 @@ func StartGinServer(store storage.Storage, url string) *gin.Engine {
 
 	router.Run(url)
 
-	return router
+	return router, nil
 
 }
 

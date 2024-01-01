@@ -5,7 +5,9 @@ import (
 )
 
 type Storage interface {
-	PostUser(fireUid types.PostUser) (*int, error) // should also return user id
+	GetUser(fireUid string) (*types.User, error)
+	// header instead of body?
+	PostUser(fireUid types.PostUser) (*int, error)
 
 	GetAllRecipes(familyId string) (*[]types.ShallowRecipe, error)
 	GetRecipeById(recipeId string) (*types.FullRecipe, error)

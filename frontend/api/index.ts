@@ -37,8 +37,8 @@ export class Api {
         return this.http.delete<Response<string>>(`http://localhost:8080/recipes/recipeingredient/${ingredientId}`)
     }
 
-    fetchUser(idToken: string) {
-        return this.http.get<Response<any>>(`http://localhost:8080/user/${idToken}`)
+    fetchUser() {
+        return this.http.get<Response<any>>("http://localhost:8080/user")
     }
 
     postUser(fireUid: string) {

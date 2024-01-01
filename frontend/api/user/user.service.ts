@@ -15,7 +15,10 @@ export class UserService {
  
   user = this.authState$.pipe(
     take(1),
-    switchMap((user) => {
+    switchMap((authUser) => {
+    if (authUser) {
+      return this.api.fetchUser()
+    }
     return of(null)
     }),
     finalize(() => this.isInitializedSubject.next(true)))

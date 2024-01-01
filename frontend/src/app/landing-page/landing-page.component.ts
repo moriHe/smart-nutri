@@ -18,7 +18,6 @@ export class LandingPageComponent {
   onLogin() {
     if (this.loginInput.value.email && this.loginInput.value.password) {
       signInWithEmailAndPassword(this.auth, this.loginInput.value.email, this.loginInput.value.password).then((result) => {
-        console.log(result)
       })
     }
   }

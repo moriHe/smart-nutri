@@ -9,9 +9,7 @@ import { UserService } from 'api/user/user.service';
 })
 export class SignupSuccessComponent {
 
-  // authState = this.userService.authState$.subscribe((value) => {
-  //   console.log(value)
-  // })
+
   
   constructor(private userService: UserService) {}
 }

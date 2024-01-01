@@ -1,7 +1,13 @@
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { FullRecipe, RecipeIngredientBody, ShallowRecipe, RecipeBody } from "./recipes/recipes.interface";
 import { Auth, idToken, authState, User } from '@angular/fire/auth';
+import { of, switchMap, take } from "rxjs";
+
+type DbUser = {
+    id: number,
+    activeFamilyId: number | null
+}
 
 export interface Response<T> {
     data: T
@@ -13,8 +19,12 @@ export interface Response<T> {
     providedIn: 'root'
   })
 export class Api {
+    authState$ = authState(this.auth);
+    private user!: DbUser | null
+    
+
     fetchRecipes() {
-        return this.http.get<Response<ShallowRecipe[]>>("http://localhost:8080/familys/1/recipes")
+        return this.http.get<Response<ShallowRecipe[]>>(`http://localhost:8080/familys/${this.user?.activeFamilyId}/recipes`)
     }
 
     fetchRecipe(id: number) {
@@ -22,7 +32,7 @@ export class Api {
     }
 
     postRecipe(body: RecipeBody) {
-        return this.http.post<Response<{id: number}>>(`http://localhost:8080/familys/1/recipes`, body)
+        return this.http.post<Response<{id: number}>>(`http://localhost:8080/familys/${this.user?.activeFamilyId}/recipes`, body)
     }
 
     deleteRecipe(id: number) {
@@ -38,7 +48,7 @@ export class Api {
     }
 
     fetchUser() {
-        return this.http.get<Response<any>>("http://localhost:8080/user")
+        return this.http.get<Response<DbUser>>("http://localhost:8080/user")
     }
 
     postUser(fireUid: string) {
@@ -48,6 +58,20 @@ export class Api {
     }
 
     constructor(
+        private auth: Auth,
         private http: HttpClient
-      ) {}
+      ) {
+        this.authState$.pipe(
+            take(1),
+            switchMap((authUser) => {
+            if (authUser) {
+              return this.fetchUser()
+            }
+            return of(null)
+            })).subscribe((response) => {
+                if (response) {
+                    this.user = response?.data
+                }
+            })
+      }
 }

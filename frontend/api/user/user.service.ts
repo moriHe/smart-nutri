@@ -22,11 +22,7 @@ export class UserService {
     return of(null)
     }),
     finalize(() => this.isInitializedSubject.next(true)))
-    .subscribe((user) => {
-      console.log(user)
-      return user
-    })
-  
+    
   isAuthRegisteredUser() {
     return this.authState$.pipe((map(user => {
       if (user) {

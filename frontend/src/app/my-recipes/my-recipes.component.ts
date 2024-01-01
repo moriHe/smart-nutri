@@ -36,8 +36,10 @@ export class MyRecipesComponent {
           defaultMeal: result.selectedMeal,
           defaultPortions: Number(result.defaultPortions),
           recipeIngredients: []
-        }).subscribe((response: Response<{id: number}>) => {
+        }).subscribe((response: Response<{id: number}> | null) => {
+          if (response) {
           this.router.navigateByUrl(`rezept/${response.data.id}`)
+        }
         })
       }
     })

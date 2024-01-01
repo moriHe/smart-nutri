@@ -1,8 +1,14 @@
 import { Injectable, signal } from '@angular/core';
-import { Api, Response } from 'api';
+import { Response } from 'api';
 import { BehaviorSubject, Observable, finalize, map, of, switchMap, take } from 'rxjs';
 import { Auth, idToken, authState, User } from '@angular/fire/auth';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+
+export type DbUser = {
+  id: number,
+  activeFamilyId: number | null
+}
 
 @Injectable({
   providedIn: 'root'
@@ -17,12 +23,14 @@ export class UserService {
     take(1),
     switchMap((authUser) => {
     if (authUser) {
-      return this.api.fetchUser()
+      return this.http.get<Response<DbUser>>("http://localhost:8080/user")
     }
     return of(null)
     }),
-    finalize(() => this.isInitializedSubject.next(true)))
-    
+    finalize(() => {
+      this.isInitializedSubject.next(true)
+    }))
+
   isAuthRegisteredUser() {
     return this.authState$.pipe((map(user => {
       if (user) {
@@ -44,7 +52,9 @@ export class UserService {
 
   
   addUser(fireUid: string): Observable<{userId: number}> {
-    return this.api.postUser(fireUid).pipe(map((response: Response<{userId: number}>) => {
+    return this.http.post<Response<{userId: number}>>("http://localhost:8080/user", {
+      fireUid
+  }).pipe(map((response: Response<{userId: number}>) => {
       const data = response.data
       this.userIdSubject.next(data.userId);
        
@@ -59,5 +69,5 @@ export class UserService {
     })
   }
 
-  constructor(private api: Api, private auth: Auth, private router: Router) { }
+  constructor(private http: HttpClient, private auth: Auth, private router: Router) { }
 }

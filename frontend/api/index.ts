@@ -1,13 +1,13 @@
-import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-import { FullRecipe, RecipeIngredientBody, ShallowRecipe, RecipeBody } from "./recipes/recipes.interface";
-import { Auth, idToken, authState, User } from '@angular/fire/auth';
-import { of, switchMap, take } from "rxjs";
+// import { HttpClient } from "@angular/common/http";
+// import { Injectable } from "@angular/core";
+// import { FullRecipe, RecipeIngredientBody, ShallowRecipe, RecipeBody } from "./recipes/recipes.interface";
+// import { Auth, idToken, authState, User } from '@angular/fire/auth';
+// import { of, switchMap, take } from "rxjs";
 
-type DbUser = {
-    id: number,
-    activeFamilyId: number | null
-}
+// type DbUser = {
+//     id: number,
+//     activeFamilyId: number | null
+// }
 
 export interface Response<T> {
     data: T
@@ -15,63 +15,66 @@ export interface Response<T> {
     status: number
 }
 
-@Injectable({
-    providedIn: 'root'
-  })
-export class Api {
-    authState$ = authState(this.auth);
-    private user!: DbUser | null
+// @Injectable({
+//     providedIn: 'root'
+//   })
+// export class Api {
+//     authState$ = authState(this.auth);
+//     private user!: DbUser | null
+//     userSubscription = this.authState$.pipe(
+//         take(1),
+//         switchMap((authUser) => {
+//         if (authUser) {
+//           return this.fetchUser()
+//         }
+//         return of(null)
+//         })).subscribe((response) => {
+//             console.log("test")
+//             if (response) {
+//                 this.user = response?.data
+//             }
+//         })
     
+//         ngOnDestroy(): void {
+//             this.userSubscription.unsubscribe()
+//         }
 
-    fetchRecipes() {
-        return this.http.get<Response<ShallowRecipe[]>>(`http://localhost:8080/familys/${this.user?.activeFamilyId}/recipes`)
-    }
+//     fetchRecipes() {
+//         return 
+//     }
 
-    fetchRecipe(id: number) {
-        return this.http.get<Response<FullRecipe>>(`http://localhost:8080/recipes/${id}`)
-    }
+//     fetchRecipe(id: number) {
+//         return 
+//     }
 
-    postRecipe(body: RecipeBody) {
-        return this.http.post<Response<{id: number}>>(`http://localhost:8080/familys/${this.user?.activeFamilyId}/recipes`, body)
-    }
+//     postRecipe(body: RecipeBody) {
+//         return 
+//     }
 
-    deleteRecipe(id: number) {
-        return this.http.delete<Response<string>>(`http://localhost:8080/recipes/${id}`)
-    }
+//     deleteRecipe(id: number) {
+//         return 
+//     }
 
-    postRecipeIngredient(recipeId: number, body: RecipeIngredientBody) {
-        return this.http.post<Response<number>>(`http://localhost:8080/recipes/${recipeId}/recipeingredient`, body)
-    }
+//     postRecipeIngredient(recipeId: number, body: RecipeIngredientBody) {
+//         return 
+//     }
 
-    deleteRecipeIngredient(ingredientId: number) {
-        return this.http.delete<Response<string>>(`http://localhost:8080/recipes/recipeingredient/${ingredientId}`)
-    }
+//     deleteRecipeIngredient(ingredientId: number) {
+//         return 
+//     }
 
-    fetchUser() {
-        return this.http.get<Response<DbUser>>("http://localhost:8080/user")
-    }
+//     fetchUser() {
+//         return 
+//     }
 
-    postUser(fireUid: string) {
-        return this.http.post<Response<{userId: number}>>("http://localhost:8080/user", {
-            fireUid
-        })
-    }
+//     postUser(fireUid: string) {
+//         return this.http.post<Response<{userId: number}>>("http://localhost:8080/user", {
+//             fireUid
+//         })
+//     }
 
-    constructor(
-        private auth: Auth,
-        private http: HttpClient
-      ) {
-        this.authState$.pipe(
-            take(1),
-            switchMap((authUser) => {
-            if (authUser) {
-              return this.fetchUser()
-            }
-            return of(null)
-            })).subscribe((response) => {
-                if (response) {
-                    this.user = response?.data
-                }
-            })
-      }
-}
+//     constructor(
+//         private auth: Auth,
+//         private http: HttpClient
+//       ) {}
+// }

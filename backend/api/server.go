@@ -2,14 +2,13 @@ package api
 
 import (
 	"context"
-	"net/http"
 
 	firebase "firebase.google.com/go/v4"
 	"firebase.google.com/go/v4/auth"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/moriHe/smart-nutri/api/middleware"
 	"github.com/moriHe/smart-nutri/storage"
-	"github.com/moriHe/smart-nutri/types"
 	"google.golang.org/api/option"
 )
 
@@ -41,6 +40,7 @@ func StartGinServer(store storage.Storage, url string) (*gin.Engine, error) {
 
 	// Use the CORS middleware
 	router.Use(cors.New(config))
+	router.Use(middleware.AuthMiddleware(store, authClient))
 
 	server.userRoutes(router)
 	server.recipeRoutes(router)
@@ -51,30 +51,4 @@ func StartGinServer(store storage.Storage, url string) (*gin.Engine, error) {
 
 	return router, nil
 
-}
-
-func errorResponse(c *gin.Context, err error) bool {
-	if err != nil {
-		if requestErr, ok := err.(*types.RequestError); ok {
-			c.JSON(requestErr.Status, gin.H{"error": requestErr})
-		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Something went wrong"})
-		}
-		return true
-	}
-
-	return false
-}
-
-func handleResponse[T any](c *gin.Context, successResponse T, err error) {
-	if err != nil {
-		if requestErr, ok := err.(*types.RequestError); ok {
-			c.JSON(requestErr.Status, gin.H{"error": requestErr})
-		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Something went wrong"})
-		}
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"data": successResponse})
 }

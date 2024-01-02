@@ -2,8 +2,6 @@ import { Injectable } from '@angular/core';
 import { Response } from 'api';
 import { Observable, Subscription, map, of, switchMap } from 'rxjs';
 import { FullRecipe, RecipeBody, RecipeIngredientBody, ShallowRecipe } from './recipes.interface';
-import { HttpClient } from '@angular/common/http';
-import { DbUser, UserService } from 'api/user/user.service';
 import { RecipesEndpointsService } from './recipes.endpoints.service';
 
 

@@ -64,3 +64,38 @@ constructor(
     private http: HttpClient
   ) {}
 }
+
+
+// TODO Streamline api for recipes and other so it can get more generic
+// user/:userId/familys/:familyId
+// import { Observable, of } from 'rxjs';
+// import { switchMap } from 'rxjs/operators';
+// import { HttpClient } from '@angular/common/http';
+// import { Response } from 'api';
+// import { DbUser, UserService } from 'api/user/user.service';
+// import { ShallowRecipe } from './recipes.interface';
+
+// @Injectable({
+//   providedIn: 'root'
+// })
+// export class GenericService {
+//   constructor(private userService: UserService, private http: HttpClient) {}
+
+//   fetchData<T>(url: string): Observable<Response<T> | null> {
+//     return this.userService.user.pipe(
+//       switchMap((user) => {
+//         if (user) {
+//           const apiUrl = `http://localhost:8080/familys/${user.data.activeFamilyId}${url}`;
+//           return this.http.get<Response<T>>(apiUrl);
+//         } else {
+//           return of(null);
+//         }
+//       })
+//     );
+//   }
+
+//   // Example usage for fetching recipes
+//   fetchRecipes(): Observable<Response<ShallowRecipe[]>> {
+//     return this.fetchData<ShallowRecipe[]>('/recipes');
+//   }
+// }

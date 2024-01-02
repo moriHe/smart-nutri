@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/moriHe/smart-nutri/api/responses"
 	"github.com/moriHe/smart-nutri/types"
 )
 
@@ -17,19 +18,19 @@ func (s *Server) handleGetMealplanItemsShoppingList(c *gin.Context) {
 	familyId := c.Param("familyId")
 	mealplanItemsShoppingList, err := s.store.GetMealPlanItemsShoppingList(familyId)
 
-	handleResponse[*[]types.ShoppingListMealplanItem](c, mealplanItemsShoppingList, err)
+	responses.HandleResponse[*[]types.ShoppingListMealplanItem](c, mealplanItemsShoppingList, err)
 }
 
 func (s *Server) handlePostMealPlanItemShoppingList(c *gin.Context) {
 	payload := types.PostShoppingListMealplanItem{FamilyId: c.Param("familyId"), MealplanId: c.Param("mealplanId")}
 	if err := c.BindJSON(&payload); err != nil {
-		errorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Payload malformed"})
+		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Payload malformed"})
 	} else {
-		handleResponse[string](c, "Added mealplan item to shopping list", s.store.PostMealPlanItemShoppingList(payload))
+		responses.HandleResponse[string](c, "Added mealplan item to shopping list", s.store.PostMealPlanItemShoppingList(payload))
 	}
 }
 
 func (s *Server) handleDeleteMealPlanItemShoppingList(c *gin.Context) {
 	id := c.Param("id")
-	handleResponse[string](c, "Deleted shopping list item", s.store.DeleteMealPlanItemShoppingList(id))
+	responses.HandleResponse[string](c, "Deleted shopping list item", s.store.DeleteMealPlanItemShoppingList(id))
 }

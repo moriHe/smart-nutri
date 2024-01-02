@@ -40,9 +40,9 @@ func StartGinServer(store storage.Storage, url string) (*gin.Engine, error) {
 
 	// Use the CORS middleware
 	router.Use(cors.New(config))
-	router.Use(middleware.AuthMiddleware(store, authClient))
 
 	server.userRoutes(router)
+	router.Use(middleware.AuthMiddleware(store, authClient))
 	server.recipeRoutes(router)
 	server.mealPlanRoutes(router)
 	server.mealplanShoppingListRoutes(router)

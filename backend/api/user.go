@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	contextmethods "github.com/moriHe/smart-nutri/api/contextMethods"
+	"github.com/moriHe/smart-nutri/api/middleware"
 	"github.com/moriHe/smart-nutri/api/responses"
 	"github.com/moriHe/smart-nutri/types"
 )
@@ -18,8 +19,10 @@ func extractBearerToken(authHeader string) string {
 }
 
 func (s *Server) userRoutes(r *gin.Engine) {
-	r.GET("/user", s.handleGetUser)
-	r.POST("/user", s.handlePostUser)
+	userGroup := r.Group("/user")
+	userGroup.POST("", s.handlePostUser)
+	userGroup.Use(middleware.AuthMiddleware(s.store, s.Auth))
+	userGroup.GET("", s.handleGetUser)
 }
 
 func (s *Server) handleGetUser(c *gin.Context) {

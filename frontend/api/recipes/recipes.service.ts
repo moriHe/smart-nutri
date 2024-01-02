@@ -14,7 +14,7 @@ export class RecipesService {
 
   getRecipes(): Observable<ShallowRecipe[]> {
     return this.recipesEndpointService.fetchRecipes().pipe(
-      map((response: { data: ShallowRecipe[] } | null) => response ? response.data : [])
+      map((response: { data: ShallowRecipe[] }) => response ? response.data : [])
     )
   }
 

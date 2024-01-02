@@ -1,5 +1,5 @@
 <div class="flex flex-col min-h-screen">
-  <ng-container *ngIf="this.isInitializedSubscription else loadingTemplate">
+  <ng-container *ngIf="this.isInitialized$ else loadingTemplate">
   <app-header class="flex-grow bg-gray-200"></app-header>
   <main class="h-90vh">
     <router-outlet></router-outlet>

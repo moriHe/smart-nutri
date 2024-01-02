@@ -11,8 +11,8 @@ import (
 	"github.com/moriHe/smart-nutri/types"
 )
 
-func (s *Storage) GetAllRecipes(familyId string) (*[]types.ShallowRecipe, error) {
-	rows, _ := s.Db.Query(context.Background(), "select id, name from recipes where family_id=$1", familyId)
+func (s *Storage) GetAllRecipes(user *types.User) (*[]types.ShallowRecipe, error) {
+	rows, _ := s.Db.Query(context.Background(), "select id, name from recipes where family_id=$1", user.ActiveFamilyId)
 
 	defer rows.Close()
 

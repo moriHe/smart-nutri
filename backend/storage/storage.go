@@ -9,7 +9,7 @@ type Storage interface {
 	// header instead of body?
 	PostUser(fireUid types.PostUser) (*int, error)
 
-	GetAllRecipes(familyId string) (*[]types.ShallowRecipe, error)
+	GetAllRecipes(user *types.User) (*[]types.ShallowRecipe, error)
 	GetRecipeById(recipeId string) (*types.FullRecipe, error)
 	PostRecipe(familyId string, payload types.PostRecipe) (*types.Id, error)
 	PostRecipeIngredient(recipeId string, payload types.PostRecipeIngredient) (*int, error)

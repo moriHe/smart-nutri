@@ -4,15 +4,16 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	contextmethods "github.com/moriHe/smart-nutri/api/contextMethods"
 	"github.com/moriHe/smart-nutri/api/responses"
 	"github.com/moriHe/smart-nutri/types"
 )
 
 func (s *Server) recipeRoutes(r *gin.Engine) {
-	r.GET("/familys/:familyId/recipes", s.handleGetAllRecipes)
+	r.GET("/recipes", s.handleGetAllRecipes)
 	// todo familyId
 	r.GET("/recipes/:id", s.handleGetRecipeById)
-	r.POST("/familys/:familyId/recipes", s.handlePostRecipe)
+	r.POST("/recipes", s.handlePostRecipe)
 	r.POST("/recipes/:id/recipeingredient", s.handlePostRecipeIngredient)
 	r.PATCH("/recipes/:id", s.handlePatchRecipeName)
 	r.DELETE("/recipes/:id", s.handleDeleteRecipe)
@@ -20,8 +21,16 @@ func (s *Server) recipeRoutes(r *gin.Engine) {
 }
 
 func (s *Server) handleGetAllRecipes(c *gin.Context) {
-	familyId := c.Param("familyId")
-	recipes, err := s.store.GetAllRecipes(familyId)
+	user, err := contextmethods.GetUserFromContext(c)
+
+	if err != nil {
+		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Invalid Date. Use format YYYY-MM-DD"})
+		return
+	}
+	if user.ActiveFamilyId == nil {
+		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "No Family"})
+	}
+	recipes, err := s.store.GetAllRecipes(user)
 	responses.HandleResponse[*[]types.ShallowRecipe](c, recipes, err)
 }
 

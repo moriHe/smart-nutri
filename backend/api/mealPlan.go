@@ -10,9 +10,9 @@ import (
 )
 
 func (s *Server) mealPlanRoutes(r *gin.Engine) {
-	r.GET("/familys/:familyId/mealplan/:date", s.handleGetMealPlan)
+	r.GET("/mealplan/:date", s.handleGetMealPlan)
 	r.GET("/mealplan/item/:id", s.handleGetMealPlanItem)
-	r.POST("/familys/:familyId/mealplan", s.handlePostMealPlanItem)
+	r.POST("/mealplan", s.handlePostMealPlanItem)
 	r.DELETE("/mealplan/item/:id", s.handleDeleteMealPlanItem)
 }
 

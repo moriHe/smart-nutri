@@ -13,29 +13,7 @@ export type DbUser = {
 @Injectable({
   providedIn: 'root'
 })
-export class UserService {
-  private isInitializedSubject = new BehaviorSubject<boolean>(false);
-  isInitialized$ = this.isInitializedSubject.asObservable();
-   
-  user = authState(this.auth).pipe(
-    take(1),
-    finalize(() => {
-      this.isInitializedSubject.next(true)
-    }))
-
-    canActivate() {
-      return this.user.pipe((map(user => {
-        if (user) {
-          return true
-        }
-        return this.router.createUrlTree([""])
-      })))
-    }
-
-
-  private userIdSubject = new BehaviorSubject<number | null>(null);
-  userId$ = this.userIdSubject.asObservable();
-  
+export class UserService {   
   addUser(fireUid: string): Observable<{userId: number}> {
     return this.http.post<Response<{userId: number}>>("http://localhost:8080/user", {
       fireUid

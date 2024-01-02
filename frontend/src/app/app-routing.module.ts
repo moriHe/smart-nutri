@@ -7,16 +7,17 @@ import { SearchComponent } from './search/search.component';
 import { SignupComponent } from './signup/signup.component';
 import { SignupSuccessComponent } from './signup-success/signup-success.component';
 import { LandingPageComponent } from './landing-page/landing-page.component';
-import { fireAuthGuard } from 'api/user/fire-auth.guard';
+import { authGuard } from 'guards/auth.guard';
+import { noUserGuard } from 'guards/no-user.guard';
 
 const routes: Routes = [
   { path: 'heroes', component: HeroesComponent },
-  {path: "", component: LandingPageComponent},
-  {path: "meine-rezepte", component: MyRecipesComponent, canActivate: [fireAuthGuard]},
-  {path: "rezept/:id", component: RecipeDetailsComponent},
-  {path: "suche/:recipeId", component: SearchComponent},
-  {path: "registrieren", component: SignupComponent},
-  {path: "willkommen", component: SignupSuccessComponent}
+  {path: "", component: LandingPageComponent, canActivate: [noUserGuard]},
+  {path: "meine-rezepte", component: MyRecipesComponent, canActivate: [authGuard]},
+  {path: "rezept/:id", component: RecipeDetailsComponent, canActivate: [authGuard]},
+  {path: "suche/:recipeId", component: SearchComponent, canActivate: [authGuard]},
+  {path: "registrieren", component: SignupComponent, canActivate: [noUserGuard]},
+  {path: "willkommen", component: SignupSuccessComponent, canActivate: [authGuard]}
 ];
 
 @NgModule({

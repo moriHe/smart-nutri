@@ -10,13 +10,14 @@ import { LandingPageComponent } from './landing-page/landing-page.component';
 import { authGuard } from 'guards/auth.guard';
 import { noUserGuard } from 'guards/no-user.guard';
 import { noFamilyGuard } from 'guards/no-family.guard';
+import { familyGuard } from 'guards/family.guard';
 
 const routes: Routes = [
   { path: 'heroes', component: HeroesComponent },
   {path: "", component: LandingPageComponent, canActivate: [noUserGuard]},
-  {path: "meine-rezepte", component: MyRecipesComponent, canActivate: [authGuard]},
-  {path: "rezept/:id", component: RecipeDetailsComponent, canActivate: [authGuard]},
-  {path: "suche/:recipeId", component: SearchComponent, canActivate: [authGuard]},
+  {path: "meine-rezepte", component: MyRecipesComponent, canActivate: [authGuard, familyGuard]},
+  {path: "rezept/:id", component: RecipeDetailsComponent, canActivate: [authGuard, familyGuard]},
+  {path: "suche/:recipeId", component: SearchComponent, canActivate: [authGuard, familyGuard]},
   {path: "registrieren", component: SignupComponent, canActivate: [noUserGuard]},
   {path: "willkommen", component: SignupSuccessComponent, canActivate: [authGuard, noFamilyGuard]}
 ];

@@ -7,14 +7,13 @@ import (
 	"firebase.google.com/go/v4/auth"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/moriHe/smart-nutri/api/middleware"
 	"github.com/moriHe/smart-nutri/storage"
 	"google.golang.org/api/option"
 )
 
 type Server struct {
 	store storage.Storage
-	Auth  *auth.Client
+	auth  *auth.Client
 }
 
 func StartGinServer(store storage.Storage, url string) (*gin.Engine, error) {
@@ -31,7 +30,7 @@ func StartGinServer(store storage.Storage, url string) (*gin.Engine, error) {
 		return nil, err
 	}
 
-	server := &Server{store: store, Auth: authClient}
+	server := &Server{store: store, auth: authClient}
 
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{"*"} // Update with your Angular app's origin
@@ -42,7 +41,7 @@ func StartGinServer(store storage.Storage, url string) (*gin.Engine, error) {
 	router.Use(cors.New(config))
 
 	server.userRoutes(router)
-	router.Use(middleware.AuthMiddleware(store, authClient))
+	router.Use(server.AuthMiddleWare())
 	server.recipeRoutes(router)
 	server.mealPlanRoutes(router)
 	server.mealplanShoppingListRoutes(router)

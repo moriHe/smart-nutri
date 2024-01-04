@@ -20,7 +20,7 @@ export class SignupComponent {
     ui.start('#firebaseui-auth-container', {
       callbacks: {
         signInSuccessWithAuthResult: (result) => {
-          this.userService.addUser(result.user.uid).subscribe(() => {
+          this.userService.addUser().subscribe(() => {
             this.router.navigate(['/willkommen']);
           })
           return false

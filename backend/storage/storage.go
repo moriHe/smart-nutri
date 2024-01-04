@@ -7,7 +7,7 @@ import (
 type Storage interface {
 	GetUser(fireUid string) (*types.User, error)
 	// header instead of body?
-	PostUser(fireUid types.PostUser) (*int, error)
+	PostUser(fireUid string) (*int, error)
 
 	GetAllRecipes(user *types.User) (*[]types.ShallowRecipe, error)
 	GetRecipeById(recipeId string) (*types.FullRecipe, error)

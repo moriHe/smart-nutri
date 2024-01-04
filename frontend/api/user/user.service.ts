@@ -1,23 +1,15 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Response } from 'api';
-import { BehaviorSubject, Observable, finalize, map, take } from 'rxjs';
-import { Auth, authState } from '@angular/fire/auth';
+import { Observable, map } from 'rxjs';
+import { Auth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-
-export type DbUser = {
-  id: number,
-  activeFamilyId: number | null
-}
-
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {   
-  addUser(fireUid: string): Observable<{userId: number}> {
-    return this.http.post<Response<{userId: number}>>("http://localhost:8080/user", {
-      fireUid
-  }).pipe(map((response: Response<{userId: number}>) => {
+  addUser(): Observable<{userId: number}> {
+    return this.http.post<Response<{userId: number}>>("http://localhost:8080/user", {}).pipe(map((response: Response<{userId: number}>) => {
       return response.data
     }))
   }

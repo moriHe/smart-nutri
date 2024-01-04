@@ -5,23 +5,14 @@ import (
 
 	"github.com/gin-gonic/gin"
 	contextmethods "github.com/moriHe/smart-nutri/api/contextMethods"
-	"github.com/moriHe/smart-nutri/api/middleware"
 	"github.com/moriHe/smart-nutri/api/responses"
 	"github.com/moriHe/smart-nutri/types"
 )
 
-func extractBearerToken(authHeader string) string {
-	const bearerPrefix = "Bearer "
-	if len(authHeader) > len(bearerPrefix) && authHeader[:len(bearerPrefix)] == bearerPrefix {
-		return authHeader[len(bearerPrefix):]
-	}
-	return ""
-}
-
 func (s *Server) userRoutes(r *gin.Engine) {
 	userGroup := r.Group("/user")
 	userGroup.POST("", s.handlePostUser)
-	userGroup.Use(middleware.AuthMiddleware(s.store, s.Auth))
+	userGroup.Use(s.AuthMiddleWare())
 	userGroup.GET("", s.handleGetUser)
 }
 
@@ -31,12 +22,13 @@ func (s *Server) handleGetUser(c *gin.Context) {
 }
 
 func (s *Server) handlePostUser(c *gin.Context) {
-	var payload types.PostUser
-
-	if err := c.BindJSON(&payload); err != nil {
-		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: err.Error()})
+	fireUid := s.GetIdToken(c)
+	if fireUid == "" {
+		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusUnauthorized, Msg: "Not authorized"})
+		c.Abort()
+		return
 	} else {
-		userId, err := s.store.PostUser(payload)
+		userId, err := s.store.PostUser(fireUid)
 		responses.HandleResponse[*int](c, userId, err)
 	}
 

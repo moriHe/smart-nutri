@@ -34,10 +34,10 @@ func (s *Storage) GetUser(fireUid string) (*types.User, error) {
 	return marshalUser(&user)
 }
 
-func (s *Storage) PostUser(payload types.PostUser) (*int, error) {
+func (s *Storage) PostUser(fireUid string) (*int, error) {
 	var userId int
 
-	err := s.Db.QueryRow(context.Background(), "insert into users (fire_uid) values ($1) returning id", payload.FireUid).Scan(&userId)
+	err := s.Db.QueryRow(context.Background(), "insert into users (fire_uid) values ($1) returning id", fireUid).Scan(&userId)
 
 	if err != nil {
 		return nil, &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Step 1: Failed to create user: %s", err)}

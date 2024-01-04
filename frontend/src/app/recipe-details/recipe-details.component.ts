@@ -32,8 +32,7 @@ export class RecipeDetailsComponent {
 
   deleteIngredient(ingredientId: number, ingredientName: string) {
     this.recipesService.removeRecipeIngredient(ingredientId).subscribe({
-      complete: () => {
-        console.log(this.recipe)
+      next: () => {
         if (this.recipe) {
           this.snackbar.open(
             `Gelöscht: ${ingredientName}`,

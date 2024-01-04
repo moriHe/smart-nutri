@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef} from '@angular/core';
 import { UserService } from 'api/user/user.service';
 import { BehaviorSubject, finalize, take } from 'rxjs';
 import {Auth, authState} from '@angular/fire/auth'
@@ -10,19 +10,23 @@ import {Auth, authState} from '@angular/fire/auth'
 })
 export class AppComponent {
   title = 'Smart Nutri';
+  isInitialized = false
   
-  private isInitializedSubject = new BehaviorSubject<boolean>(false);
-  isInitialized$ = this.isInitializedSubject.asObservable();
-  
+  // might not needed. seems to be working without
   authSubscription = authState(this.auth).pipe(
     take(1),
     finalize(() => {
-      this.isInitializedSubject.next(true)
+      this.isInitialized = true
+      this.cdr.detectChanges()
     })).subscribe()
 
   ngOnDestroy(): void {
     this.authSubscription.unsubscribe()
   }
 
-  constructor(public userService: UserService, private auth: Auth) {}
+  constructor(
+    public userService: UserService, 
+    private auth: Auth,
+    private cdr: ChangeDetectorRef
+    ) {}
 }

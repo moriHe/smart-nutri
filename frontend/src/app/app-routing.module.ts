@@ -9,6 +9,7 @@ import { SignupSuccessComponent } from './signup-success/signup-success.componen
 import { LandingPageComponent } from './landing-page/landing-page.component';
 import { authGuard } from 'guards/auth.guard';
 import { noUserGuard } from 'guards/no-user.guard';
+import { noFamilyGuard } from 'guards/no-family.guard';
 
 const routes: Routes = [
   { path: 'heroes', component: HeroesComponent },
@@ -17,7 +18,7 @@ const routes: Routes = [
   {path: "rezept/:id", component: RecipeDetailsComponent, canActivate: [authGuard]},
   {path: "suche/:recipeId", component: SearchComponent, canActivate: [authGuard]},
   {path: "registrieren", component: SignupComponent, canActivate: [noUserGuard]},
-  {path: "willkommen", component: SignupSuccessComponent, canActivate: [authGuard]}
+  {path: "willkommen", component: SignupSuccessComponent, canActivate: [authGuard, noFamilyGuard]}
 ];
 
 @NgModule({

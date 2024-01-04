@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS familys(
     id SERIAL NOT NULL PRIMARY KEY,
-    name TEXT NOT NULL
+    name TEXT NOT NULL,
+    code TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS users(
@@ -11,7 +12,7 @@ CREATE TABLE IF NOT EXISTS users(
 
 
 
-CREATE TABLE IF NOT EXISTS user_family(
+CREATE TABLE IF NOT EXISTS users_familys(
     id SERIAL NOT NULL PRIMARY KEY,
     family_id INTEGER NOT NULL REFERENCES familys (id),
     user_id INTEGER NOT NULL REFERENCES users (id),
@@ -1248,28 +1249,9 @@ SELECT setval(pg_get_serial_sequence('units', 'id'), max(id)) FROM units;
 INSERT INTO meals (id, meal) VALUES (1, 'BREAKFAST'), (2, 'LUNCH'), (3, 'DINNER'), (4, 'NONE');
 SELECT setval(pg_get_serial_sequence('meals', 'id'), max(id)) FROM meals;
 
--- Generate some sample data
-INSERT INTO familys ("id", "name") VALUES
-(1, 'Eberhart'),
-(2, 'Krakauer');
-SELECT setval(pg_get_serial_sequence('familys', 'id'), max(id)) FROM familys;
-
-INSERT INTO recipes ("id", "family_id", "name", "default_portions", "default_meal") VALUES
-(1, 1, 'Spaghetti', 1, 1),
-(2, 2, 'Pizza', 2, 2);
-SELECT setval(pg_get_serial_sequence('recipes', 'id'), max(id)) FROM recipes;
-
-INSERT INTO recipes_ingredients (recipe_id, ingredient_id, amount_per_portion, unit, market, is_bio) VALUES 
-(1, 1, 100, 1, 1, true),
-(1, 2, 200, 1, 1, false);
-SELECT setval(pg_get_serial_sequence('recipes_ingredients', 'id'), max(id)) FROM recipes_ingredients;
-
-INSERT INTO mealplans (id, family_id, recipe_id, date, meal, portions) VALUES 
-(1, 1, 1, TO_DATE('2023/08/22', 'YYYY/MM/DD'), 3, 2),
-(2, 1, 2, TO_DATE('2023/08/22', 'YYYY/MM/DD'), 1, 1);
-SELECT setval(pg_get_serial_sequence('mealplans', 'id'), max(id)) FROM mealplans;
-
-INSERT INTO mealplans_shopping_list(id, family_id, mealplan_id, recipes_ingredients_id, market, is_bio) VALUES
-(1, 1, 1, 1, 1, true),
-(2, 1, 2, 2, 2, false);
-SELECT setval(pg_get_serial_sequence('mealplans_shopping_list', 'id'), max(id)) FROM mealplans_shopping_list;
+-- shouldnt be necessary anymore
+-- SELECT setval(pg_get_serial_sequence('familys', 'id'), max(id)) FROM familys;
+-- SELECT setval(pg_get_serial_sequence('recipes', 'id'), max(id)) FROM recipes;
+-- SELECT setval(pg_get_serial_sequence('recipes_ingredients', 'id'), max(id)) FROM recipes_ingredients;
+-- SELECT setval(pg_get_serial_sequence('mealplans', 'id'), max(id)) FROM mealplans;
+-- SELECT setval(pg_get_serial_sequence('mealplans_shopping_list', 'id'), max(id)) FROM mealplans_shopping_list;

@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { FamilysService } from 'api/familys/familys.service';
 import { UserService } from 'api/user/user.service';
+import { take } from 'rxjs';
 
 
 @Component({
@@ -8,8 +11,19 @@ import { UserService } from 'api/user/user.service';
   styleUrls: ['./signup-success.component.css']
 })
 export class SignupSuccessComponent {
+  name = ""
 
+  createFamily() {
+    if (!this.name) {
+      return
+    }
+    this.familysService.createFamily(this.name).subscribe(
+      {
+        next: () => {
+          this.router.navigateByUrl("meine-rezepte")
+        }
+    })
+  }
 
-  
-  constructor(private userService: UserService) {}
+  constructor(private familysService: FamilysService, private router: Router) {}
 }

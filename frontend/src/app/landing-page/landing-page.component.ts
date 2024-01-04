@@ -1,9 +1,7 @@
 import { Component } from '@angular/core';
 import { signInWithEmailAndPassword } from "firebase/auth";
 import {Auth} from '@angular/fire/auth'
-import { Router } from '@angular/router';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { UserService } from 'api/user/user.service';
+import { FormBuilder } from '@angular/forms';
 @Component({
   selector: 'app-landing-page',
   templateUrl: './landing-page.component.html',
@@ -26,7 +24,6 @@ export class LandingPageComponent {
 
     constructor(
       private auth: Auth, 
-      private router: Router,
       private formBuilder: FormBuilder,
       ) {}
   }

@@ -14,7 +14,6 @@ export class UserService {
     }))
   }
 
-
   logout(): void {
     this.auth.signOut().then(() => {
       this.router.navigate([""])

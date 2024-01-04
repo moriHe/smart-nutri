@@ -45,6 +45,7 @@ func StartGinServer(store storage.Storage, url string) (*gin.Engine, error) {
 	server.recipeRoutes(router)
 	server.mealPlanRoutes(router)
 	server.mealplanShoppingListRoutes(router)
+	server.familyRoutes(router)
 
 	router.Run(url)
 

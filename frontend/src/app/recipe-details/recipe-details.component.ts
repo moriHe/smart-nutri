@@ -50,7 +50,7 @@ export class RecipeDetailsComponent {
       }
     })
   }
-// TODO: Doesnt redirect anymore
+  
   deleteRecipe() {
     if (this.recipe) {
       this.recipesService.removeRecipe(this.recipe.id).subscribe({

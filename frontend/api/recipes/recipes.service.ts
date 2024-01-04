@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Response } from 'api';
-import { Observable, Subscription, map, of, switchMap } from 'rxjs';
+import { Observable, Subscription, map, of, switchMap, take } from 'rxjs';
 import { FullRecipe, RecipeBody, RecipeIngredientBody, ShallowRecipe } from './recipes.interface';
 import { RecipesEndpointsService } from './recipes.endpoints.service';
 
@@ -27,7 +27,7 @@ export class RecipesService {
   }
 
   removeRecipe(id: number): Observable<string>{
-    return this.recipesEndpointService.deleteRecipe(id).pipe(map((response: Response<string>) => response.data))
+    return this.recipesEndpointService.deleteRecipe(id).pipe(take(1), map((response: Response<string>) => response.data))
   }
 
   addRecipeIngredient(recipeId: number, body: RecipeIngredientBody): Observable<number>{

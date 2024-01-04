@@ -1,6 +1,5 @@
 package types
 
-// TODO: Mealplan endpoints
 type ShallowMealPlanItem struct {
 	Id         int     `json:"id"`
 	RecipeName string  `json:"recipeName"`

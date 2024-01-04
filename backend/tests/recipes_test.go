@@ -28,7 +28,6 @@ func TestGetRecipeByIdSucc(t *testing.T) {
 	if err != nil {
 		return
 	}
-	// TODO Return all fields
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/recipes/1", nil)
 	r.ServeHTTP(w, req)
@@ -72,7 +71,6 @@ func TestPostRecipeSuccNoIngredients(t *testing.T) {
 	assert.Equal(t, `{"data":{"id":3}}`, w.Body.String())
 }
 
-// TODO TestPostRecipeSuccIngredients fails running indivudually since it builds up on TestPostRecipeSuccNoIngredients
 func TestPostRecipeSuccIngredients(t *testing.T) {
 	r, err := startServer()
 	if err != nil {
@@ -87,12 +85,9 @@ func TestPostRecipeSuccIngredients(t *testing.T) {
 	r.ServeHTTP(w, req)
 
 	assert.Equal(t, 200, w.Code)
-	// TODO: Return payload in response
 	assert.Equal(t, `{"data":{"id":4}}`, w.Body.String())
 }
 
-// TODO: Add bad request tests for missing ingriedientId, amountPerPortion etc
-// TODO: Also add test family id not correct
 func TestPostRecipeBadReq(t *testing.T) {
 	r, err := startServer()
 	if err != nil {

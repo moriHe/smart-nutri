@@ -11,7 +11,6 @@ import (
 
 func (s *Server) recipeRoutes(r *gin.Engine) {
 	r.GET("/recipes", s.handleGetAllRecipes)
-	// todo familyId
 	r.GET("/recipes/:id", s.handleGetRecipeById)
 	r.POST("/recipes", s.handlePostRecipe)
 	r.POST("/recipes/:id/recipeingredient", s.handlePostRecipeIngredient)
@@ -21,12 +20,8 @@ func (s *Server) recipeRoutes(r *gin.Engine) {
 }
 
 func (s *Server) handleGetAllRecipes(c *gin.Context) {
-	user, err := contextmethods.GetUserFromContext(c)
+	user := contextmethods.GetUserFromContext(c)
 
-	if err != nil {
-		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Invalid Date. Use format YYYY-MM-DD"})
-		return
-	}
 	if user.ActiveFamilyId == nil {
 		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "No Family"})
 	}
@@ -43,14 +38,14 @@ func (s *Server) handleGetRecipeById(c *gin.Context) {
 }
 
 func (s *Server) handlePostRecipe(c *gin.Context) {
-	// TODO: search all c.Param("familyId") and replace with user.displayFamilyId
-	familyId := c.Param("familyId")
+	user := contextmethods.GetUserFromContext(c)
+
 	var payload types.PostRecipe
 
 	if err := c.BindJSON(&payload); err != nil {
 		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: err.Error()})
 	} else {
-		response, err := s.store.PostRecipe(familyId, payload)
+		response, err := s.store.PostRecipe(user.ActiveFamilyId, payload)
 		responses.HandleResponse[*types.Id](c, response, err)
 	}
 }
@@ -58,7 +53,6 @@ func (s *Server) handlePostRecipe(c *gin.Context) {
 func (s *Server) handlePostRecipeIngredient(c *gin.Context) {
 	recipeId := c.Param("id")
 	var payload types.PostRecipeIngredient
-	// TODO add test because of change  from err return to int, err return
 	if err := c.BindJSON(&payload); err != nil {
 		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Payload malformed"})
 	} else {
@@ -78,7 +72,6 @@ func (s *Server) handlePatchRecipeName(c *gin.Context) {
 	}
 }
 
-// TODO: handlePatchRecipeIngredient (amount, unit, market, isBio)
 func (s *Server) handleDeleteRecipe(c *gin.Context) {
 	recipeId := c.Param("id")
 	responses.HandleResponse[string](c, "Recipe deleted", s.store.DeleteRecipe(recipeId))

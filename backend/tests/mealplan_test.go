@@ -80,7 +80,6 @@ func TestGetMealplanItemBadReq(t *testing.T) {
 	assert.Equal(t, `{"error":{"status":400,"message":"Bad Request: no rows in result set"}}`, w.Body.String())
 }
 
-// TODO Check if item is posted correctly to db
 func TestPostMealplanItemSucc(t *testing.T) {
 	r, err := startServer()
 	if err != nil {
@@ -100,8 +99,6 @@ func TestPostMealplanItemSucc(t *testing.T) {
 	assert.Equal(t, `{"data":"Added mealplan item"}`, w.Body.String())
 }
 
-// TODO: Test other missing payloads
-// TODO: Add proper error messages
 func TestPostMealplanItemBadReq(t *testing.T) {
 	r, err := startServer()
 	if err != nil {

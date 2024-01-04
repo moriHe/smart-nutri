@@ -8,11 +8,6 @@ import (
 	"github.com/moriHe/smart-nutri/types"
 )
 
-// TODO: Post user anderer umgang mit firebaseuid
-// TODO: Add activation code familys
-// TODO: Rename table users_family to users_familys
-// TODO: Überall wo familyId in golang benutzt wurde, muss der wert jetzt von c.user kommen
-// error handling wenn null
 func extractBearerToken(authHeader string) string {
 	const bearerPrefix = "Bearer "
 	if len(authHeader) > len(bearerPrefix) && authHeader[:len(bearerPrefix)] == bearerPrefix {

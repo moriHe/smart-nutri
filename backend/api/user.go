@@ -17,8 +17,8 @@ func (s *Server) userRoutes(r *gin.Engine) {
 }
 
 func (s *Server) handleGetUser(c *gin.Context) {
-	user, err := contextmethods.GetUserFromContext(c)
-	responses.HandleResponse[*types.User](c, user, err)
+	user := contextmethods.GetUserFromContext(c)
+	responses.HandleResponse[*types.User](c, user, nil)
 }
 
 func (s *Server) handlePostUser(c *gin.Context) {

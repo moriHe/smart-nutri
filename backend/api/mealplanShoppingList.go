@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	contextmethods "github.com/moriHe/smart-nutri/api/contextMethods"
 	"github.com/moriHe/smart-nutri/api/responses"
 	"github.com/moriHe/smart-nutri/types"
 )
@@ -15,14 +16,15 @@ func (s *Server) mealplanShoppingListRoutes(r *gin.Engine) {
 }
 
 func (s *Server) handleGetMealplanItemsShoppingList(c *gin.Context) {
-	familyId := c.Param("familyId")
-	mealplanItemsShoppingList, err := s.store.GetMealPlanItemsShoppingList(familyId)
+	user := contextmethods.GetUserFromContext(c)
+	mealplanItemsShoppingList, err := s.store.GetMealPlanItemsShoppingList(user.ActiveFamilyId)
 
 	responses.HandleResponse[*[]types.ShoppingListMealplanItem](c, mealplanItemsShoppingList, err)
 }
 
 func (s *Server) handlePostMealPlanItemShoppingList(c *gin.Context) {
-	payload := types.PostShoppingListMealplanItem{FamilyId: c.Param("familyId"), MealplanId: c.Param("mealplanId")}
+	user := contextmethods.GetUserFromContext(c)
+	payload := types.PostShoppingListMealplanItem{FamilyId: user.ActiveFamilyId, MealplanId: c.Param("mealplanId")}
 	if err := c.BindJSON(&payload); err != nil {
 		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Payload malformed"})
 	} else {

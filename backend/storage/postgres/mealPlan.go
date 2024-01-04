@@ -9,7 +9,7 @@ import (
 	"github.com/moriHe/smart-nutri/types"
 )
 
-func (s *Storage) GetMealPlan(familyId string, date string) (*[]types.ShallowMealPlanItem, error) {
+func (s *Storage) GetMealPlan(familyId *int, date string) (*[]types.ShallowMealPlanItem, error) {
 	query := "select mealplans.id, recipes.name, cast(date as text), portions, meals.meal from mealplans " +
 		"join recipes on mealplans.recipe_id = recipes.id join meals on mealplans.meal = meals.id " +
 		"where mealplans.family_id = $1 and mealplans.date = $2"
@@ -60,7 +60,7 @@ func (s *Storage) GetMealPlanItem(id string) (*types.FullMealPlanItem, error) {
 	return &test, nil
 }
 
-func (s *Storage) PostMealPlanItem(familyId string, payload types.PostMealPlanItem) error {
+func (s *Storage) PostMealPlanItem(familyId *int, payload types.PostMealPlanItem) error {
 	var mealId int
 	err := s.Db.QueryRow(context.Background(), "select (id) from meals where meals.meal = $1", payload.Meal).Scan(&mealId)
 	if err != nil {

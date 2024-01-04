@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	contextmethods "github.com/moriHe/smart-nutri/api/contextMethods"
 	"github.com/moriHe/smart-nutri/api/responses"
 	"github.com/moriHe/smart-nutri/types"
 )
@@ -17,7 +18,7 @@ func (s *Server) mealPlanRoutes(r *gin.Engine) {
 }
 
 func (s *Server) handleGetMealPlan(c *gin.Context) {
-	familyId := c.Param("familyId")
+	user := contextmethods.GetUserFromContext(c)
 	date := c.Param("date")
 	_, err := time.Parse("2006-01-02", date)
 
@@ -26,7 +27,7 @@ func (s *Server) handleGetMealPlan(c *gin.Context) {
 		return
 	}
 
-	mealPlan, err := s.store.GetMealPlan(familyId, date)
+	mealPlan, err := s.store.GetMealPlan(user.ActiveFamilyId, date)
 	responses.HandleResponse[*[]types.ShallowMealPlanItem](c, mealPlan, err)
 }
 
@@ -39,13 +40,13 @@ func (s *Server) handleGetMealPlanItem(c *gin.Context) {
 }
 
 func (s *Server) handlePostMealPlanItem(c *gin.Context) {
-	familyId := c.Param("familyId")
+	user := contextmethods.GetUserFromContext(c)
 	var payload types.PostMealPlanItem
 
 	if err := c.BindJSON(&payload); err != nil {
 		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Payload malformed"})
 	} else {
-		responses.HandleResponse[string](c, "Added mealplan item", s.store.PostMealPlanItem(familyId, payload))
+		responses.HandleResponse[string](c, "Added mealplan item", s.store.PostMealPlanItem(user.ActiveFamilyId, payload))
 	}
 }
 

@@ -17,12 +17,12 @@ type Storage interface {
 	DeleteRecipe(recipeId string) error
 	DeleteRecipeIngredient(recipeIngredientId string) error
 
-	GetMealPlan(familyId string, date string) (*[]types.ShallowMealPlanItem, error)
+	GetMealPlan(familyId *int, date string) (*[]types.ShallowMealPlanItem, error)
 	GetMealPlanItem(id string) (*types.FullMealPlanItem, error)
-	PostMealPlanItem(familyId string, payload types.PostMealPlanItem) error
+	PostMealPlanItem(familyId *int, payload types.PostMealPlanItem) error
 	DeleteMealPlanItem(id string) error
 
-	GetMealPlanItemsShoppingList(familyId string) (*[]types.ShoppingListMealplanItem, error)
+	GetMealPlanItemsShoppingList(familyId *int) (*[]types.ShoppingListMealplanItem, error)
 	PostMealPlanItemShoppingList(payload types.PostShoppingListMealplanItem) error
 	DeleteMealPlanItemShoppingList(id string) error
 }

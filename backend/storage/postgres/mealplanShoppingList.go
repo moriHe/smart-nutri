@@ -16,7 +16,7 @@ var getQuery = "select mealplans_shopping_list.id, mealplans.id, markets.name, m
 	"left join markets on mealplans_shopping_list.market = markets.id left join ingredients on recipes_ingredients.ingredient_id = ingredients.id " +
 	"where mealplans_shopping_list.family_id = $1;"
 
-func (s *Storage) GetMealPlanItemsShoppingList(familyId string) (*[]types.ShoppingListMealplanItem, error) {
+func (s *Storage) GetMealPlanItemsShoppingList(familyId *int) (*[]types.ShoppingListMealplanItem, error) {
 
 	rows, _ := s.Db.Query(context.Background(), getQuery, familyId)
 	defer rows.Close()

@@ -1,7 +1,7 @@
 package types
 
 type PostShoppingListMealplanItem struct {
-	FamilyId           string `json:"familyId"`
+	FamilyId           *int   `json:"familyId"`
 	MealplanId         string `json:"mealplanId"`
 	RecipeIngredientId int    `json:"recipeIngredientId"`
 	Market             string `json:"market"`

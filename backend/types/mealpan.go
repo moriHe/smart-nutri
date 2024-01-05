@@ -1,12 +1,14 @@
 package types
 
+import "time"
+
 type ShallowMealPlanItem struct {
-	Id         int     `json:"id"`
-	RecipeId   int     `json:"recipeId"`
-	RecipeName string  `json:"recipeName"`
-	Date       string  `json:"date"`
-	Portions   float32 `json:"portions"`
-	Meal       string  `json:"meal"`
+	Id         int       `json:"id"`
+	RecipeId   int       `json:"recipeId"`
+	RecipeName string    `json:"recipeName"`
+	Date       time.Time `json:"date"`
+	Portions   float32   `json:"portions"`
+	Meal       string    `json:"meal"`
 }
 
 // FullRecipe needs amount needs to be multiplied by portions

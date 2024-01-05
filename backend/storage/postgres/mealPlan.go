@@ -5,15 +5,43 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/moriHe/smart-nutri/types"
 )
 
-// mealplans.date =
-func (s *Storage) GetMealPlan(familyId *int, date string) (*[]types.ShallowMealPlanItem, error) {
-	query := "select mealplans.id, recpies.id, recipes.name, cast(date as text), portions, meals.meal from mealplans " +
-		"join recipes on mealplans.recipe_id = recipes.id join meals on mealplans.meal = meals.id " +
-		"where mealplans.family_id = $1 and mealplans.date = $2"
+func getDateRange(dateString string) (string, string, error) {
+	// Parse the input date string
+	date, err := time.Parse(time.RFC3339Nano, dateString)
+	if err != nil {
+		return "", "", err
+	}
+
+	// Set the time component to midnight (00:00:00)
+	dateStart := date.Truncate(24 * time.Hour)
+
+	// Set the time component to midnight of the next day
+	dateEnd := dateStart.Add(24 * time.Hour)
+
+	// Format the dates as strings
+	dateStartStr := dateStart.Format(time.RFC3339Nano)
+	dateEndStr := dateEnd.Format(time.RFC3339Nano)
+
+	return dateStartStr, dateEndStr, nil
+}
+
+func (s *Storage) GetMealPlan(familyId *int, date time.Time) (*[]types.ShallowMealPlanItem, error) {
+	query := `
+			SELECT mealplans.id, recipes.id, recipes.name, mealplans.date, portions, meals.meal
+			FROM mealplans
+			JOIN recipes ON mealplans.recipe_id = recipes.id
+			JOIN meals ON mealplans.meal = meals.id
+			WHERE mealplans.family_id = $1
+			AND date_trunc('day', mealplans.date AT TIME ZONE 'UTC') = date_trunc('day', $2::timestamptz AT TIME ZONE 'UTC')
+			AND mealplans.date >= $2::timestamptz AT TIME ZONE 'UTC'
+			AND mealplans.date < ($2::timestamptz + interval '1 day') AT TIME ZONE 'UTC'
+			`
+
 	rows, _ := s.Db.Query(context.Background(), query, familyId, date)
 	defer rows.Close()
 
@@ -22,7 +50,6 @@ func (s *Storage) GetMealPlan(familyId *int, date string) (*[]types.ShallowMealP
 	for rows.Next() {
 		var mealPlanItem types.ShallowMealPlanItem
 		err := rows.Scan(&mealPlanItem.Id, &mealPlanItem.RecipeId, &mealPlanItem.RecipeName, &mealPlanItem.Date, &mealPlanItem.Portions, &mealPlanItem.Meal)
-
 		if err != nil {
 			return nil, &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Scan Get mealPlanItems failed: %s", err)}
 		}

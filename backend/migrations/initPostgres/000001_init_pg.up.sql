@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS mealplans(
     id SERIAL NOT NULL PRIMARY KEY,
     family_id INTEGER NOT NULL REFERENCES familys (id),
     recipe_id INTEGER NOT NULL REFERENCES recipes (id),
-    date DATE NOT NULL,
+    date timestamptz NOT NULL,
     meal INTEGER REFERENCES meals (id),
     portions FLOAT NOT NULL
 );

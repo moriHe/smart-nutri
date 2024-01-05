@@ -29,18 +29,11 @@ func (s *Server) mealPlanRoutes(r *gin.Engine) {
 // rows, err := db.Query(query, utcDate, utcDate.Add(24*time.Hour))
 // if err != nil {
 
-func isIsoString(date string) bool {
-	_, err := time.Parse(time.RFC3339, date)
-
-	if err != nil {
-		return false
-	}
-	return true
-}
 func (s *Server) handleGetMealPlan(c *gin.Context) {
 	user := contextmethods.GetUserFromContext(c)
-	date := c.Param("date")
-	if isIsoString(date) == false {
+	dateStr := c.Param("date")
+	date, err := time.Parse(time.RFC3339, dateStr)
+	if err != nil {
 		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Invalid UTC Date"})
 		return
 	}

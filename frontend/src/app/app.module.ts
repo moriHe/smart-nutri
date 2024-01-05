@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, LOCALE_ID } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
@@ -26,9 +26,12 @@ import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { environment } from 'src/environments/environment.development';
 import { SignupSuccessComponent } from './signup-success/signup-success.component';
-import { UserService } from 'api/user/user.service';
 import { LandingPageComponent } from './landing-page/landing-page.component';
 import { AuthInterceptor } from './auth.interceptor';
+import { MealplansComponent } from './mealplans/mealplans/mealplans.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { CommonModule, DatePipe } from '@angular/common';
 
 
 
@@ -44,7 +47,8 @@ import { AuthInterceptor } from './auth.interceptor';
     CreateRecipeDialogComponent,
     SignupComponent,
     SignupSuccessComponent,
-    LandingPageComponent
+    LandingPageComponent,
+    MealplansComponent
   ],
   imports: [
     BrowserModule,
@@ -62,6 +66,9 @@ import { AuthInterceptor } from './auth.interceptor';
     MatChipsModule,
     MatSnackBarModule,
     CdkAccordionModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    CommonModule,
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAuth(() => getAuth()),
   ],
@@ -70,7 +77,12 @@ import { AuthInterceptor } from './auth.interceptor';
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true
-    }
+    },
+    {
+      provide: LOCALE_ID,
+      useValue: 'de'
+    },
+    DatePipe
   ],
   bootstrap: [AppComponent]
 })

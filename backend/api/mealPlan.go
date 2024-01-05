@@ -17,13 +17,31 @@ func (s *Server) mealPlanRoutes(r *gin.Engine) {
 	r.DELETE("/mealplan/item/:id", s.handleDeleteMealPlanItem)
 }
 
+// localDate := time.Date(2024, time.January, 5, 0, 0, 0, 0, time.Local)
+
+// 	// Convert the local date to UTC
+// 	utcDate := localDate.UTC()
+
+// 	// Construct the SQL query
+// 	query := "SELECT * FROM your_table WHERE your_date_column >= $1 AND your_date_column < $2"
+
+// // Execute the query with the UTC start and end dates
+// rows, err := db.Query(query, utcDate, utcDate.Add(24*time.Hour))
+// if err != nil {
+
+func isIsoString(date string) bool {
+	_, err := time.Parse(time.RFC3339, date)
+
+	if err != nil {
+		return false
+	}
+	return true
+}
 func (s *Server) handleGetMealPlan(c *gin.Context) {
 	user := contextmethods.GetUserFromContext(c)
 	date := c.Param("date")
-	_, err := time.Parse("2006-01-02", date)
-
-	if err != nil {
-		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Invalid Date. Use format YYYY-MM-DD"})
+	if isIsoString(date) == false {
+		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Invalid UTC Date"})
 		return
 	}
 

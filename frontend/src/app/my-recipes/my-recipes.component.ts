@@ -5,6 +5,7 @@ import { Response } from 'api';
 import { ShallowRecipe } from 'api/recipes/recipes.interface';
 import { RecipesService } from 'api/recipes/recipes.service';
 import { CreateRecipeDialogComponent } from '../create-recipe-dialog/create-recipe-dialog.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-my-recipes',
@@ -13,9 +14,10 @@ import { CreateRecipeDialogComponent } from '../create-recipe-dialog/create-reci
 })
 export class MyRecipesComponent {
   recipes: ShallowRecipe[] = []
+  private recipesSubscription!: Subscription
 
   ngOnInit(): void {
-    this.recipesService.getRecipes().subscribe((response: ShallowRecipe[]) => {
+    this.recipesSubscription = this.recipesService.getRecipes().subscribe((response: ShallowRecipe[]) => {
       this.recipes = response
     })
   }
@@ -43,9 +45,13 @@ export class MyRecipesComponent {
         })
       }
     })
-
   }
 
+  ngOnDestroy(): void {
+    if (this.recipesSubscription) {
+      this.recipesSubscription.unsubscribe();
+    }
+  }
 
 
   constructor(

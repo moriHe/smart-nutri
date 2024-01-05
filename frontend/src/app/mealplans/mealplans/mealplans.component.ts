@@ -1,5 +1,8 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectorRef, Component, Inject, LOCALE_ID } from '@angular/core';
+import { Mealplan } from 'api/mealplans/mealplans.interface';
+import { MealplansService } from 'api/mealplans/mealplans.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-mealplans',
@@ -7,9 +10,21 @@ import { ChangeDetectorRef, Component, Inject, LOCALE_ID } from '@angular/core';
   styleUrls: ['./mealplans.component.css'],
 })
 export class MealplansComponent {
+  mealplan: Mealplan = []
+  private mealplanSubscription!: Subscription
   today: Date = new Date()
   selectedDate: Date = this.today
     // send console.log(this.today.toUTCString()) to backend
+
+
+    ngOnInit(): void {
+      this.mealplanSubscription = this.mealplanService.getMealplan(this.selectedDate.toISOString())
+      .subscribe((response: Mealplan) => {
+        if (response) {
+          this.mealplan = response
+        }
+      })
+    }
 
   previousDay(): void {
     this.selectedDate.setDate(this.selectedDate.getDate() - 1);
@@ -41,7 +56,14 @@ export class MealplansComponent {
     return displayDate || '';
   }
 
+  ngOnDestroy(): void {
+    if (this.mealplanSubscription) {
+      this.mealplanSubscription.unsubscribe()
+    }
+  }
+
   constructor(
+    private mealplanService: MealplansService,
     private cdr: ChangeDetectorRef,
     private datePipe: DatePipe, 
     @Inject(LOCALE_ID) private locale: string

@@ -9,8 +9,9 @@ import (
 	"github.com/moriHe/smart-nutri/types"
 )
 
+// mealplans.date =
 func (s *Storage) GetMealPlan(familyId *int, date string) (*[]types.ShallowMealPlanItem, error) {
-	query := "select mealplans.id, recipes.name, cast(date as text), portions, meals.meal from mealplans " +
+	query := "select mealplans.id, recpies.id, recipes.name, cast(date as text), portions, meals.meal from mealplans " +
 		"join recipes on mealplans.recipe_id = recipes.id join meals on mealplans.meal = meals.id " +
 		"where mealplans.family_id = $1 and mealplans.date = $2"
 	rows, _ := s.Db.Query(context.Background(), query, familyId, date)
@@ -20,7 +21,7 @@ func (s *Storage) GetMealPlan(familyId *int, date string) (*[]types.ShallowMealP
 
 	for rows.Next() {
 		var mealPlanItem types.ShallowMealPlanItem
-		err := rows.Scan(&mealPlanItem.Id, &mealPlanItem.RecipeName, &mealPlanItem.Date, &mealPlanItem.Portions, &mealPlanItem.Meal)
+		err := rows.Scan(&mealPlanItem.Id, &mealPlanItem.RecipeId, &mealPlanItem.RecipeName, &mealPlanItem.Date, &mealPlanItem.Portions, &mealPlanItem.Meal)
 
 		if err != nil {
 			return nil, &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Scan Get mealPlanItems failed: %s", err)}

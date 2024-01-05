@@ -2,6 +2,7 @@ package types
 
 type ShallowMealPlanItem struct {
 	Id         int     `json:"id"`
+	RecipeId   int     `json:"recipeId"`
 	RecipeName string  `json:"recipeName"`
 	Date       string  `json:"date"`
 	Portions   float32 `json:"portions"`

@@ -2,7 +2,7 @@ import { DatePipe } from '@angular/common';
 import { ChangeDetectorRef, Component, Inject, LOCALE_ID } from '@angular/core';
 import { Mealplan } from 'api/mealplans/mealplans.interface';
 import { MealplansService } from 'api/mealplans/mealplans.service';
-import { Subscription } from 'rxjs';
+import { Subscription, take } from 'rxjs';
 
 @Component({
   selector: 'app-mealplans',
@@ -15,24 +15,33 @@ export class MealplansComponent {
   today: Date = new Date()
   selectedDate: Date = this.today
     // send console.log(this.today.toUTCString()) to backend
-
+    private updateMealplan(): void {
+      if (this.mealplanSubscription) {
+        this.mealplanSubscription.unsubscribe();
+      }
+  
+      this.mealplanSubscription = this.mealplanService
+        .getMealplan(this.selectedDate.toISOString())
+        .subscribe((response: Mealplan) => {
+          if (response) {
+            this.mealplan = response;
+          }
+        });
+    }
 
     ngOnInit(): void {
-      this.mealplanSubscription = this.mealplanService.getMealplan(this.selectedDate.toISOString())
-      .subscribe((response: Mealplan) => {
-        if (response) {
-          this.mealplan = response
-        }
-      })
+      this.updateMealplan()
     }
 
   previousDay(): void {
     this.selectedDate.setDate(this.selectedDate.getDate() - 1);
+    this.updateMealplan()
     this.cdr.detectChanges()
   }
 
   nextDay(): void {
     this.selectedDate.setDate(this.selectedDate.getDate() + 1);
+    this.updateMealplan()
     this.cdr.detectChanges()
   }
 

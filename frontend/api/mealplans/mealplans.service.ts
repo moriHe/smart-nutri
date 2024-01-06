@@ -13,5 +13,11 @@ export class MealplansService {
     )
   }
 
+  addMealplanItem(): Observable<string> {
+    return this.mealplanEndpoint.postMealplanItem().pipe(
+      map((response: {data: string}) => response.data)
+    )
+  }
+
   constructor(private mealplanEndpoint: MealplansEndpointsService) { }
 }

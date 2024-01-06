@@ -65,6 +65,10 @@ export class MealplansComponent {
     return displayDate || '';
   }
 
+  addMealPlanItem() {
+    this.mealplanService.addMealplanItem().pipe(take(1)).subscribe()
+  }
+
   ngOnDestroy(): void {
     if (this.mealplanSubscription) {
       this.mealplanSubscription.unsubscribe()

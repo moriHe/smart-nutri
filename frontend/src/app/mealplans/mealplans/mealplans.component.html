@@ -9,6 +9,26 @@
       <mat-icon>keyboard_arrow_right</mat-icon>
     </button>
   </div>
+  <div class="flex flex-col items-center">
+    <div>
+      <h2>{{mealsService.MealDisplay.BREAKFAST}}</h2>
+      <div *ngFor="let item of getMealplanForMealType(mealsService.MealKey.BREAKFAST)">
+        <p>{{item.recipeName}}</p>
+      </div>
+    </div>
+    <div>
+      <h2>{{mealsService.MealDisplay.LUNCH}}</h2>
+      <div *ngFor="let item of getMealplanForMealType(mealsService.MealKey.LUNCH)">
+        <p>{{item.recipeName}}</p>
+      </div>
+    </div>
+    <div>
+      <h2>{{mealsService.MealDisplay.DINNER}}</h2>
+      <div *ngFor="let item of getMealplanForMealType(mealsService.MealKey.DINNER)">
+        <p>{{item.recipeName}}</p>
+      </div>
+    </div>
+  </div>
 
   <button mat-raised-button (click)="addMealPlanItem()" color="primary">Hinzufügen</button>
   

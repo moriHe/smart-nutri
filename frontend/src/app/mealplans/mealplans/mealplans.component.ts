@@ -2,7 +2,9 @@ import { DatePipe } from '@angular/common';
 import { ChangeDetectorRef, Component, Inject, LOCALE_ID } from '@angular/core';
 import { Mealplan } from 'api/mealplans/mealplans.interface';
 import { MealplansService } from 'api/mealplans/mealplans.service';
+import { Meals } from 'api/recipes/recipes.interface';
 import { Subscription, take } from 'rxjs';
+import { MealsService } from 'services/meals.service';
 
 @Component({
   selector: 'app-mealplans',
@@ -69,6 +71,10 @@ export class MealplansComponent {
     this.mealplanService.addMealplanItem().pipe(take(1)).subscribe()
   }
 
+  getMealplanForMealType(mealKey: Meals): Mealplan {
+    return this.mealplan.filter(item => item.meal === Meals[mealKey]);
+  }
+
   ngOnDestroy(): void {
     if (this.mealplanSubscription) {
       this.mealplanSubscription.unsubscribe()
@@ -79,6 +85,7 @@ export class MealplansComponent {
     private mealplanService: MealplansService,
     private cdr: ChangeDetectorRef,
     private datePipe: DatePipe, 
-    @Inject(LOCALE_ID) private locale: string
+    @Inject(LOCALE_ID) private locale: string,
+    public mealsService: MealsService
     ) {}
 }

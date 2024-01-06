@@ -11,7 +11,14 @@ export class MealsService {
     [Meals.BREAKFAST]: "Frühstück",
     [Meals.LUNCH]: "Mittagessen",
     [Meals.DINNER]: "Abendessen"
-}
+  }
+    MealKey = {
+      [Meals.NONE]: Meals.NONE,
+      [Meals.BREAKFAST]: Meals.BREAKFAST,
+      [Meals.LUNCH]: Meals.LUNCH,
+      [Meals.DINNER]: Meals.DINNER
+    }
+
 
   constructor() { }
 }

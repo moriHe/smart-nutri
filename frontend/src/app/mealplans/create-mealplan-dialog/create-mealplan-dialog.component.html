@@ -4,8 +4,8 @@
   </mat-form-field>
 <div class="w-4/5 mx-auto">
     <div
-    class="flex my-2 h-16 items-center py-2 px-5 shadow-md"
-    *ngFor="let recipe of recipes"
+    class="flex my-2 h-16 items-center py-2 px-5 shadow-md cursor-pointer"
+    *ngFor="let recipe of searchQueryRecipes()"
     >
         <p>{{recipe.name}}</p>
     </div>

@@ -20,6 +20,15 @@ export class CreateMealplanDialogComponent {
     })
   }
 
+  searchQueryRecipes() {
+    if (this.searchQuery == "") {
+      return this.recipes
+    }
+
+    return this.recipes.filter((recipe) => {
+      return recipe.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+    })
+  }
 
   ngOnDestroy(): void {
     if (this.recipesSubscription) {

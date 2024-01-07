@@ -11,7 +11,10 @@
   </div>
   <div class="flex flex-col items-center gap-10">
     <div class="w-3/4">
+      <div class="flex justify-between">
       <h2>{{mealsService.MealDisplay.BREAKFAST}}</h2>
+      <button mat-raised-button (click)="addMealPlanItem()" color="primary">Hinzufügen</button>
+    </div>
       <div
       class="flex my-2 h-16 items-center py-2 px-5 cursor-pointer shadow-md"
        *ngFor="let item of getMealplanForMealType(mealsService.MealKey.BREAKFAST)">
@@ -34,6 +37,4 @@
       </div>
     </div>
   </div>
-
-  <button mat-raised-button (click)="addMealPlanItem()" color="primary">Hinzufügen</button>
   

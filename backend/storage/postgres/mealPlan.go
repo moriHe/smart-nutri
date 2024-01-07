@@ -10,10 +10,11 @@ import (
 )
 
 func (s *Storage) GetMealPlan(familyId *int, date string) (*[]types.ShallowMealPlanItem, error) {
+	fmt.Println(date)
 	query := "select mealplans.id, recipes.id, recipes.name, mealplans.date, portions, meals.meal " +
 		"from mealplans join recipes on mealplans.recipe_id = recipes.id " +
 		"join meals on mealplans.meal = meals.id where mealplans.family_id = $1 " +
-		"and date >= $2::timestamptz and mealplans.date < ($2::timestamptz + interval '1 day')"
+		"and date >= $2::timestamp and mealplans.date < ($2::timestamp + interval '1 day')"
 	rows, _ := s.Db.Query(context.Background(), query, familyId, date)
 	defer rows.Close()
 

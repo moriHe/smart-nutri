@@ -18,6 +18,8 @@ export class MealplansComponent {
   selectedDate: Date = this.today
     // send console.log(this.today.toUTCString()) to backend
     private updateMealplan(): void {
+      console.log(this.selectedDate)
+      console.log(this.selectedDate.toISOString())
       if (this.mealplanSubscription) {
         this.mealplanSubscription.unsubscribe();
       }
@@ -68,7 +70,11 @@ export class MealplansComponent {
   }
 
   addMealPlanItem() {
-    this.mealplanService.addMealplanItem().pipe(take(1)).subscribe()
+    this.mealplanService.addMealplanItem().pipe(take(1)).subscribe({
+      next: () => {
+        this.updateMealplan()
+      }
+    })
   }
 
   getMealplanForMealType(mealKey: Meals): Mealplan {

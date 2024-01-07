@@ -78,7 +78,10 @@ export class MealplansComponent {
   }
 
   openDialog(mealKey: Meals) {
-    const dialogRef = this.dialog.open(CreateMealplanDialogComponent);
+    const dialogRef = this.dialog.open(CreateMealplanDialogComponent, {
+      height: '80vh',
+      width: '60vw'
+    });
 
     dialogRef.afterClosed().subscribe(result => {
       // TODO add error if something is missing

@@ -1,1 +1,12 @@
-<p>create-mealplan-dialog works!</p>
+<mat-form-field class="w-full">
+    <mat-label>Suche</mat-label>
+    <input matInput [(ngModel)]="this.searchQuery">
+  </mat-form-field>
+<div class="w-4/5 mx-auto">
+    <div
+    class="flex my-2 h-16 items-center py-2 px-5 shadow-md"
+    *ngFor="let recipe of recipes"
+    >
+        <p>{{recipe.name}}</p>
+    </div>
+</div>

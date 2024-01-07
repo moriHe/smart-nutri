@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { ShallowRecipe } from 'api/recipes/recipes.interface';
 import { RecipesService } from 'api/recipes/recipes.service';
 import { Subscription } from 'rxjs';
@@ -11,8 +11,9 @@ import { Subscription } from 'rxjs';
 export class CreateMealplanDialogComponent {
   searchQuery = ""
   portions!: number
-  recipes: ShallowRecipe[] = []
   private recipesSubscription!: Subscription
+  recipes: ShallowRecipe[] = []
+  selectedRecipeId?: number = undefined
 
   ngOnInit(): void {
     this.recipesSubscription = this.recipesService.getRecipes().subscribe((response: ShallowRecipe[]) => {
@@ -30,11 +31,26 @@ export class CreateMealplanDialogComponent {
     })
   }
 
+  selectRecipe(id: number) {
+    this.selectedRecipeId = id
+    this.cdr.detectChanges()
+  }
+
+  isSelected(id: number) {
+    if (this.selectedRecipeId === id) {
+      return true
+    }
+    return false
+  }
+
   ngOnDestroy(): void {
     if (this.recipesSubscription) {
       this.recipesSubscription.unsubscribe();
     }
   }
 
-  constructor(private recipesService: RecipesService) {}
+  constructor(
+    private recipesService: RecipesService,
+    private cdr: ChangeDetectorRef
+    ) {}
 }

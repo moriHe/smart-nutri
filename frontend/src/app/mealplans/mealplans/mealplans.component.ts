@@ -16,10 +16,7 @@ export class MealplansComponent {
   private mealplanSubscription!: Subscription
   today: Date = new Date()
   selectedDate: Date = this.today
-    // send console.log(this.today.toUTCString()) to backend
     private updateMealplan(): void {
-      console.log(this.selectedDate)
-      console.log(this.selectedDate.toISOString())
       if (this.mealplanSubscription) {
         this.mealplanSubscription.unsubscribe();
       }
@@ -77,7 +74,13 @@ export class MealplansComponent {
     })
   }
 
+  openDialog(mealKey: Meals) {
+    console.log(mealKey)
+  }
+
   getMealplanForMealType(mealKey: Meals): Mealplan {
+    console.log(this.mealplan)
+    console.log(this.mealplan.filter(item => item.meal === Meals[mealKey]))
     return this.mealplan.filter(item => item.meal === Meals[mealKey]);
   }
 

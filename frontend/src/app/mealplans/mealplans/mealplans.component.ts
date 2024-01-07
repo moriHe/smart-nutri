@@ -1,10 +1,13 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectorRef, Component, Inject, LOCALE_ID } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { Mealplan } from 'api/mealplans/mealplans.interface';
 import { MealplansService } from 'api/mealplans/mealplans.service';
 import { Meals } from 'api/recipes/recipes.interface';
 import { Subscription, take } from 'rxjs';
 import { MealsService } from 'services/meals.service';
+import { CreateMealplanDialogComponent } from '../create-mealplan-dialog/create-mealplan-dialog.component';
 
 @Component({
   selector: 'app-mealplans',
@@ -75,9 +78,13 @@ export class MealplansComponent {
   }
 
   openDialog(mealKey: Meals) {
-    console.log(mealKey)
-  }
+    const dialogRef = this.dialog.open(CreateMealplanDialogComponent);
 
+    dialogRef.afterClosed().subscribe(result => {
+      // TODO add error if something is missing
+      console.log("test")
+  })
+}
   getMealplanForMealType(mealKey: Meals): Mealplan {
     console.log(this.mealplan)
     console.log(this.mealplan.filter(item => item.meal === Meals[mealKey]))
@@ -95,6 +102,8 @@ export class MealplansComponent {
     private cdr: ChangeDetectorRef,
     private datePipe: DatePipe, 
     @Inject(LOCALE_ID) private locale: string,
-    public mealsService: MealsService
+    public mealsService: MealsService,
+    public dialog: MatDialog,
+    private router: Router
     ) {}
 }

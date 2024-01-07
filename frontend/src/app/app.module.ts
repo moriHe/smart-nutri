@@ -32,6 +32,7 @@ import { MealplansComponent } from './mealplans/mealplans/mealplans.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { CommonModule, DatePipe } from '@angular/common';
+import { CreateMealplanDialogComponent } from './mealplans/create-mealplan-dialog/create-mealplan-dialog.component';
 
 
 
@@ -48,7 +49,8 @@ import { CommonModule, DatePipe } from '@angular/common';
     SignupComponent,
     SignupSuccessComponent,
     LandingPageComponent,
-    MealplansComponent
+    MealplansComponent,
+    CreateMealplanDialogComponent
   ],
   imports: [
     BrowserModule,

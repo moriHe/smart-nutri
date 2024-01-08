@@ -50,7 +50,7 @@ import { CreateMealplanDialogComponent } from './mealplans/create-mealplan-dialo
     SignupSuccessComponent,
     LandingPageComponent,
     MealplansComponent,
-    CreateMealplanDialogComponent
+    CreateMealplanDialogComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,3 +1,17 @@
+<!-- Mobile -->
+<div *ngIf="isMobileDialogOpen" class="hide-desktop">
+  <div class="flex justify-end">
+  <button mat-icon-button (click)="closeMobileDialog()">
+    <mat-icon aria-label="Close">close</mat-icon>
+  </button>
+  </div>
+  <mat-form-field class="w-full">
+    <mat-label>Suche</mat-label>
+    <input matInput [(ngModel)]="this.mobileSearchQuery">
+  </mat-form-field>
+</div> 
+<!-- Desktop -->
+<div *ngIf="!isMobileDialogOpen" class="">
 <div class="flex items-center justify-center">
     <button mat-icon-button (click)="previousDay()">
       <mat-icon>keyboard_arrow_left</mat-icon>
@@ -48,4 +62,3 @@
       </div>
     </div>
   </div>
-  

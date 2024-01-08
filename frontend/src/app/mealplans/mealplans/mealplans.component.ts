@@ -8,6 +8,7 @@ import { Meals } from 'api/recipes/recipes.interface';
 import { Subscription, take } from 'rxjs';
 import { MealsService } from 'services/meals.service';
 import { CreateMealplanDialogComponent } from '../create-mealplan-dialog/create-mealplan-dialog.component';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-mealplans',
@@ -15,6 +16,9 @@ import { CreateMealplanDialogComponent } from '../create-mealplan-dialog/create-
   styleUrls: ['./mealplans.component.css'],
 })
 export class MealplansComponent {
+  isMobile = false
+  isMobileDialogOpen = false
+  mobileSearchQuery = ""
   mealplan: Mealplan = []
   private mealplanSubscription!: Subscription
   today: Date = new Date()
@@ -35,6 +39,14 @@ export class MealplansComponent {
 
     ngOnInit(): void {
       this.updateMealplan()
+
+      this.breakpointObserver.observe([
+        Breakpoints.Handset,
+        Breakpoints.Tablet,
+      ]).subscribe(result => {
+        console.log(result.matches)
+        this.isMobile = result.matches;
+      });
     }
 
   previousDay(): void {
@@ -78,10 +90,11 @@ export class MealplansComponent {
   }
 
   openDialog(mealKey: Meals) {
-    const dialogRef = this.dialog.open(CreateMealplanDialogComponent, {
-      height: '80vh',
-      width: '60vw'
-    });
+    if (this.isMobile) {
+      this.isMobileDialogOpen = true
+      return
+    }
+    const dialogRef = this.dialog.open(CreateMealplanDialogComponent, {height: "80vh", width: "60vw"});
 
     dialogRef.afterClosed().subscribe(result => {
       // TODO add error if something is missing
@@ -92,6 +105,11 @@ export class MealplansComponent {
     console.log(this.mealplan)
     console.log(this.mealplan.filter(item => item.meal === Meals[mealKey]))
     return this.mealplan.filter(item => item.meal === Meals[mealKey]);
+  }
+
+  closeMobileDialog() {
+    this.isMobileDialogOpen = false
+    this.mobileSearchQuery = ""
   }
 
   ngOnDestroy(): void {
@@ -107,6 +125,7 @@ export class MealplansComponent {
     @Inject(LOCALE_ID) private locale: string,
     public mealsService: MealsService,
     public dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    private breakpointObserver: BreakpointObserver
     ) {}
 }

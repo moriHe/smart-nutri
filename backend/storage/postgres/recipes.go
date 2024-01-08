@@ -31,11 +31,11 @@ func (s *Storage) GetAllRecipes(user *types.User) (*[]types.RecipeWithoutIngredi
 	return &recipes, nil
 }
 
-func (s *Storage) GetRecipeById(id string) (*types.FullRecipe, error) {
+func (s *Storage) GetRecipeById(id string, activeFamilyId *int) (*types.FullRecipe, error) {
 
 	recipe := types.FullRecipe{RecipeIngredients: []types.RecipeIngredient{}}
-	query := "select recipes.id, name, default_portions, meal from recipes join meals on recipes.default_meal = meals.id where recipes.id = $1"
-	err := s.Db.QueryRow(context.Background(), query, id).Scan(&recipe.Id, &recipe.Name, &recipe.DefaultPortions, &recipe.DefaultMeal)
+	query := "select recipes.id, name, default_portions, meal from recipes join meals on recipes.default_meal = meals.id where recipes.id = $1 and family_id = $2"
+	err := s.Db.QueryRow(context.Background(), query, id, activeFamilyId).Scan(&recipe.Id, &recipe.Name, &recipe.DefaultPortions, &recipe.DefaultMeal)
 
 	if err != nil {
 		return nil, &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Bad Request: No recipe found with id %s", id)}

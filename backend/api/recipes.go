@@ -31,8 +31,13 @@ func (s *Server) handleGetAllRecipes(c *gin.Context) {
 
 func (s *Server) handleGetRecipeById(c *gin.Context) {
 	id := c.Param("id")
+	user := contextmethods.GetUserFromContext(c)
 
-	recipe, err := s.store.GetRecipeById(id)
+	if user.ActiveFamilyId == nil {
+		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "No Family"})
+	}
+
+	recipe, err := s.store.GetRecipeById(id, user.ActiveFamilyId)
 	responses.HandleResponse[*types.FullRecipe](c, recipe, err)
 
 }

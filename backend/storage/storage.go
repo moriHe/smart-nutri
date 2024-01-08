@@ -11,7 +11,7 @@ type Storage interface {
 	PostFamily(name string, userId int) error
 
 	GetAllRecipes(user *types.User) (*[]types.RecipeWithoutIngredients, error)
-	GetRecipeById(recipeId string) (*types.FullRecipe, error)
+	GetRecipeById(recipeId string, activeFamilyId *int) (*types.FullRecipe, error)
 	PostRecipe(familyId *int, payload types.PostRecipe) (*types.Id, error)
 	PostRecipeIngredient(recipeId string, payload types.PostRecipeIngredient) (*int, error)
 	PatchRecipeName(recipeId string, payload types.PatchRecipeName) error

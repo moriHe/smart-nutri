@@ -4,10 +4,11 @@ import { SearchResponseHit } from 'typesense/lib/Typesense/Documents';
 import { RecipesService } from 'api/recipes/recipes.service';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { debounceTime, switchMap } from 'rxjs';
+import { debounceTime, switchMap, take } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { SearchIngredientDialogComponent } from '../search-ingredient-dialog/search-ingredient-dialog.component';
 import { MatSnackBar, MatSnackBarRef, SimpleSnackBar } from '@angular/material/snack-bar';
+import { FullRecipe } from 'api/recipes/recipes.interface';
 
 @Component({
   selector: 'app-search',
@@ -15,7 +16,7 @@ import { MatSnackBar, MatSnackBarRef, SimpleSnackBar } from '@angular/material/s
   styleUrls: ['./search.component.css']
 })
 export class SearchComponent {
-  recipeId?: number
+  recipe!: FullRecipe
   results: SearchResponseHit<Result>[] = []
 
   ingredientInput!: FormGroup
@@ -25,8 +26,12 @@ export class SearchComponent {
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
-     this.recipeId = params['recipeId']
+     this.recipesService.getRecipe(params['recipeId']).pipe(take(1)).subscribe((response: FullRecipe) => {
+      this.recipe = response
+    });
     })
+
+
 
     this.ingredientInput = this.formBuilder.group({
       query: ""
@@ -57,10 +62,10 @@ export class SearchComponent {
     const dialogRef = this.dialog.open(SearchIngredientDialogComponent);
 
     dialogRef.afterClosed().subscribe(result => {
-      if (this.recipeId && result) {
-        this.recipesService.addRecipeIngredient(this.recipeId, {
+      if (this.recipe.id && result) {
+        this.recipesService.addRecipeIngredient(this.recipe.id, {
           ingredientId: this.ingredientId,
-          amountPerPortion: Number(result.amountPerPortion),
+          amountPerPortion: Number(result.amountPerPortion) / this.recipe.defaultPortions,
           isBio: result.isBio,
           market: result.selectedMarket,
           unit: result.selectedUnit

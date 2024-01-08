@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { FullRecipe, RecipeBody, RecipeIngredientBody, ShallowRecipe } from "./recipes.interface";
+import { FullRecipe, RecipeBody, RecipeIngredientBody, RecipeWithoutIngredients } from "./recipes.interface";
 import { Response } from "api";
 import { HttpClient } from "@angular/common/http";
 
@@ -9,7 +9,7 @@ import { HttpClient } from "@angular/common/http";
 export class RecipesEndpointsService {
 
   fetchRecipes() {
-    return this.http.get<Response<ShallowRecipe[]>>(`http://localhost:8080/recipes`);
+    return this.http.get<Response<RecipeWithoutIngredients[]>>(`http://localhost:8080/recipes`);
 }
 
 fetchRecipe(id: number) {

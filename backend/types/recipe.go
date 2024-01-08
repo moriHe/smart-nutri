@@ -20,9 +20,11 @@ type RecipeIngredient struct {
 	IsBio            bool    `json:"isBio"`
 }
 
-type ShallowRecipe struct {
-	Id   int    `json:"id"`
-	Name string `json:"name"`
+type RecipeWithoutIngredients struct {
+	Id              int     `json:"id"`
+	Name            string  `json:"name"`
+	DefaultPortions float32 `json:"defaultPortions"`
+	DefaultMeal     string  `json:"defaultMeal"`
 }
 
 type FullRecipe struct {

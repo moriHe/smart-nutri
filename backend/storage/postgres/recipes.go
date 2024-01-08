@@ -11,17 +11,17 @@ import (
 	"github.com/moriHe/smart-nutri/types"
 )
 
-func (s *Storage) GetAllRecipes(user *types.User) (*[]types.ShallowRecipe, error) {
-	rows, _ := s.Db.Query(context.Background(), "select id, name from recipes where family_id=$1", user.ActiveFamilyId)
+func (s *Storage) GetAllRecipes(user *types.User) (*[]types.RecipeWithoutIngredients, error) {
+	rows, _ := s.Db.Query(context.Background(), "select id, name, default_portions, default_meal from recipes where family_id=$1", user.ActiveFamilyId)
 
 	defer rows.Close()
 
-	var recipes []types.ShallowRecipe
+	var recipes []types.RecipeWithoutIngredients
 
 	for rows.Next() {
-		var recipe types.ShallowRecipe
+		var recipe types.RecipeWithoutIngredients
 
-		err := rows.Scan(&recipe.Id, &recipe.Name)
+		err := rows.Scan(&recipe.Id, &recipe.Name, &recipe.DefaultPortions, &recipe.DefaultMeal)
 		if err != nil {
 			return nil, &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Scan recipes table failed: %s", err)}
 		}

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Response } from 'api';
 import { Observable, Subscription, map, of, switchMap, take } from 'rxjs';
-import { FullRecipe, RecipeBody, RecipeIngredientBody, ShallowRecipe } from './recipes.interface';
+import { FullRecipe, RecipeBody, RecipeIngredientBody, RecipeWithoutIngredients } from './recipes.interface';
 import { RecipesEndpointsService } from './recipes.endpoints.service';
 
 
@@ -12,9 +12,9 @@ import { RecipesEndpointsService } from './recipes.endpoints.service';
 export class RecipesService {
 
 
-  getRecipes(): Observable<ShallowRecipe[]> {
+  getRecipes(): Observable<RecipeWithoutIngredients[]> {
     return this.recipesEndpointService.fetchRecipes().pipe(
-      map((response: { data: ShallowRecipe[] }) => response ? response.data : [])
+      map((response: { data: RecipeWithoutIngredients[] }) => response ? response.data : [])
     )
   }
 

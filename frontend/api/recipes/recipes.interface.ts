@@ -1,6 +1,8 @@
-export interface ShallowRecipe {
+export interface RecipeWithoutIngredients {
     id: number,
-    name: string
+    name: string,
+    defaultMeal: Meals,
+    defaultPortions: number,
   }
 
 
@@ -43,9 +45,7 @@ export type RecipeIngredientBody = Omit<RecipeIngredient, "name" | "id"> & {
   ingredientId: number
 }
 
-export interface FullRecipe extends ShallowRecipe {
-  defaultMeal: Meals,
-  defaultPortions: number,
+export interface FullRecipe extends RecipeWithoutIngredients {
   recipeIngredients: RecipeIngredient[]
 }
 

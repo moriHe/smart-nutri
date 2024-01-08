@@ -26,7 +26,7 @@ func (s *Server) handleGetAllRecipes(c *gin.Context) {
 		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "No Family"})
 	}
 	recipes, err := s.store.GetAllRecipes(user)
-	responses.HandleResponse[*[]types.ShallowRecipe](c, recipes, err)
+	responses.HandleResponse[*[]types.RecipeWithoutIngredients](c, recipes, err)
 }
 
 func (s *Server) handleGetRecipeById(c *gin.Context) {

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Response } from 'api';
-import { ShallowRecipe } from 'api/recipes/recipes.interface';
+import { RecipeWithoutIngredients } from 'api/recipes/recipes.interface';
 import { RecipesService } from 'api/recipes/recipes.service';
 import { CreateRecipeDialogComponent } from '../create-recipe-dialog/create-recipe-dialog.component';
 import { Subscription } from 'rxjs';
@@ -13,11 +13,11 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./my-recipes.component.css']
 })
 export class MyRecipesComponent {
-  recipes: ShallowRecipe[] = []
+  recipes: RecipeWithoutIngredients[] = []
   private recipesSubscription!: Subscription
 
   ngOnInit(): void {
-    this.recipesSubscription = this.recipesService.getRecipes().subscribe((response: ShallowRecipe[]) => {
+    this.recipesSubscription = this.recipesService.getRecipes().subscribe((response: RecipeWithoutIngredients[]) => {
       this.recipes = response
     })
   }

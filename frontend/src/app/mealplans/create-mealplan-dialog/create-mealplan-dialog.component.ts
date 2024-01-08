@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
-import { ShallowRecipe } from 'api/recipes/recipes.interface';
+import { RecipeWithoutIngredients } from 'api/recipes/recipes.interface';
 import { RecipesService } from 'api/recipes/recipes.service';
 import { Subscription } from 'rxjs';
 
@@ -12,11 +12,11 @@ export class CreateMealplanDialogComponent {
   searchQuery = ""
   portions!: number
   private recipesSubscription!: Subscription
-  recipes: ShallowRecipe[] = []
+  recipes: RecipeWithoutIngredients[] = []
   selectedRecipeId?: number = undefined
 
   ngOnInit(): void {
-    this.recipesSubscription = this.recipesService.getRecipes().subscribe((response: ShallowRecipe[]) => {
+    this.recipesSubscription = this.recipesService.getRecipes().subscribe((response: RecipeWithoutIngredients[]) => {
       this.recipes = response
     })
   }

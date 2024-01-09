@@ -19,7 +19,6 @@ export class CreateMealplanBottomsheetComponent {
   portions: number = this.data.defaultPortions
   
   addMealplanItem(): void {
-    console.log(this.data)
     this.data.addMealplanItem({recipeId: this.data.id, meal: this.selectedMeal, portions: this.portions})
     this._bottomSheetRef.dismiss();
   }

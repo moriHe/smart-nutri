@@ -56,7 +56,6 @@ export class MealplansComponent {
         Breakpoints.Handset,
         Breakpoints.Tablet,
       ]).subscribe(result => {
-        console.log(result.matches)
         this.isMobile = result.matches;
       });
     }
@@ -92,7 +91,7 @@ export class MealplansComponent {
     const displayDate = this.datePipe.transform(this.selectedDate, format, undefined, this.locale);
     return displayDate || '';
   }
-  addMealPlanItem({recipeId, meal, portions}: Omit<PostMealplanPayload, "date">) {
+  addMealPlanItem = ({recipeId, meal, portions}: Omit<PostMealplanPayload, "date">) =>{
     this.mealplanService.addMealplanItem({
       recipeId,
       meal,
@@ -145,7 +144,7 @@ export class MealplansComponent {
       return
     }
     this._bottomSheet.open(CreateMealplanBottomsheetComponent, 
-      { data: {...selectedRecipe, addMealplanItem: this.addMealPlanItem.bind(this)} }
+      { data: {...selectedRecipe, addMealplanItem: this.addMealPlanItem} }
       );
   }
 

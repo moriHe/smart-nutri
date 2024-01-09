@@ -33,7 +33,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { CreateMealplanDialogComponent } from './mealplans/create-mealplan-dialog/create-mealplan-dialog.component';
-
+import { CreateMealplanBottomsheetComponent } from './mealplans/create-mealplan-bottomsheet/create-mealplan-bottomsheet.component';
+import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 
 
 @NgModule({
@@ -51,6 +52,7 @@ import { CreateMealplanDialogComponent } from './mealplans/create-mealplan-dialo
     LandingPageComponent,
     MealplansComponent,
     CreateMealplanDialogComponent,
+    CreateMealplanBottomsheetComponent
   ],
   imports: [
     BrowserModule,
@@ -71,6 +73,7 @@ import { CreateMealplanDialogComponent } from './mealplans/create-mealplan-dialo
     MatDatepickerModule,
     MatNativeDateModule,
     CommonModule,
+    MatBottomSheetModule,
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAuth(() => getAuth()),
   ],

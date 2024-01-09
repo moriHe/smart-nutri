@@ -4,11 +4,14 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Mealplan } from 'api/mealplans/mealplans.interface';
 import { MealplansService } from 'api/mealplans/mealplans.service';
-import { Meals } from 'api/recipes/recipes.interface';
+import { Meals, RecipeWithoutIngredients } from 'api/recipes/recipes.interface';
 import { Subscription, take } from 'rxjs';
 import { MealsService } from 'services/meals.service';
 import { CreateMealplanDialogComponent } from '../create-mealplan-dialog/create-mealplan-dialog.component';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { RecipesService } from 'api/recipes/recipes.service';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { CreateMealplanBottomsheetComponent } from '../create-mealplan-bottomsheet/create-mealplan-bottomsheet.component';
 
 @Component({
   selector: 'app-mealplans',
@@ -19,7 +22,11 @@ export class MealplansComponent {
   isMobile = false
   isMobileDialogOpen = false
   mobileSearchQuery = ""
+  private recipesSubscription!: Subscription
+  recipes: RecipeWithoutIngredients[] = []
+  
   mealplan: Mealplan = []
+
   private mealplanSubscription!: Subscription
   today: Date = new Date()
   selectedDate: Date = this.today
@@ -38,6 +45,11 @@ export class MealplansComponent {
     }
 
     ngOnInit(): void {
+        this.recipesSubscription = this.recipesService.getRecipes().subscribe((response: RecipeWithoutIngredients[]) => {
+          this.recipes = response
+        })
+      
+
       this.updateMealplan()
 
       this.breakpointObserver.observe([
@@ -80,7 +92,7 @@ export class MealplansComponent {
     const displayDate = this.datePipe.transform(this.selectedDate, format, undefined, this.locale);
     return displayDate || '';
   }
-
+// TODO arguments and pass function
   addMealPlanItem() {
     this.mealplanService.addMealplanItem().pipe(take(1)).subscribe({
       next: () => {
@@ -112,9 +124,30 @@ export class MealplansComponent {
     this.mobileSearchQuery = ""
   }
 
+  searchQueryRecipes() {
+    if (this.mobileSearchQuery == "") {
+      return this.recipes
+    }
+
+    return this.recipes.filter((recipe) => {
+      return recipe.name.toLowerCase().includes(this.mobileSearchQuery.toLowerCase())
+    })
+  }
+
+  openBottomSheet(id: number) {
+    const selectedRecipe = this.recipes.find((recipe) => recipe.id === id)
+    if (!selectedRecipe) {
+      return
+    }
+    this._bottomSheet.open(CreateMealplanBottomsheetComponent, { data: {... selectedRecipe, selectedDate: this.selectedDate} });
+  }
+
   ngOnDestroy(): void {
     if (this.mealplanSubscription) {
       this.mealplanSubscription.unsubscribe()
+    }
+    if (this.recipesSubscription) {
+      this.recipesSubscription.unsubscribe();
     }
   }
 
@@ -126,6 +159,8 @@ export class MealplansComponent {
     public mealsService: MealsService,
     public dialog: MatDialog,
     private router: Router,
-    private breakpointObserver: BreakpointObserver
+    private breakpointObserver: BreakpointObserver,
+    private recipesService: RecipesService,
+    private _bottomSheet: MatBottomSheet
     ) {}
 }

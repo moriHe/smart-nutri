@@ -12,8 +12,8 @@ import (
 )
 
 func (s *Storage) GetAllRecipes(user *types.User) (*[]types.RecipeWithoutIngredients, error) {
-	rows, _ := s.Db.Query(context.Background(), "select id, name, default_portions, default_meal from recipes where family_id=$1", user.ActiveFamilyId)
-
+	rows, _ := s.Db.Query(context.Background(), "select recipes.id, name, default_portions, meal from recipes join meals on recipes.default_meal = meals.id where family_id=$1", user.ActiveFamilyId)
+	// error handling um silent errors zu vermeiden (hatte id anstatt recipes nach einbau von join, was n silent error warf)
 	defer rows.Close()
 
 	var recipes []types.RecipeWithoutIngredients

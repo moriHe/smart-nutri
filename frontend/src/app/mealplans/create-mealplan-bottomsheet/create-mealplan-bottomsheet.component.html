@@ -1,0 +1,25 @@
+<h2>{{data.name}}</h2>
+<div class="flex items-baseline justify-between my-3">
+    <div class="flex flex-grow items-center">
+        <button mat-icon-button (click)="decrement()">
+        <mat-icon>remove</mat-icon>
+        </button>
+    
+        <!-- Display the number in the middle -->
+        <span>{{ portions }} {{getPortionLabel()}}</span>
+    
+        <!-- Plus icon button -->
+        <button mat-icon-button (click)="increment()">
+        <mat-icon>add</mat-icon>
+        </button>
+    </div>
+    <mat-form-field>
+        <mat-label>Mahlzeit</mat-label>
+        <mat-select [(ngModel)]="selectedMeal" name="meals">
+            <mat-option *ngFor="let meal of meals" [value]="meal">{{mealsService.MealDisplay[meal]}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+  </div>
+  <div class="flex justify-center mb-3">
+    <button mat-raised-button color="primary">Hinzufügen</button>
+  </div>

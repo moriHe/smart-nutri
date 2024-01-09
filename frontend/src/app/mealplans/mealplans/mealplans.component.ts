@@ -2,7 +2,7 @@ import { DatePipe } from '@angular/common';
 import { ChangeDetectorRef, Component, Inject, LOCALE_ID } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { Mealplan } from 'api/mealplans/mealplans.interface';
+import { Mealplan, PostMealplanPayload } from 'api/mealplans/mealplans.interface';
 import { MealplansService } from 'api/mealplans/mealplans.service';
 import { Meals, RecipeWithoutIngredients } from 'api/recipes/recipes.interface';
 import { Subscription, take } from 'rxjs';
@@ -92,9 +92,14 @@ export class MealplansComponent {
     const displayDate = this.datePipe.transform(this.selectedDate, format, undefined, this.locale);
     return displayDate || '';
   }
-// TODO arguments and pass function
-  addMealPlanItem() {
-    this.mealplanService.addMealplanItem().pipe(take(1)).subscribe({
+  addMealPlanItem({recipeId, meal, portions}: Omit<PostMealplanPayload, "date">) {
+    this.mealplanService.addMealplanItem({
+      recipeId,
+      meal,
+      portions,
+      date: this.selectedDate.toISOString(),
+
+    }).pipe(take(1)).subscribe({
       next: () => {
         this.updateMealplan()
       }
@@ -139,7 +144,9 @@ export class MealplansComponent {
     if (!selectedRecipe) {
       return
     }
-    this._bottomSheet.open(CreateMealplanBottomsheetComponent, { data: {... selectedRecipe, selectedDate: this.selectedDate} });
+    this._bottomSheet.open(CreateMealplanBottomsheetComponent, 
+      { data: {...selectedRecipe, addMealplanItem: this.addMealPlanItem.bind(this)} }
+      );
   }
 
   ngOnDestroy(): void {

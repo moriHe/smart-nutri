@@ -1,9 +1,12 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet';
+import { PostMealplanPayload } from 'api/mealplans/mealplans.interface';
+import { MealplansService } from 'api/mealplans/mealplans.service';
 import { Meals, RecipeWithoutIngredients } from 'api/recipes/recipes.interface';
 import { MealsService } from 'services/meals.service';
 
-type BottomSheetData = RecipeWithoutIngredients & {selectedDate: Date}
+type BottomSheetData = RecipeWithoutIngredients & 
+{addMealplanItem: (payload: Omit<PostMealplanPayload, "date">) => void}
 
 @Component({
   selector: 'app-create-mealplan-bottomsheet',
@@ -15,9 +18,10 @@ export class CreateMealplanBottomsheetComponent {
   meals: Meals[] = Object.values(Meals)
   portions: number = this.data.defaultPortions
   
-  openLink(event: MouseEvent): void {
+  addMealplanItem(): void {
+    console.log(this.data)
+    this.data.addMealplanItem({recipeId: this.data.id, meal: this.selectedMeal, portions: this.portions})
     this._bottomSheetRef.dismiss();
-    event.preventDefault();
   }
 
   getPortionLabel() {
@@ -39,7 +43,7 @@ export class CreateMealplanBottomsheetComponent {
   }
   constructor(
     private _bottomSheetRef: MatBottomSheetRef<CreateMealplanBottomsheetComponent>,
-    @Inject(MAT_BOTTOM_SHEET_DATA) public data: RecipeWithoutIngredients,
+    @Inject(MAT_BOTTOM_SHEET_DATA) public data: BottomSheetData,
     public mealsService: MealsService
     ) {}
 }

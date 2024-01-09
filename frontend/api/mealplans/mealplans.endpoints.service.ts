@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Response } from 'api';
-import { Mealplan } from './mealplans.interface';
+import { Mealplan, PostMealplanPayload } from './mealplans.interface';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({
@@ -11,13 +11,8 @@ export class MealplansEndpointsService {
     return this.http.get<Response<Mealplan>>(`http://localhost:8080/mealplan/${date}`)
   }
 
-  postMealplanItem() {
-    return this.http.post<Response<string>>("http://localhost:8080/mealplan", {
-      recipeId: 1,
-      date: new Date().toISOString(),
-      meal: 'BREAKFAST',
-      portions: 3
-    })
+  postMealplanItem(payload: PostMealplanPayload) {
+    return this.http.post<Response<string>>("http://localhost:8080/mealplan", payload)
   }
 
   constructor(

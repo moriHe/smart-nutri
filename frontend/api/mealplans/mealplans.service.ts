@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { Mealplan } from './mealplans.interface';
+import { Mealplan, PostMealplanPayload } from './mealplans.interface';
 import { MealplansEndpointsService } from './mealplans.endpoints.service';
 
 @Injectable({
@@ -13,8 +13,8 @@ export class MealplansService {
     )
   }
 
-  addMealplanItem(): Observable<string> {
-    return this.mealplanEndpoint.postMealplanItem().pipe(
+  addMealplanItem(payload: PostMealplanPayload): Observable<string> {
+    return this.mealplanEndpoint.postMealplanItem(payload).pipe(
       map((response: {data: string}) => response.data)
     )
   }

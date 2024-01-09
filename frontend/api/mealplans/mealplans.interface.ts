@@ -10,3 +10,10 @@ type ShallowMealplanItem = {
 }
 
 export type Mealplan = ShallowMealplanItem[]
+
+export type PostMealplanPayload = {
+    recipeId: number,
+    date: string,
+    meal: Meals,
+    portions: number
+}

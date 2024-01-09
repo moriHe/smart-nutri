@@ -15,15 +15,15 @@
         >
         <div class="flex justify-end items-center gap-10">
             <div class="flex items-center">
-                <button mat-icon-button (click)="decrement()">
+                <button mat-icon-button (click)="decrement($event)">
                 <mat-icon>remove</mat-icon>
                 </button>
             
                 <!-- Display the number in the middle -->
-                <span>{{ portionsSubject.value }} {{getPortionLabel()}}</span>
+                <span>{{ portions }} {{getPortionLabel()}}</span>
             
                 <!-- Plus icon button -->
-                <button mat-icon-button (click)="increment()">
+                <button mat-icon-button (click)="increment($event)">
                 <mat-icon>add</mat-icon>
                 </button>
             </div>

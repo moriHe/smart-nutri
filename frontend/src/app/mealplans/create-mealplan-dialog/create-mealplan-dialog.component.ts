@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Inject } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, signal } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Meals, RecipeWithoutIngredients } from 'api/recipes/recipes.interface';
 import { RecipesService } from 'api/recipes/recipes.service';
@@ -16,8 +16,7 @@ export class CreateMealplanDialogComponent {
   recipes: RecipeWithoutIngredients[] = []
 
   selectedRecipeId?: number = undefined
-  portions: number = 1
-  portionsSubject: BehaviorSubject<number> = new BehaviorSubject<number>(1);
+  portions = 1
 
 
   ngOnInit(): void {
@@ -37,10 +36,14 @@ export class CreateMealplanDialogComponent {
   }
 
   selectRecipe(id: number) {
+    if (this.selectedRecipeId === id) {
+      return
+    }
+    
     const selectedRecipe = this.recipes.find((recipe) => recipe.id === id)
     if (selectedRecipe) {
       this.selectedRecipeId = selectedRecipe.id
-      this.portions = selectedRecipe.defaultPortions
+      this.portions =selectedRecipe.defaultPortions
     } 
     
     this.cdr.detectChanges()
@@ -53,15 +56,17 @@ export class CreateMealplanDialogComponent {
     return "Portionen"
   }
 
-  increment() {
-    this.portionsSubject.next(this.portionsSubject.value + 1)
+  increment(event: Event) {
+    event.stopPropagation();
+    this.portions = this.portions + 1
   }
 
-  decrement() {
+  decrement(event: Event) {
+    event.stopPropagation();
     if (this.portions === 1) {
       return
     }
-    this.portionsSubject.next(this.portionsSubject.value - 1)
+    this.portions = this.portions - 1
   }
 
   isSelected(id: number) {
@@ -74,7 +79,7 @@ export class CreateMealplanDialogComponent {
   closeDialog(): void {
     this.dialogRef.close({
       recipeId: this.selectedRecipeId,
-      portions: this.portionsSubject.value
+      portions: this.portions
     });
   }
 

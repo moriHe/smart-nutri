@@ -12,7 +12,7 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { RecipesService } from 'api/recipes/recipes.service';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { CreateMealplanBottomsheetComponent } from '../create-mealplan-bottomsheet/create-mealplan-bottomsheet.component';
-
+// TODO: Add Sonstige, style all
 @Component({
   selector: 'app-mealplans',
   templateUrl: './mealplans.component.html',

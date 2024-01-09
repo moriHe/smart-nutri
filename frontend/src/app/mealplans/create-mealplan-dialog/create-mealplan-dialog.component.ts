@@ -1,7 +1,9 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
-import { RecipeWithoutIngredients } from 'api/recipes/recipes.interface';
+import { ChangeDetectorRef, Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Meals, RecipeWithoutIngredients } from 'api/recipes/recipes.interface';
 import { RecipesService } from 'api/recipes/recipes.service';
 import { Subscription } from 'rxjs';
+import { MealsService } from 'services/meals.service';
 
 @Component({
   selector: 'app-create-mealplan-dialog',
@@ -10,10 +12,11 @@ import { Subscription } from 'rxjs';
 })
 export class CreateMealplanDialogComponent {
   searchQuery = ""
-  portions!: number
   private recipesSubscription!: Subscription
   recipes: RecipeWithoutIngredients[] = []
+
   selectedRecipeId?: number = undefined
+  portions: number = 1
 
   ngOnInit(): void {
     this.recipesSubscription = this.recipesService.getRecipes().subscribe((response: RecipeWithoutIngredients[]) => {
@@ -32,7 +35,32 @@ export class CreateMealplanDialogComponent {
   }
 
   selectRecipe(id: number) {
-    this.selectedRecipeId = id
+    const selectedRecipe = this.recipes.find((recipe) => recipe.id === id)
+    if (selectedRecipe) {
+      this.selectedRecipeId = selectedRecipe.id
+      this.portions = selectedRecipe.defaultPortions
+    } 
+    
+    this.cdr.detectChanges()
+  }
+
+  getPortionLabel() {
+    if (this.portions === 1) {
+      return "Portion"
+    }
+    return "Portionen"
+  }
+
+  increment() {
+    this.portions = this.portions + 1
+    this.cdr.detectChanges()
+  }
+
+  decrement() {
+    if (this.portions === 1) {
+      return
+    }
+    this.portions = this.portions - 1
     this.cdr.detectChanges()
   }
 
@@ -43,6 +71,13 @@ export class CreateMealplanDialogComponent {
     return false
   }
 
+  closeDialog(): void {
+    this.dialogRef.close({
+      recipeId: this.selectedRecipeId,
+      portions: this.portions
+    });
+  }
+
   ngOnDestroy(): void {
     if (this.recipesSubscription) {
       this.recipesSubscription.unsubscribe();
@@ -51,6 +86,9 @@ export class CreateMealplanDialogComponent {
 
   constructor(
     private recipesService: RecipesService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    public mealsService: MealsService,
+    public dialogRef: MatDialogRef<CreateMealplanDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: {recipeId: number, portions: number, selectedMeal: Meals}
     ) {}
 }

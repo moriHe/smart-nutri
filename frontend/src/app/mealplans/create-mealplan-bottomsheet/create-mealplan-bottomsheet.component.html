@@ -13,13 +13,7 @@
         <mat-icon>add</mat-icon>
         </button>
     </div>
-    <mat-form-field>
-        <mat-label>Mahlzeit</mat-label>
-        <mat-select [(ngModel)]="selectedMeal" name="meals">
-            <mat-option *ngFor="let meal of meals" [value]="meal">{{mealsService.MealDisplay[meal]}}</mat-option>
-        </mat-select>
-      </mat-form-field>
   </div>
   <div class="flex justify-center mb-3">
-    <button (click)="addMealplanItem()" mat-raised-button color="primary">Hinzufügen</button>
+    <button (click)="addMealplanItem()" mat-raised-button color="primary">{{mealsService.MealDisplay[data.selectedMeal]}} Hinzufügen</button>
   </div>

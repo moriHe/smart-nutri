@@ -1,20 +1,39 @@
 <mat-form-field class="w-full">
-    <mat-label>Suche</mat-label>
+    <mat-label>Suche {{mealsService.MealDisplay[data.selectedMeal]}}</mat-label>
     <input matInput [(ngModel)]="this.searchQuery">
   </mat-form-field>
-<div class="w-4/5 mx-auto">
+<div class="w-full mx-auto">
     <div
     (click)="selectRecipe(recipe.id)"
     class="flex my-2 h-16 items-center py-2 px-5 shadow-md cursor-pointer"
     [class]="isSelected(recipe.id) ? 'bg-green-200' : ''"
     *ngFor="let recipe of searchQueryRecipes()"
     >
-        <p class="w-1/2">{{recipe.name}}</p>
+        <p class="w-2/3">{{recipe.name}}</p>
         <div
         *ngIf="isSelected(recipe.id)"
-        class="flex justify-end gap-10 flex-grow"
         >
-            <p>{{recipe.defaultPortions}}</p>
+        <div class="flex justify-end items-center gap-10">
+            <div class="flex items-center">
+                <button mat-icon-button (click)="decrement()">
+                <mat-icon>remove</mat-icon>
+                </button>
+            
+                <!-- Display the number in the middle -->
+                <span>{{ portions }} {{getPortionLabel()}}</span>
+            
+                <!-- Plus icon button -->
+                <button mat-icon-button (click)="increment()">
+                <mat-icon>add</mat-icon>
+                </button>
+            </div>
+            <button 
+                mat-mini-fab color="primary"
+                (click)="closeDialog()"
+                cdkFocusInitial>
+                <mat-icon>add</mat-icon>
+            </button>
+          </div>
         </div>
     </div>
 </div>

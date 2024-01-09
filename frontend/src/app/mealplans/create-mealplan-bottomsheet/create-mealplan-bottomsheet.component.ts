@@ -4,8 +4,12 @@ import { PostMealplanPayload } from 'api/mealplans/mealplans.interface';
 import { Meals, RecipeWithoutIngredients } from 'api/recipes/recipes.interface';
 import { MealsService } from 'services/meals.service';
 
-type BottomSheetData = RecipeWithoutIngredients & 
-{addMealplanItem: (payload: Omit<PostMealplanPayload, "date">) => void}
+export type CreateMealplanDialogData = RecipeWithoutIngredients & 
+{
+  addMealplanItem: (payload: Omit<PostMealplanPayload, "date">) => void,
+  selectedMeal: Meals,
+  meal: Meals
+}
 
 @Component({
   selector: 'app-create-mealplan-bottomsheet',
@@ -13,12 +17,11 @@ type BottomSheetData = RecipeWithoutIngredients &
   styleUrls: ['./create-mealplan-bottomsheet.component.css']
 })
 export class CreateMealplanBottomsheetComponent {
-  selectedMeal: Meals = this.data.defaultMeal
   meals: Meals[] = Object.values(Meals)
   portions: number = this.data.defaultPortions
   
   addMealplanItem(): void {
-    this.data.addMealplanItem({recipeId: this.data.id, meal: this.selectedMeal, portions: this.portions})
+    this.data.addMealplanItem({recipeId: this.data.id, meal: this.data.selectedMeal, portions: this.portions})
     this._bottomSheetRef.dismiss();
   }
 
@@ -41,7 +44,7 @@ export class CreateMealplanBottomsheetComponent {
   }
   constructor(
     private _bottomSheetRef: MatBottomSheetRef<CreateMealplanBottomsheetComponent>,
-    @Inject(MAT_BOTTOM_SHEET_DATA) public data: BottomSheetData,
+    @Inject(MAT_BOTTOM_SHEET_DATA) public data: CreateMealplanDialogData,
     public mealsService: MealsService
     ) {}
 }

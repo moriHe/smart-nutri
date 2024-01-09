@@ -25,6 +25,7 @@ export class MealplansComponent {
   private recipesSubscription!: Subscription
   recipes: RecipeWithoutIngredients[] = []
   
+  selectedMeal!: Meals
   mealplan: Mealplan = []
 
   private mealplanSubscription!: Subscription
@@ -106,16 +107,20 @@ export class MealplansComponent {
     })
   }
 
+  // todo mealKey setzt das initiale meal nicht recipe
   openDialog(mealKey: Meals) {
     if (this.isMobile) {
+      this.selectedMeal = mealKey
       this.isMobileDialogOpen = true
       return
     }
-    const dialogRef = this.dialog.open(CreateMealplanDialogComponent, {height: "80vh", width: "60vw"});
+    const dialogRef = this.dialog.open(CreateMealplanDialogComponent, 
+      {height: "80vh", width: "60vw", data: {selectedMeal: mealKey}});
 
     dialogRef.afterClosed().subscribe(result => {
-      // TODO add error if something is missing
-      console.log("test")
+      if (result) {
+        this.addMealPlanItem({...result, meal: mealKey})
+      }
   })
 }
   getMealplanForMealType(mealKey: Meals): Mealplan {
@@ -143,7 +148,7 @@ export class MealplansComponent {
       return
     }
     this._bottomSheet.open(CreateMealplanBottomsheetComponent, 
-      { data: {...selectedRecipe, addMealplanItem: this.addMealPlanItem} }
+      { data: {...selectedRecipe, addMealplanItem: this.addMealPlanItem, selectedMeal: this.selectedMeal} }
       );
   }
 

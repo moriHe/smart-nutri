@@ -101,6 +101,7 @@ export class MealplansComponent {
     }).pipe(take(1)).subscribe({
       next: () => {
         this.updateMealplan()
+        this.isMobileDialogOpen = false
       }
     })
   }
@@ -118,8 +119,6 @@ export class MealplansComponent {
   })
 }
   getMealplanForMealType(mealKey: Meals): Mealplan {
-    console.log(this.mealplan)
-    console.log(this.mealplan.filter(item => item.meal === Meals[mealKey]))
     return this.mealplan.filter(item => item.meal === Meals[mealKey]);
   }
 

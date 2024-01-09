@@ -1,7 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import { PostMealplanPayload } from 'api/mealplans/mealplans.interface';
-import { MealplansService } from 'api/mealplans/mealplans.service';
 import { Meals, RecipeWithoutIngredients } from 'api/recipes/recipes.interface';
 import { MealsService } from 'services/meals.service';
 

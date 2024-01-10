@@ -1,4 +1,4 @@
-<!-- Mobile -->
+<!-- Mobile Search Screen -->
 <div *ngIf="isMobileDialogOpen">
   <div class="flex justify-end">
     <button mat-icon-button (click)="closeMobileDialog()">
@@ -19,7 +19,7 @@
     </div>
   </div>
 </div> 
-<!-- Desktop -->
+<!-- Desktop and Mobile Main Screen -->
 <div *ngIf="!isMobileDialogOpen">
 <div class="flex items-center justify-center">
     <button mat-icon-button (click)="previousDay()">
@@ -33,41 +33,7 @@
     </button>
   </div>
   <div class="flex flex-col items-center gap-10">
-    <div class="w-3/4">
-      <div class="flex gap-5 items-center">
-      <h2 class="!m-0 w-28">{{mealsService.MealDisplay.BREAKFAST}}</h2>
-      <button mat-mini-fab color="primary" (click)="openDialog(mealsService.MealKey.BREAKFAST)">
-        <mat-icon>add</mat-icon>
-      </button>
-    </div>
-      <div
-      class="flex my-2 h-16 items-center py-2 px-5 cursor-pointer shadow-md"
-       *ngFor="let item of getMealplanForMealType(mealsService.MealKey.BREAKFAST)">
-          <p class="w-1/2">{{item.recipeName}}</p>
-            <div class="flex flex-grow"> 
-      </div>
-    </div>
-    </div>
-    <div class="w-3/4">
-      <div class="flex gap-5 items-center">
-      <h2 class="!m-0 w-28">{{mealsService.MealDisplay.LUNCH}}</h2>
-      <button mat-mini-fab color="primary" (click)="openDialog(mealsService.MealKey.LUNCH)">
-        <mat-icon>add</mat-icon>
-      </button>
-      </div>
-      <div *ngFor="let item of getMealplanForMealType(mealsService.MealKey.LUNCH)">
-        <p>{{item.recipeName}}</p>
-      </div>
-    </div>
-    <div class="w-3/4">
-      <div class="flex gap-5 items-center">
-        <h2 class="!m-0 w-28">{{mealsService.MealDisplay.DINNER}}</h2>
-        <button mat-mini-fab color="primary" (click)="openDialog(mealsService.MealKey.DINNER)">
-          <mat-icon>add</mat-icon>
-        </button>
-        </div>
-      <div *ngFor="let item of getMealplanForMealType(mealsService.MealKey.DINNER)">
-        <p>{{item.recipeName}}</p>
-      </div>
-    </div>
+    <app-mealplan-cards class="w-3/4" [mealKey]="mealsService.MealKey.BREAKFAST" [mealplan]="mealplan" [openDialog]="openDialog"></app-mealplan-cards>
+    <app-mealplan-cards class="w-3/4" [mealKey]="mealsService.MealKey.LUNCH" [mealplan]="mealplan" [openDialog]="openDialog"></app-mealplan-cards>
+    <app-mealplan-cards class="w-3/4" [mealKey]="mealsService.MealKey.DINNER" [mealplan]="mealplan" [openDialog]="openDialog"></app-mealplan-cards>
   </div>

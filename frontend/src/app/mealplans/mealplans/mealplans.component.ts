@@ -12,8 +12,7 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { RecipesService } from 'api/recipes/recipes.service';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { CreateMealplanBottomsheetComponent } from '../create-mealplan-bottomsheet/create-mealplan-bottomsheet.component';
-// TODO: Add Sonstige, style all
-// TODO: Varchar(40) rezeptname
+
 @Component({
   selector: 'app-mealplans',
   templateUrl: './mealplans.component.html',
@@ -32,7 +31,7 @@ export class MealplansComponent {
   private mealplanSubscription!: Subscription
   today: Date = new Date()
   selectedDate: Date = this.today
-    private updateMealplan(): void {
+  private updateMealplan(): void {
       if (this.mealplanSubscription) {
         this.mealplanSubscription.unsubscribe();
       }
@@ -109,8 +108,7 @@ export class MealplansComponent {
     })
   }
 
-  // todo mealKey setzt das initiale meal nicht recipe
-  openDialog(mealKey: Meals) {
+  openDialog = (mealKey: Meals) => {
     if (this.isMobile) {
       this.selectedMeal = mealKey
       this.isMobileDialogOpen = true
@@ -125,6 +123,7 @@ export class MealplansComponent {
       }
   })
 }
+
   getMealplanForMealType(mealKey: Meals): Mealplan {
     return this.mealplan.filter(item => item.meal === Meals[mealKey]);
   }
@@ -173,6 +172,6 @@ export class MealplansComponent {
     private router: Router,
     private breakpointObserver: BreakpointObserver,
     private recipesService: RecipesService,
-    private _bottomSheet: MatBottomSheet
+    private _bottomSheet: MatBottomSheet, 
     ) {}
 }

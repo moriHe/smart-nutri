@@ -35,6 +35,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { CreateMealplanDialogComponent } from './mealplans/create-mealplan-dialog/create-mealplan-dialog.component';
 import { CreateMealplanBottomsheetComponent } from './mealplans/create-mealplan-bottomsheet/create-mealplan-bottomsheet.component';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
+import { MealplanCardsComponent } from './mealplans/mealplan-cards/mealplan-cards.component';
 
 
 @NgModule({
@@ -52,7 +53,8 @@ import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
     LandingPageComponent,
     MealplansComponent,
     CreateMealplanDialogComponent,
-    CreateMealplanBottomsheetComponent
+    CreateMealplanBottomsheetComponent,
+    MealplanCardsComponent
   ],
   imports: [
     BrowserModule,

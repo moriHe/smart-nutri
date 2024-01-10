@@ -1,6 +1,6 @@
 import { Component, ChangeDetectorRef} from '@angular/core';
 import { UserService } from 'api/user/user.service';
-import { BehaviorSubject, finalize, take } from 'rxjs';
+import { finalize, take } from 'rxjs';
 import {Auth, authState} from '@angular/fire/auth'
 
 @Component({

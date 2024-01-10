@@ -9,12 +9,12 @@ import (
 	"github.com/moriHe/smart-nutri/types"
 )
 
-var getQuery = "select mealplans_shopping_list.id, mealplans.id, markets.name, mealplans_shopping_list.is_bio, recipes.name, cast(mealplans.date as text), mealplans.portions, meals.meal, recipes_ingredients.id, " +
-	"ingredients.name, recipes_ingredients.amount_per_portion, units.name from mealplans_shopping_list " +
+var getQuery = "select shopping_list.id, mealplans.id, markets.name, shopping_list.is_bio, recipes.name, cast(mealplans.date as text), mealplans.portions, meals.meal, recipes_ingredients.id, " +
+	"ingredients.name, recipes_ingredients.amount_per_portion, units.name from shopping_list " +
 	"left join mealplans on mealplan_id = mealplans.id left join recipes on mealplans.recipe_id = recipes.id left join recipes_ingredients on " +
 	"recipes_ingredients_id = recipes_ingredients.id left join meals on mealplans.meal = meals.id left join units on recipes_ingredients.unit = units.id " +
-	"left join markets on mealplans_shopping_list.market = markets.id left join ingredients on recipes_ingredients.ingredient_id = ingredients.id " +
-	"where mealplans_shopping_list.family_id = $1;"
+	"left join markets on shopping_list.market = markets.id left join ingredients on recipes_ingredients.ingredient_id = ingredients.id " +
+	"where shopping_list.family_id = $1;"
 
 func (s *Storage) GetMealPlanItemsShoppingList(familyId *int) (*[]types.ShoppingListMealplanItem, error) {
 
@@ -55,7 +55,7 @@ func (s *Storage) PostMealPlanItemShoppingList(payload types.PostShoppingListMea
 	if err != nil {
 		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Step 1: Failed to find market name: %s", err)}
 	}
-	_, err = s.Db.Exec(context.Background(), "insert into mealplans_shopping_list (family_id, mealplan_id, recipes_ingredients_id, market, is_bio) values ($1, $2, $3, $4, $5)", &payload.FamilyId, &payload.MealplanId, &payload.RecipeIngredientId, &marketId, &payload.IsBio)
+	_, err = s.Db.Exec(context.Background(), "insert into shopping_list (family_id, mealplan_id, recipes_ingredients_id, market, is_bio) values ($1, $2, $3, $4, $5)", &payload.FamilyId, &payload.MealplanId, &payload.RecipeIngredientId, &marketId, &payload.IsBio)
 	if err != nil {
 		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Error: Failed to post mealplan item shopping list: %s", err)}
 	}
@@ -65,7 +65,7 @@ func (s *Storage) PostMealPlanItemShoppingList(payload types.PostShoppingListMea
 
 // TODO: Portions needs to be in mealplanItem
 func (s *Storage) DeleteMealPlanItemShoppingList(id string) error {
-	item, err := s.Db.Exec(context.Background(), "delete from mealplans_shopping_list where mealplans_shopping_list.id = $1", id)
+	item, err := s.Db.Exec(context.Background(), "delete from shopping_list where shopping_list.id = $1", id)
 
 	if err != nil {
 		return errors.New(fmt.Sprintf("Unable to delete shopping list item: %v\n", err))

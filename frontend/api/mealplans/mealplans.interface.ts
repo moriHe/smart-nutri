@@ -6,7 +6,8 @@ type ShallowMealplanItem = {
     recipeName: string,
     date: string,
     portions: number,
-    meal: Meals
+    meal: Meals,
+    isShoppingListItem: boolean
 }
 
 export type Mealplan = ShallowMealplanItem[]
@@ -15,5 +16,6 @@ export type PostMealplanPayload = {
     recipeId: number,
     date: string,
     meal: Meals,
-    portions: number
+    portions: number,
+    isShoppingListItem: boolean
 }

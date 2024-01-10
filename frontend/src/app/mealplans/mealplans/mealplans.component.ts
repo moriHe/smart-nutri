@@ -13,6 +13,7 @@ import { RecipesService } from 'api/recipes/recipes.service';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { CreateMealplanBottomsheetComponent } from '../create-mealplan-bottomsheet/create-mealplan-bottomsheet.component';
 // TODO: Add Sonstige, style all
+// TODO: Varchar(40) rezeptname
 @Component({
   selector: 'app-mealplans',
   templateUrl: './mealplans.component.html',
@@ -92,12 +93,13 @@ export class MealplansComponent {
     const displayDate = this.datePipe.transform(this.selectedDate, format, undefined, this.locale);
     return displayDate || '';
   }
-  addMealPlanItem = ({recipeId, meal, portions}: Omit<PostMealplanPayload, "date">) =>{
+  addMealPlanItem = ({recipeId, meal, portions}: Omit<PostMealplanPayload, "date" | "isShoppingListItem">) =>{
     this.mealplanService.addMealplanItem({
       recipeId,
       meal,
       portions,
       date: this.selectedDate.toISOString(),
+      isShoppingListItem: false
 
     }).pipe(take(1)).subscribe({
       next: () => {

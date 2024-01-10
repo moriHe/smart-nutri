@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS meals(
 CREATE TABLE IF NOT EXISTS recipes(
 	id SERIAL NOT NULL PRIMARY KEY,
     family_id INTEGER NOT NULL REFERENCES familys (id),
-	name TEXT NOT NULL,
+	name VARCHAR(40) NOT NULL,
     default_portions FLOAT NOT NULL,
     default_meal INTEGER REFERENCES meals (id)
 
@@ -39,7 +39,8 @@ CREATE TABLE IF NOT EXISTS mealplans(
     recipe_id INTEGER NOT NULL REFERENCES recipes (id),
     date timestamptz NOT NULL,
     meal INTEGER REFERENCES meals (id),
-    portions FLOAT NOT NULL
+    portions FLOAT NOT NULL,
+    is_shopping_list_item BOOLEAN NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS ingredients(
@@ -68,7 +69,7 @@ CREATE TABLE IF NOT EXISTS recipes_ingredients(
     is_bio BOOLEAN NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS mealplans_shopping_list(
+CREATE TABLE IF NOT EXISTS shopping_list(
     id SERIAL NOT NULL PRIMARY KEY,
     family_id INTEGER NOT NULL REFERENCES familys (id),
     mealplan_id INTEGER NOT NULL REFERENCES mealplans (id),
@@ -1254,4 +1255,4 @@ SELECT setval(pg_get_serial_sequence('meals', 'id'), max(id)) FROM meals;
 -- SELECT setval(pg_get_serial_sequence('recipes', 'id'), max(id)) FROM recipes;
 -- SELECT setval(pg_get_serial_sequence('recipes_ingredients', 'id'), max(id)) FROM recipes_ingredients;
 -- SELECT setval(pg_get_serial_sequence('mealplans', 'id'), max(id)) FROM mealplans;
--- SELECT setval(pg_get_serial_sequence('mealplans_shopping_list', 'id'), max(id)) FROM mealplans_shopping_list;
+-- SELECT setval(pg_get_serial_sequence('shopping_list', 'id'), max(id)) FROM shopping_list;

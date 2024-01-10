@@ -71,7 +71,7 @@ func TestPostMealplanItemShoppingListBadReq(t *testing.T) {
 	}`)))
 	r.ServeHTTP(w, req)
 	response := `{"error":{"status":400,"message":"Error: Failed to post mealplan item shopping list: ERROR: insert or ` +
-		`update on table \"mealplans_shopping_list\" violates foreign key constraint \"mealplans_shopping_list_family_id_fkey\" (SQLSTATE 23503)"}}`
+		`update on table \"shopping_list\" violates foreign key constraint \"shopping_list_family_id_fkey\" (SQLSTATE 23503)"}}`
 	assert.Equal(t, 400, w.Code)
 	assert.Equal(t, response, w.Body.String())
 }

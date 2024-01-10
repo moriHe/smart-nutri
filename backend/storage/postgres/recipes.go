@@ -170,7 +170,7 @@ func (s *Storage) DeleteRecipe(recipeId string) error {
 		if err != nil {
 			return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Delete recipe failed 1: %s", err)}
 		}
-		_, err = s.Db.Exec(context.Background(), "delete from mealplans_shopping_list where mealplan_id = $1", mealplanId)
+		_, err = s.Db.Exec(context.Background(), "delete from shopping_list where mealplan_id = $1", mealplanId)
 		if err != nil {
 			return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Delete recipe failed 2: %s", err)}
 		}
@@ -202,7 +202,7 @@ func (s *Storage) DeleteRecipe(recipeId string) error {
 }
 
 func (s *Storage) DeleteRecipeIngredient(recipeIngredientId string) error {
-	_, err := s.Db.Exec(context.Background(), "delete from mealplans_shopping_list where recipes_ingredients_id = $1", recipeIngredientId)
+	_, err := s.Db.Exec(context.Background(), "delete from shopping_list where recipes_ingredients_id = $1", recipeIngredientId)
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to delete recipe row: %v\n", err)

@@ -6,7 +6,7 @@ import { MealsService } from 'services/meals.service';
 
 export type CreateMealplanDialogData = RecipeWithoutIngredients & 
 {
-  addMealplanItem: (payload: Omit<PostMealplanPayload, "date">) => void,
+  addMealplanItem: (payload: Omit<PostMealplanPayload, "date" | "isShoppingListItem">) => void,
   selectedMeal: Meals,
   meal: Meals
 }

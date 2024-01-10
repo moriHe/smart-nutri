@@ -45,22 +45,6 @@ export class MealplansComponent {
         });
     }
 
-    ngOnInit(): void {
-        this.recipesSubscription = this.recipesService.getRecipes().subscribe((response: RecipeWithoutIngredients[]) => {
-          this.recipes = response
-        })
-      
-
-      this.updateMealplan()
-
-      this.breakpointObserver.observe([
-        Breakpoints.Handset,
-        Breakpoints.Tablet,
-      ]).subscribe(result => {
-        this.isMobile = result.matches;
-      });
-    }
-
   previousDay(): void {
     this.selectedDate.setDate(this.selectedDate.getDate() - 1);
     this.updateMealplan()
@@ -152,6 +136,22 @@ export class MealplansComponent {
       { data: {...selectedRecipe, addMealplanItem: this.addMealPlanItem, selectedMeal: this.selectedMeal} }
       );
   }
+
+  ngOnInit(): void {
+    this.recipesSubscription = this.recipesService.getRecipes().subscribe((response: RecipeWithoutIngredients[]) => {
+      this.recipes = response
+    })
+  
+
+  this.updateMealplan()
+
+  this.breakpointObserver.observe([
+    Breakpoints.Handset,
+    Breakpoints.Tablet,
+  ]).subscribe(result => {
+    this.isMobile = result.matches;
+  });
+}
 
   ngOnDestroy(): void {
     if (this.mealplanSubscription) {

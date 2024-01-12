@@ -1,5 +1,5 @@
 <button 
-[class]="isMobile ? 'w-full' : 'h-full w-28'"
+[class]="isMobile ? 'w-full' : 'h-full w-32'"
 class="bg-emerald-600 p-2 border-l-2 border-t-2 border-r-2 border-b-0 rounded-tl-lg text-white" 
 [ngClass]="getHighlighting('/meine-rezepte')"
 (click)="switchScreen('/meine-rezepte')"
@@ -7,7 +7,7 @@ class="bg-emerald-600 p-2 border-l-2 border-t-2 border-r-2 border-b-0 rounded-tl
 Meine Rezepte
 </button>
 <button 
-[class]="isMobile ? 'w-full' : 'h-full w-28'"
+[class]="isMobile ? 'w-full' : 'h-full w-32'"
 class="bg-emerald-600 p-2 border-l-0 border-t-2 border-r-2 border-b-0 rounded-tl-lg text-white" 
 [ngClass]="getHighlighting('/essensplan')"
 (click)="switchScreen('/essensplan')"
@@ -15,15 +15,15 @@ class="bg-emerald-600 p-2 border-l-0 border-t-2 border-r-2 border-b-0 rounded-tl
 Essensplan
 </button>
 <button 
-[class]="isMobile ? 'w-full' : 'h-full w-28'"
+[class]="isMobile ? 'w-full' : 'h-full w-32'"
 class="bg-emerald-600 p-2 border-l-0 border-t-2 border-r-2 border-b-0 rounded-tl-lg text-white" 
-[ngClass]="getHighlighting('/einkaufsliste')"
-(click)="switchScreen('/einkaufsliste')"
+[ngClass]="getHighlighting('/einkaufszettel')"
+(click)="switchScreen('/einkaufszettel')"
 >
-Einkaufsliste
+Einkaufszettel
 </button>
 <button 
-[class]="isMobile ? 'w-full' : 'h-full w-28'"
+[class]="isMobile ? 'w-full' : 'h-full w-32'"
 class="bg-emerald-600 p-2 border-l-0 border-t-2 border-r-2 border-b-0 rounded-tl-lg text-white hover:bg-yellow-400/50" 
 (click)="onLogout()"
 >

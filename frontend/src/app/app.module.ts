@@ -38,6 +38,7 @@ import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { MealplanCardsComponent } from './mealplans/mealplan-cards/mealplan-cards.component';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import { NavigationButtonsComponent } from './header/navigation-buttons/navigation-buttons.component';
+import { ShoppingListComponent } from './shopping-list/shopping-list/shopping-list.component';
 
 
 @NgModule({
@@ -57,7 +58,8 @@ import { NavigationButtonsComponent } from './header/navigation-buttons/navigati
     CreateMealplanDialogComponent,
     CreateMealplanBottomsheetComponent,
     MealplanCardsComponent,
-    NavigationButtonsComponent
+    NavigationButtonsComponent,
+    ShoppingListComponent
   ],
   imports: [
     BrowserModule,

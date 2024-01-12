@@ -5,6 +5,7 @@ module.exports = {
     extend: {
       height: {
         "90vh": "90vh",
+        "10vh": "10vh",
       },
       minHeight: {
         "9/10": "90%",

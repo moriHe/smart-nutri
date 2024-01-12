@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { UserService } from 'api/user/user.service';
 
 @Component({
@@ -12,5 +13,19 @@ export class HeaderComponent {
     this.userService.logout()
   }
 
-  constructor(private userService: UserService) {}
+  switchScreen(url: string) {
+    this.router.navigate([url])
+  }
+
+  isScreenOpen(url: string) {
+    if (this.router.url === url) {
+      return true
+    }
+    return false
+  }
+
+  constructor(
+    private userService: UserService,
+    private router: Router
+    ) {}
 }

@@ -1,7 +1,5 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { UserService } from 'api/user/user.service';
 
 @Component({
   selector: 'app-header',
@@ -10,21 +8,6 @@ import { UserService } from 'api/user/user.service';
 })
 export class HeaderComponent {
   isMobile = false
-
-  onLogout() {
-    this.userService.logout()
-  }
-
-  switchScreen(url: string) {
-    this.router.navigate([url])
-  }
-
-  isScreenOpen(url: string) {
-    if (this.router.url === url) {
-      return true
-    }
-    return false
-  }
 
   ngOnInit(): void {
     this.breakpointObserver.observe([
@@ -36,8 +19,6 @@ export class HeaderComponent {
   }
 
   constructor(
-    private userService: UserService,
-    private router: Router,
     private breakpointObserver: BreakpointObserver
     ) {}
 }

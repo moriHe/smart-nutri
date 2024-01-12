@@ -169,7 +169,6 @@ export class MealplansComponent {
     @Inject(LOCALE_ID) private locale: string,
     public mealsService: MealsService,
     public dialog: MatDialog,
-    private router: Router,
     private breakpointObserver: BreakpointObserver,
     private recipesService: RecipesService,
     private _bottomSheet: MatBottomSheet, 

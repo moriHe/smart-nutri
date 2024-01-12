@@ -36,6 +36,7 @@ import { CreateMealplanDialogComponent } from './mealplans/create-mealplan-dialo
 import { CreateMealplanBottomsheetComponent } from './mealplans/create-mealplan-bottomsheet/create-mealplan-bottomsheet.component';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { MealplanCardsComponent } from './mealplans/mealplan-cards/mealplan-cards.component';
+import {MatSidenavModule} from '@angular/material/sidenav';
 
 
 @NgModule({
@@ -76,6 +77,7 @@ import { MealplanCardsComponent } from './mealplans/mealplan-cards/mealplan-card
     MatNativeDateModule,
     CommonModule,
     MatBottomSheetModule,
+    MatSidenavModule,
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAuth(() => getAuth()),
   ],

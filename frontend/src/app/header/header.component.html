@@ -1,4 +1,29 @@
-<header class="flex justify-end h-full">
+<header class="h-full" *ngIf="isMobile">
+    <mat-sidenav-container class="h-full">
+        <mat-sidenav fixedInViewport="true" #sidenav class="w-2/3" mode="over" opened="true">
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+        </mat-sidenav>
+      
+        <div class="flex justify-end items-center h-full bg-emerald-700 pr-5">
+            <button 
+            (click)="sidenav.toggle()"
+            mat-fab color="primary" 
+            aria-label="menu"
+            >
+                <mat-icon>menu</mat-icon>
+        </button>
+        </div>
+      
+      </mat-sidenav-container>
+</header>
+<header class="h-full" *ngIf="!isMobile">
+    <div class="flex justify-end h-full bg-emerald-700">
     <button 
     class="w-28 h-full bg-emerald-600 p-2 border-l-2 border-t-2 border-r-2 border-b-0 rounded-tl-lg text-white" 
     [ngClass]="{
@@ -35,4 +60,5 @@
     >
     Logout
     </button>
+</div>
 </header>

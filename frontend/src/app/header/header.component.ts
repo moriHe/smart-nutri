@@ -1,3 +1,4 @@
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from 'api/user/user.service';
@@ -8,6 +9,7 @@ import { UserService } from 'api/user/user.service';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent {
+  isMobile = false
 
   onLogout() {
     this.userService.logout()
@@ -24,8 +26,19 @@ export class HeaderComponent {
     return false
   }
 
+  ngOnInit(): void {
+    this.breakpointObserver.observe([
+      Breakpoints.Handset,
+      Breakpoints.Tablet,
+    ]).subscribe(result => {
+      this.isMobile = result.matches;
+    });
+  }
+
   constructor(
     private userService: UserService,
-    private router: Router
+    private router: Router,
+    private breakpointObserver: BreakpointObserver
     ) {}
 }
+

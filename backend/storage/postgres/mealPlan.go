@@ -5,15 +5,37 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/moriHe/smart-nutri/types"
 )
 
-func (s *Storage) GetMealPlan(familyId *int, date string) (*[]types.ShallowMealPlanItem, error) {
+/***** 2 scenarios GetMealPlan
+** a) forShoppingList false returns all entries for provided date regardless of is_shopping_list_item true/false
+** b) forShoppingList true returns all entries from provided date until date.now() where is_shopping_list_item = false
+*****************************/
+func (s *Storage) GetMealPlan(familyId *int, date string, forShoppingListStr string) (*[]types.ShallowMealPlanItem, error) {
 	query := "select mealplans.id, recipes.id, recipes.name, mealplans.date, portions, meals.meal, is_shopping_list_item " +
 		"from mealplans join recipes on mealplans.recipe_id = recipes.id " +
 		"join meals on mealplans.meal = meals.id where mealplans.family_id = $1 " +
-		"and date >= $2::timestamp and mealplans.date < ($2::timestamp + interval '1 day')"
+		"and mealplans.date >= $2::timestamp"
+
+	var forShoppingList = false
+	var err error
+	if forShoppingListStr != "" {
+		forShoppingList, err = strconv.ParseBool(forShoppingListStr)
+		if err != nil {
+			return nil, &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Wrong format isShoppingListItem: %s", err)}
+
+		}
+	}
+
+	if forShoppingList {
+		query += " and is_shopping_list_item = false"
+	} else {
+		query += " and mealplans.date < ($2::timestamp + interval '1 day')"
+	}
+
 	rows, _ := s.Db.Query(context.Background(), query, familyId, date)
 	defer rows.Close()
 

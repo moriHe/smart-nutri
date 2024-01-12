@@ -18,7 +18,7 @@ type Storage interface {
 	DeleteRecipe(recipeId string) error
 	DeleteRecipeIngredient(recipeIngredientId string) error
 
-	GetMealPlan(familyId *int, date string) (*[]types.ShallowMealPlanItem, error)
+	GetMealPlan(familyId *int, date string, forShoppingListStr string) (*[]types.ShallowMealPlanItem, error)
 	GetMealPlanItem(id string) (*types.FullMealPlanItem, error)
 	PostMealPlanItem(familyId *int, payload types.PostMealPlanItem) error
 	DeleteMealPlanItem(id string) error

@@ -20,6 +20,7 @@ func (s *Server) mealPlanRoutes(r *gin.Engine) {
 func (s *Server) handleGetMealPlan(c *gin.Context) {
 	user := contextmethods.GetUserFromContext(c)
 	dateStr := c.Param("date")
+	forShoppingListStr := c.Query("forShoppingList")
 	date, err := time.Parse(time.RFC3339, dateStr)
 	formattedTimestamp := date.Truncate(24 * time.Hour).Format("2006-01-02 15:04:05.999")
 
@@ -28,7 +29,7 @@ func (s *Server) handleGetMealPlan(c *gin.Context) {
 		return
 	}
 
-	mealPlan, err := s.store.GetMealPlan(user.ActiveFamilyId, formattedTimestamp)
+	mealPlan, err := s.store.GetMealPlan(user.ActiveFamilyId, formattedTimestamp, forShoppingListStr)
 	responses.HandleResponse[*[]types.ShallowMealPlanItem](c, mealPlan, err)
 }
 

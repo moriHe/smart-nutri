@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { Mealplan, PostMealplanPayload } from './mealplans.interface';
-import { MealplansEndpointsService } from './mealplans.endpoints.service';
+import { FetchMealPlanQuery, MealplansEndpointsService } from './mealplans.endpoints.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MealplansService {
-  getMealplan(date: string): Observable<Mealplan> {
-    return this.mealplanEndpoint.fetchMealplan(date).pipe(
+  getMealplan(query: FetchMealPlanQuery): Observable<Mealplan> {
+    return this.mealplanEndpoint.fetchMealplan(query).pipe(
       map((response: { data: Mealplan }) => response ? response.data : [])
     )
   }

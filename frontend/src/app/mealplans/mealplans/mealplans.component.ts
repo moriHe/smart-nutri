@@ -37,7 +37,7 @@ export class MealplansComponent {
       }
   
       this.mealplanSubscription = this.mealplanService
-        .getMealplan(this.selectedDate.toISOString())
+        .getMealplan({date: this.selectedDate.toISOString(), forShoppingList: false})
         .subscribe((response: Mealplan) => {
           if (response) {
             this.mealplan = response;

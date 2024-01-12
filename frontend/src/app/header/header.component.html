@@ -1,13 +1,33 @@
 <header class="h-full" *ngIf="isMobile">
     <mat-sidenav-container class="h-full">
         <mat-sidenav fixedInViewport="true" #sidenav class="w-2/3" mode="over" opened="true">
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
+            <button 
+            class="w-full bg-emerald-600 p-2 border-l-2 border-t-2 border-r-2 border-b-0 rounded-tl-lg text-white" 
+            [ngClass]="{'bg-yellow-400': isScreenOpen('/meine-rezepte')}"
+            (click)="switchScreen('/meine-rezepte')"
+            >
+            Meine Rezepte
+            </button>
+            <button 
+            class="w-full bg-emerald-600 p-2 border-l-0 border-t-2 border-r-2 border-b-0 rounded-tl-lg text-white" 
+            [ngClass]="{'bg-yellow-400': isScreenOpen('/essensplan')}"
+            (click)="switchScreen('/essensplan')"
+            >
+            Essensplan
+            </button>
+            <button 
+            class="w-full bg-emerald-600 p-2 border-l-0 border-t-2 border-r-2 border-b-0 rounded-tl-lg text-white" 
+            [ngClass]="{'bg-yellow-400': isScreenOpen('/einkaufsliste')}"
+            (click)="switchScreen('/einkaufsliste')"
+            >
+            Einkaufsliste
+            </button>
+            <button 
+            class="w-full bg-emerald-600 p-2 border-l-0 border-t-2 border-r-2 border-b-0 rounded-tl-lg text-white hover:bg-yellow-400/50" 
+            (click)="onLogout()"
+            >
+            Logout
+            </button>
         </mat-sidenav>
       
         <div class="flex justify-end items-center h-full bg-emerald-700 pr-5">

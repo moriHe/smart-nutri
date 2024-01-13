@@ -1,6 +1,6 @@
 import { Meals } from "api/recipes/recipes.interface"
 
-type ShallowMealplanItem = {
+export type ShallowMealplanItem = {
     id: number,
     recipeId: number, 
     recipeName: string,

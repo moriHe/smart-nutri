@@ -9,7 +9,7 @@ import (
 	"github.com/moriHe/smart-nutri/types"
 )
 
-var getQuery = "select shopping_list.id, mealplans.id, markets.name, shopping_list.is_bio, recipes.name, cast(mealplans.date as text), mealplans.portions, meals.meal, recipes_ingredients.id, " +
+var getQuery = "select shopping_list.id, mealplans.id, markets.name, shopping_list.is_bio, recipes.name, mealplans.date, mealplans.portions, meals.meal, recipes_ingredients.id, " +
 	"ingredients.name, recipes_ingredients.amount_per_portion, units.name from shopping_list " +
 	"left join mealplans on mealplan_id = mealplans.id left join recipes on mealplans.recipe_id = recipes.id left join recipes_ingredients on " +
 	"recipes_ingredients_id = recipes_ingredients.id left join meals on mealplans.meal = meals.id left join units on recipes_ingredients.unit = units.id " +

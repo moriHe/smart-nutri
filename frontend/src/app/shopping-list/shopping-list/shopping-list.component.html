@@ -11,6 +11,9 @@
             <mat-icon>notifications</mat-icon>
           </button>
         </div>
-      </div>
-           
+      </div>       
 </div>
+<div
+      *ngFor="let item of shoppingList">
+      <p>{{ item.recipeIngredient.name }}</p>
+    </div>

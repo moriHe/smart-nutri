@@ -56,7 +56,7 @@ func (s *Storage) GetMealPlan(familyId *int, date string, forShoppingListStr str
 func (s *Storage) GetMealPlanItem(id string) (*types.FullMealPlanItem, error) {
 	var test types.FullMealPlanItem
 
-	query := "select mealplans.id, cast(date as text), meals.meal, portions, is_shopping_list_item, recipes.id " +
+	query := "select mealplans.id, mealplans.date, meals.meal, portions, is_shopping_list_item, recipes.id " +
 		"as recipeId, recipes.name, jsonb_agg(jsonb_build_object(" +
 		"'id', recipes_ingredients.id, 'name', ingredients.name, 'unit', units.name, " +
 		"'amountPerPortion', recipes_ingredients.amount_per_portion, 'isBio', recipes_ingredients.is_bio, " +

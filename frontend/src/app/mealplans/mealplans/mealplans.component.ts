@@ -2,7 +2,7 @@ import { DatePipe } from '@angular/common';
 import { ChangeDetectorRef, Component, Inject, LOCALE_ID } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { Mealplan, PostMealplanPayload } from 'api/mealplans/mealplans.interface';
+import { Mealplans, PostMealplanPayload } from 'api/mealplans/mealplans.interface';
 import { MealplansService } from 'api/mealplans/mealplans.service';
 import { Meals, RecipeWithoutIngredients } from 'api/recipes/recipes.interface';
 import { Subscription, take } from 'rxjs';
@@ -26,7 +26,7 @@ export class MealplansComponent {
   recipes: RecipeWithoutIngredients[] = []
   
   selectedMeal!: Meals
-  mealplan: Mealplan = []
+  mealplan: Mealplans = []
 
   private mealplanSubscription!: Subscription
   today: Date = new Date()
@@ -38,7 +38,7 @@ export class MealplansComponent {
   
       this.mealplanSubscription = this.mealplanService
         .getMealplan({date: this.selectedDate.toISOString(), forShoppingList: false})
-        .subscribe((response: Mealplan) => {
+        .subscribe((response: Mealplans) => {
           if (response) {
             this.mealplan = response;
           }
@@ -108,7 +108,7 @@ export class MealplansComponent {
   })
 }
 
-  getMealplanForMealType(mealKey: Meals): Mealplan {
+  getMealplanForMealType(mealKey: Meals): Mealplans {
     return this.mealplan.filter(item => item.meal === Meals[mealKey]);
   }
 

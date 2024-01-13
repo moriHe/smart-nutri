@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Mealplans } from 'api/mealplans/mealplans.interface';
 import { MealplansService } from 'api/mealplans/mealplans.service';
 
 @Component({
@@ -7,9 +8,10 @@ import { MealplansService } from 'api/mealplans/mealplans.service';
   styleUrls: ['./shopping-list.component.css']
 })
 export class ShoppingListComponent {
+  mealplansNotOnShoppingList!: Mealplans
   // todo get mealplans that are not on the shopping list
   // from today to future
-  
+
 // todo get shopping list items (dont forget new column isInShoppingList on mealplan)
   // from today to future
 

@@ -10,7 +10,7 @@ type ShallowMealplanItem = {
     isShoppingListItem: boolean
 }
 
-export type Mealplan = ShallowMealplanItem[]
+export type Mealplans = ShallowMealplanItem[]
 
 export type PostMealplanPayload = {
     recipeId: number,

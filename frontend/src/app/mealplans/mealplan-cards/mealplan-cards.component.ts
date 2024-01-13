@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Mealplan } from 'api/mealplans/mealplans.interface';
+import { Mealplans } from 'api/mealplans/mealplans.interface';
 import { Meals } from 'api/recipes/recipes.interface';
 import { MealsService } from 'services/meals.service';
 
@@ -10,11 +10,11 @@ import { MealsService } from 'services/meals.service';
 })
 export class MealplanCardsComponent {
   @Input() mealKey!: Meals;
-  @Input() mealplan: Mealplan = []
+  @Input() mealplan: Mealplans = []
   @Input() openDialog!: (mealKey: Meals) => void
 
   
-  getMealplanForMealType(): Mealplan {
+  getMealplanForMealType(): Mealplans {
     return this.mealplan.filter(item => item.meal === Meals[this.mealKey]);
   }
 

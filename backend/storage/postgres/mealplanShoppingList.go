@@ -16,7 +16,6 @@ var getQuery = "select shopping_list.id, mealplans.id, markets.name, shopping_li
 	"left join markets on shopping_list.market = markets.id left join ingredients on recipes_ingredients.ingredient_id = ingredients.id " +
 	"where shopping_list.family_id = $1;"
 
-// TODO this query looks funky. is recipeIngredient necessary? why is mealplanItem.recipeId 0?
 func (s *Storage) GetMealPlanItemsShoppingList(familyId *int) (*[]types.ShoppingListMealplanItem, error) {
 
 	rows, _ := s.Db.Query(context.Background(), getQuery, familyId)

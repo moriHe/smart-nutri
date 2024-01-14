@@ -9,13 +9,14 @@ import (
 	"github.com/moriHe/smart-nutri/types"
 )
 
-var getQuery = "select shopping_list.id, mealplans.id, markets.name, shopping_list.is_bio, recipes.name, mealplans.date, mealplans.portions, meals.meal, recipes_ingredients.id, " +
+var getQuery = "select shopping_list.id, mealplans.id, markets.name, shopping_list.is_bio, recipes.id, recipes.name, mealplans.date, mealplans.portions, meals.meal, recipes_ingredients.id, " +
 	"ingredients.name, recipes_ingredients.amount_per_portion, units.name from shopping_list " +
 	"left join mealplans on mealplan_id = mealplans.id left join recipes on mealplans.recipe_id = recipes.id left join recipes_ingredients on " +
 	"recipes_ingredients_id = recipes_ingredients.id left join meals on mealplans.meal = meals.id left join units on recipes_ingredients.unit = units.id " +
 	"left join markets on shopping_list.market = markets.id left join ingredients on recipes_ingredients.ingredient_id = ingredients.id " +
 	"where shopping_list.family_id = $1;"
 
+// TODO this query looks funky. is recipeIngredient necessary? why is mealplanItem.recipeId 0?
 func (s *Storage) GetMealPlanItemsShoppingList(familyId *int) (*[]types.ShoppingListMealplanItem, error) {
 
 	rows, _ := s.Db.Query(context.Background(), getQuery, familyId)
@@ -29,6 +30,7 @@ func (s *Storage) GetMealPlanItemsShoppingList(familyId *int) (*[]types.Shopping
 			&item.MealplanItem.Id,
 			&item.Market,
 			&item.IsBio,
+			&item.MealplanItem.RecipeId,
 			&item.MealplanItem.RecipeName,
 			&item.MealplanItem.Date,
 			&item.MealplanItem.Portions,

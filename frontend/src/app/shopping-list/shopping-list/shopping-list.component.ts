@@ -13,11 +13,11 @@ import { take } from 'rxjs';
 export class ShoppingListComponent {
   mealplansNotOnShoppingList: Mealplans = []
   shoppingList: ShoppingListItems = []
-  // todo get mealplans that are not on the shopping list
-  // from today to future
-
-// todo get shopping list items (dont forget new column isInShoppingList on mealplan)
-  // from today to future
+  
+  // TODO: Add mealplan items to shopping list
+  // *** kind of a session approach (abbrechen, speichern und weiter, speichern und beenden)
+  // display shopping list items
+  // remove shopping list items
 
 ngOnInit(): void {
   this.mealplansService.getMealplan({date: new Date().toISOString(), forShoppingList: true})

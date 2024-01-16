@@ -26,23 +26,32 @@
   </div>
 </ng-template>
 <ng-template #addItemsView>
+  <div *ngIf="mealplanItemInView">
   <div
   class="w-3/4 mx-auto"
   *ngFor="let item of mealplanItemInView.recipe.recipeIngredients"
->
+  >
 <mat-card class="my-5 h-20">
   <mat-card-content>
     <div class="flex justify-between">
-    <p class="w-1/2">{{item.name}}</p>
-          <mat-form-field>
-            <mat-label>Markt</mat-label>
-            <mat-select [(ngModel)]="selectedMarket" name="markets">
-                <mat-option *ngFor="let market of this.markets" [value]="market">{{marketsService.MarketDisplay[market]}}</mat-option>
-            </mat-select>
-          </mat-form-field>
-    <mat-icon [style.color]="item.isBio ? 'primary' : 'warn'">compost</mat-icon>
+    <p class="w-10/12">{{item.name}}</p>
+    <div class="flex-grow flex justify-between">
+    <button 
+    (click)="removeItem(item.id)"
+    mat-mini-fab color="warn" 
+    aria-label="Example icon button with a menu icon">
+      <mat-icon>delete</mat-icon>
+    </button>
+  </div>
   </div>
   </mat-card-content>
 </mat-card>
+</div>
+</div>
+<div class="mx-auto w-1/2 flex justify-around mt-10">
+  <button (click)="openShoppingListView()" mat-raised-button color="warn">Abbrechen</button>
+  <button mat-raised-button color="accent">Spechern und Beenden</button>
+  <button mat-raised-button color="primary">Speichern und weiter</button>
+
 </div>
 </ng-template>

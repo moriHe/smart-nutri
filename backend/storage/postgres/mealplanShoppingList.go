@@ -84,6 +84,8 @@ func (s *Storage) PostShoppingList(payload []types.PostShoppingListMealplanItem,
 		if err != nil {
 			return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Error: Failed to post mealplan item shopping list: %s", err)}
 		}
+
+		_, err = tx.Exec(context.Background(), "update mealplans set is_shopping_list_item = true where family_id = $1 and mealplans.id = $2", activeFamilyId, mealplanId)
 	}
 
 	// Commit the transaction if all insertions are successful

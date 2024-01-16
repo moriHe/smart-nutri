@@ -73,13 +73,13 @@ addMealplanToShoppingList(action: "finish" | "next") {
       if (response) {
         this.mealplanItemInView = undefined
         this.isShoppingListView = true
+        this.updateListItems()
       }
     })
   }
  
 }
-
-ngOnInit(): void {
+updateListItems() {
   this.mealplansService.getMealplan({date: new Date().toISOString(), forShoppingList: true})
     .pipe(take(1)).subscribe((response) => {
       if (response) {
@@ -92,6 +92,9 @@ ngOnInit(): void {
         this.shoppingList = response
       }
     })
+}
+ngOnInit(): void {
+  this.updateListItems()
 }
   constructor(
     private shoppingListService: ShoppingListService,

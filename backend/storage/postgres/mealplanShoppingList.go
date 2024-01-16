@@ -72,12 +72,6 @@ func (s *Storage) PostShoppingList(payload []types.PostShoppingListMealplanItem)
 	}
 	defer tx.Rollback(context.Background())
 
-	// Prepare a statement for inserting shopping list items
-	stmt, err := tx.Prepare(context.Background(), "post_shopping_list", "INSERT INTO shopping_list (family_id, mealplan_id, recipes_ingredients_id, market, is_bio) VALUES ($1, $2, $3, $4, $5)")
-	if err != nil {
-		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Failed to prepare statement: %s", err)}
-	}
-
 	// Iterate through the items and insert them into the database
 	for _, item := range payload {
 		var marketID int
@@ -86,7 +80,7 @@ func (s *Storage) PostShoppingList(payload []types.PostShoppingListMealplanItem)
 			return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Failed to find market name: %s", err)}
 		}
 
-		_, err = tx.Exec(context.Background(), stmt.SQL, item.FamilyId, item.MealplanId, item.RecipeIngredientId, marketID, item.IsBio)
+		_, err = tx.Exec(context.Background(), "post_shopping_list", "INSERT INTO shopping_list (family_id, mealplan_id, recipes_ingredients_id, market, is_bio) VALUES ($1, $2, $3, $4, $5)", item.FamilyId, item.MealplanId, item.RecipeIngredientId, marketID, item.IsBio)
 		if err != nil {
 			return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Error: Failed to post mealplan item shopping list: %s", err)}
 		}

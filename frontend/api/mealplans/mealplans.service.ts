@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { Mealplans, PostMealplanPayload } from './mealplans.interface';
+import { FullMealplanItem, Mealplans, PostMealplanPayload } from './mealplans.interface';
 import { FetchMealPlanQuery, MealplansEndpointsService } from './mealplans.endpoints.service';
 
 @Injectable({
@@ -10,6 +10,12 @@ export class MealplansService {
   getMealplan(query: FetchMealPlanQuery): Observable<Mealplans> {
     return this.mealplanEndpoint.fetchMealplan(query).pipe(
       map((response: { data: Mealplans }) => response ? response.data : [])
+    )
+  }
+
+  getMealplanItem(id: number): Observable<FullMealplanItem> {
+    return this.mealplanEndpoint.fetchMealplanItem(id).pipe(
+      map((response: {data: FullMealplanItem}) => response.data)
     )
   }
 

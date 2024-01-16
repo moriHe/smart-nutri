@@ -39,7 +39,7 @@ import { MealplanCardsComponent } from './mealplans/mealplan-cards/mealplan-card
 import {MatSidenavModule} from '@angular/material/sidenav';
 import { NavigationButtonsComponent } from './header/navigation-buttons/navigation-buttons.component';
 import { ShoppingListComponent } from './shopping-list/shopping-list/shopping-list.component';
-import {MatMenuModule} from '@angular/material/menu';
+import {MatCardModule} from '@angular/material/card';
 
 @NgModule({
   declarations: [
@@ -82,7 +82,7 @@ import {MatMenuModule} from '@angular/material/menu';
     CommonModule,
     MatBottomSheetModule,
     MatSidenavModule,
-    MatMenuModule,
+    MatCardModule,
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAuth(() => getAuth()),
   ],

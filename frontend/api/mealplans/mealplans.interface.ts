@@ -1,4 +1,4 @@
-import { Meals } from "api/recipes/recipes.interface"
+import { FullRecipe, Meals } from "api/recipes/recipes.interface"
 
 export type ShallowMealplanItem = {
     id: number,
@@ -8,6 +8,10 @@ export type ShallowMealplanItem = {
     portions: number,
     meal: Meals,
     isShoppingListItem: boolean
+}
+
+export type FullMealplanItem = Omit<ShallowMealplanItem, "recipeId" | "recipeName"> & {
+    recipe: Pick<FullRecipe, "id" | "name" | "recipeIngredients">
 }
 
 export type Mealplans = ShallowMealplanItem[]

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Response } from 'api';
-import { Mealplans, PostMealplanPayload } from './mealplans.interface';
+import { FullMealplanItem, Mealplans, PostMealplanPayload } from './mealplans.interface';
 import { HttpClient } from '@angular/common/http';
 
 export type FetchMealPlanQuery = {date: string, forShoppingList: boolean}
@@ -11,6 +11,10 @@ export type FetchMealPlanQuery = {date: string, forShoppingList: boolean}
 export class MealplansEndpointsService {
   fetchMealplan({date, forShoppingList}: FetchMealPlanQuery) {
     return this.http.get<Response<Mealplans>>(`http://localhost:8080/mealplan/${date}?forShoppingList=${forShoppingList}`)
+  }
+
+  fetchMealplanItem(id: number) {
+    return this.http.get<Response<FullMealplanItem>>(`http://localhost:8080/mealplan/item/${id}`)
   }
 
   postMealplanItem(payload: PostMealplanPayload) {

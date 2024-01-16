@@ -7,16 +7,42 @@
           >
             {{mealplansNotOnShoppingList.length}}
           </div>
-          <button mat-fab color="warn" aria-label="notifications" [matMenuTriggerFor]="beforeMenu">
+          <button 
+          [disabled]="!mealplansNotOnShoppingList.length" 
+          (click)="openAddItemsView()"
+          mat-fab color="warn" 
+          aria-label="notifications"
+          >
             <mat-icon>notifications</mat-icon>
           </button>
-          <mat-menu #beforeMenu="matMenu" xPosition="before">
-            <button mat-menu-item *ngFor="let item of mealplansNotOnShoppingList">{{ item.recipeName }}</button>
-          </mat-menu>
         </div>
       </div>       
 </div>
-<div
-      *ngFor="let item of shoppingList">
-      <p>{{ item.recipeIngredient.name }}</p>
-    </div>
+<div *ngIf="isShoppingListView; then shoppingListView else addItemsView"></div>
+<ng-template #shoppingListView>
+  <div
+    *ngFor="let item of shoppingList">
+    <p>{{ item.recipeIngredient.name }}</p>
+  </div>
+</ng-template>
+<ng-template #addItemsView>
+  <div
+  class="w-3/4 mx-auto"
+  *ngFor="let item of mealplanItemInView.recipe.recipeIngredients"
+>
+<mat-card class="my-5 h-20">
+  <mat-card-content>
+    <div class="flex justify-between">
+    <p class="w-1/2">{{item.name}}</p>
+          <mat-form-field>
+            <mat-label>Markt</mat-label>
+            <mat-select [(ngModel)]="selectedMarket" name="markets">
+                <mat-option *ngFor="let market of this.markets" [value]="market">{{marketsService.MarketDisplay[market]}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+    <mat-icon [style.color]="item.isBio ? 'primary' : 'warn'">compost</mat-icon>
+  </div>
+  </mat-card-content>
+</mat-card>
+</div>
+</ng-template>

@@ -21,7 +21,7 @@ type MealPlanItemRecipe struct {
 
 type FullMealPlanItem struct {
 	Id                 string             `json:"id"`
-	Date               string             `json:"date"`
+	Date               time.Time          `json:"date"`
 	Meal               string             `json:"meal"`
 	Portions           float32            `json:"portions"`
 	Recipe             MealPlanItemRecipe `json:"recipe"`

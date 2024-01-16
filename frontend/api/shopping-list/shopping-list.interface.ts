@@ -32,3 +32,9 @@ export type ShoppingListItem = {
 }
 
 export type ShoppingListItems = ShoppingListItem[]
+
+export type AddToShoppingList = {
+    recipeIngredientId: number
+    market: Markets
+    isBio: boolean
+  }

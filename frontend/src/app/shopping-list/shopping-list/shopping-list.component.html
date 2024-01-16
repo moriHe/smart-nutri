@@ -50,7 +50,7 @@
 </div>
 <div class="mx-auto lg:w-1/2 flex justify-around gap-3 mt-20">
   <button (click)="openShoppingListView()" mat-raised-button color="warn">Abbrechen</button>
-  <button mat-raised-button color="accent">Spechern und Beenden</button>
+  <button (click)="addMealplanToShoppingList('finish')" mat-raised-button color="accent">Speichern und Beenden</button>
   <button mat-raised-button color="primary">Speichern und weiter</button>
 
 </div>

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FullMealplanItem, Mealplans } from 'api/mealplans/mealplans.interface';
 import { MealplansService } from 'api/mealplans/mealplans.service';
 import { Markets } from 'api/recipes/recipes.interface';
-import { RecipeIngredientItem, ShoppingListItems } from 'api/shopping-list/shopping-list.interface';
+import { AddToShoppingList, RecipeIngredientItem, ShoppingListItems } from 'api/shopping-list/shopping-list.interface';
 import { ShoppingListService } from 'api/shopping-list/shopping-list.service';
 import { take } from 'rxjs';
 import { MarketsService } from 'services/markets.service';
@@ -18,6 +18,7 @@ export class ShoppingListComponent {
   shoppingList: ShoppingListItems = []
   markets: Markets[] = Object.values(Markets)
   mealplanItemInView?: FullMealplanItem
+  addToShoppingList: AddToShoppingList[] = []
 
   
   // TODO: Add mealplan items to shopping list
@@ -51,6 +52,31 @@ openAddItemsView() {
 openShoppingListView() {
   this.isShoppingListView = true
   this.mealplanItemInView = undefined
+}
+
+addMealplanToShoppingList(action: "finish" | "next") {
+  let updatedAddToShoppingList: AddToShoppingList[] = this.addToShoppingList
+  if (this.mealplanItemInView) {
+    const shoppingListItems: AddToShoppingList[] = this.mealplanItemInView.recipe.recipeIngredients.map(
+      (item) => {
+        return {
+          recipeIngredientId: item.id,
+          market: item.market,
+          isBio: item.isBio
+        }
+      }
+    )
+    updatedAddToShoppingList = [...updatedAddToShoppingList, ...shoppingListItems]
+  }
+  if (action === "finish") {
+    this.shoppingListService.addShoppingListItems(updatedAddToShoppingList, this.mealplanItemInView!.id).pipe(take(1)).subscribe((response) => {
+      if (response) {
+        this.mealplanItemInView = undefined
+        this.isShoppingListView = true
+      }
+    })
+  }
+ 
 }
 
 ngOnInit(): void {

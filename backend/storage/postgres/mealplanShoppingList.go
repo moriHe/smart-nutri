@@ -50,21 +50,21 @@ func (s *Storage) GetMealPlanItemsShoppingList(familyId *int) (*[]types.Shopping
 	return &shoppingList, nil
 }
 
-func (s *Storage) PostMealPlanItemShoppingList(payload types.PostShoppingListMealplanItem) error {
-	var marketId int
-	err := s.Db.QueryRow(context.Background(), "select (id) from markets where markets.name = $1", payload.Market).Scan(&marketId)
-	if err != nil {
-		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Step 1: Failed to find market name: %s", err)}
-	}
-	_, err = s.Db.Exec(context.Background(), "insert into shopping_list (family_id, mealplan_id, recipes_ingredients_id, market, is_bio) values ($1, $2, $3, $4, $5)", &payload.FamilyId, &payload.MealplanId, &payload.RecipeIngredientId, &marketId, &payload.IsBio)
-	if err != nil {
-		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Error: Failed to post mealplan item shopping list: %s", err)}
-	}
+// func (s *Storage) PostMealPlanItemShoppingList(payload types.PostShoppingListMealplanItem) error {
+// 	var marketId int
+// 	err := s.Db.QueryRow(context.Background(), "select (id) from markets where markets.name = $1", payload.Market).Scan(&marketId)
+// 	if err != nil {
+// 		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Step 1: Failed to find market name: %s", err)}
+// 	}
+// 	_, err = s.Db.Exec(context.Background(), "insert into shopping_list (family_id, mealplan_id, recipes_ingredients_id, market, is_bio) values ($1, $2, $3, $4, $5)", &payload.FamilyId, &payload.MealplanId, &payload.RecipeIngredientId, &marketId, &payload.IsBio)
+// 	if err != nil {
+// 		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Error: Failed to post mealplan item shopping list: %s", err)}
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
-func (s *Storage) PostShoppingList(payload []types.PostShoppingListMealplanItem) error {
+func (s *Storage) PostShoppingList(payload []types.PostShoppingListMealplanItem, activeFamilyId *int, mealplanId string) error {
 	// Start a database transaction
 	tx, err := s.Db.Begin(context.Background())
 	if err != nil {
@@ -80,7 +80,7 @@ func (s *Storage) PostShoppingList(payload []types.PostShoppingListMealplanItem)
 			return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Failed to find market name: %s", err)}
 		}
 
-		_, err = tx.Exec(context.Background(), "post_shopping_list", "INSERT INTO shopping_list (family_id, mealplan_id, recipes_ingredients_id, market, is_bio) VALUES ($1, $2, $3, $4, $5)", item.FamilyId, item.MealplanId, item.RecipeIngredientId, marketID, item.IsBio)
+		_, err = tx.Exec(context.Background(), "insert into shopping_list (family_id, mealplan_id, recipes_ingredients_id, market, is_bio) VALUES ($1, $2, $3, $4, $5)", activeFamilyId, mealplanId, item.RecipeIngredientId, marketID, item.IsBio)
 		if err != nil {
 			return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Error: Failed to post mealplan item shopping list: %s", err)}
 		}

@@ -64,6 +64,42 @@ func (s *Storage) PostMealPlanItemShoppingList(payload types.PostShoppingListMea
 	return nil
 }
 
+func (s *Storage) PostShoppingList(payload []types.PostShoppingListMealplanItem) error {
+	// Start a database transaction
+	tx, err := s.Db.Begin(context.Background())
+	if err != nil {
+		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Failed to start database transaction: %s", err)}
+	}
+	defer tx.Rollback(context.Background())
+
+	// Prepare a statement for inserting shopping list items
+	stmt, err := tx.Prepare(context.Background(), "post_shopping_list", "INSERT INTO shopping_list (family_id, mealplan_id, recipes_ingredients_id, market, is_bio) VALUES ($1, $2, $3, $4, $5)")
+	if err != nil {
+		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Failed to prepare statement: %s", err)}
+	}
+
+	// Iterate through the items and insert them into the database
+	for _, item := range payload {
+		var marketID int
+		err := s.Db.QueryRow(context.Background(), "SELECT id FROM markets WHERE name = $1", item.Market).Scan(&marketID)
+		if err != nil {
+			return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Failed to find market name: %s", err)}
+		}
+
+		_, err = tx.Exec(context.Background(), stmt.SQL, item.FamilyId, item.MealplanId, item.RecipeIngredientId, marketID, item.IsBio)
+		if err != nil {
+			return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Error: Failed to post mealplan item shopping list: %s", err)}
+		}
+	}
+
+	// Commit the transaction if all insertions are successful
+	if err := tx.Commit(context.Background()); err != nil {
+		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Failed to commit transaction: %s", err)}
+	}
+
+	return nil
+}
+
 // TODO: Portions needs to be in mealplanItem
 func (s *Storage) DeleteMealPlanItemShoppingList(id string) error {
 	item, err := s.Db.Exec(context.Background(), "delete from shopping_list where shopping_list.id = $1", id)

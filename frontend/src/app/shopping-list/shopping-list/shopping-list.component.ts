@@ -161,7 +161,15 @@ getAmount(amountPerPortion: number, portions: number) {
 }
 
 removeFromShoppingList(id: number) {
+  this.shoppingListService.removeShoppingListItem(id).pipe(take(1)).subscribe((response) => {
+    if (response) {
+      this.updateListItems()
+    }
+  })
   console.log(id)
+  // todo remove shopping list item
+  // todo remove mealplan item 
+  // todo add safe and exit
 }
 
 updateListItems() {

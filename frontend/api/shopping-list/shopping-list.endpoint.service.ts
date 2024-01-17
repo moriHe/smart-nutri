@@ -14,6 +14,10 @@ export class ShoppingListEndpointService {
   postShoppingListItems(shoppingListItems: AddToShoppingList[], mealplanId: number) {
     return this.http.post<Response<string>>(`http://localhost:8080/shopping-list/${mealplanId}`, shoppingListItems)
   }
+  
+  deleteShoppingListItem(id: number) {
+    return this.http.delete<Response<string>>(`http://localhost:8080/mealplan/shopping-list/${id}`)
+  }
 
   constructor(
     private http: HttpClient

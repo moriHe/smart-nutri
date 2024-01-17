@@ -20,6 +20,11 @@ export class ShoppingListService {
     )
   }
 
+  removeShoppingListItem(id: number) {
+    return this.shoppingListEndpointService.deleteShoppingListItem(id).pipe(map((
+      response: {data: string}) => response))
+  }
+
   constructor(
     private shoppingListEndpointService: ShoppingListEndpointService
   ) { }

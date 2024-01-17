@@ -16,5 +16,21 @@ export class MarketsService {
     [Markets.LIDL]: "Lidl"
   }
 
+  ShoppingListDisplay = {
+    ...this.MarketDisplay,
+    "TODAY": "Heute"
+  }
+
+  MarketKey = {
+    [Markets.NONE]: Markets.NONE,
+    [Markets.REWE]: Markets.REWE,
+    [Markets.EDEKA]: Markets.EDEKA,
+    [Markets.BIO_COMPANY]: Markets.BIO_COMPANY,
+    [Markets.WEEKLY_MARKET]: Markets.WEEKLY_MARKET,
+    [Markets.ALDI]: Markets.ALDI,
+    [Markets.LIDL]: Markets.LIDL
+
+  }
+
   constructor() { }
 }

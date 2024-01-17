@@ -20,15 +20,37 @@
 </div>
 <div *ngIf="isShoppingListView; then shoppingListView else addItemsView"></div>
 <ng-template #shoppingListView>
-  <div
-    *ngFor="let item of shoppingList">
-    <p>{{ item.recipeIngredient.name }}</p>
+ <div 
+ class="md:w-3/4 mx-auto"
+ *ngFor="let category of this.sortShoppingListItems()"
+ >
+ <div *ngIf="category.list.length > 0">
+    <h2>{{marketsService.ShoppingListDisplay[category.key]}}</h2>
+    <mat-card class="my-2" *ngFor="let item of category.list">
+      <mat-card-content>
+        <div class="flex">
+        <p class="w-1/2">{{item.recipeIngredient.name}}</p>
+        <p>{{getAmount(item.recipeIngredient.amountPerPortion, item.mealplanItem.portions)}} <span>{{unitsService.UnitDisplay[item.recipeIngredient.unit]}}</span></p>
+        <div class="basis-1/5">
+          <img *ngIf="item.isBio" class="w-8 h-8 mx-auto" src="assets/organic.png" />
+      </div>
+      <button 
+      (click)="removeFromShoppingList(item.id)"
+      class="ml-auto"
+      mat-mini-fab color="primary" 
+      aria-label="Example icon button with a menu icon">
+        <mat-icon>done</mat-icon>
+      </button>
+      </div>
+      </mat-card-content>
+    </mat-card>
   </div>
+</div>
 </ng-template>
 <ng-template #addItemsView>
   <div *ngIf="mealplanItemInView">
   <div
-  class="w-3/4 mx-auto"
+  class="md:w-3/4 mx-auto"
   *ngFor="let item of mealplanItemInView.recipe.recipeIngredients"
   >
 <mat-card class="my-5 h-20">

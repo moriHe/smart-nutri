@@ -24,7 +24,7 @@ func (s *Server) handleGetUser(c *gin.Context) {
 func (s *Server) handlePostUser(c *gin.Context) {
 	fireUid := s.GetIdToken(c)
 	if fireUid == "" {
-		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusUnauthorized, Msg: "Not authorized"})
+		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusUnauthorized, Msg: "Not authorized 1"})
 		c.Abort()
 		return
 	} else {

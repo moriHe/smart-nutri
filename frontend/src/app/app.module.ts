@@ -1,4 +1,4 @@
-import { NgModule, LOCALE_ID } from '@angular/core';
+import { NgModule, LOCALE_ID, APP_INITIALIZER } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
@@ -43,6 +43,7 @@ import {MatCardModule} from '@angular/material/card';
 import { ShoppingListViewComponent } from './shopping-list/shopping-list-view/shopping-list-view.component';
 import { NotOnShoppingListViewComponent } from './shopping-list/not-on-shopping-list-view/not-on-shopping-list-view.component';
 import { ShoppingListBellComponent } from './shopping-list/shopping-list-bell/shopping-list-bell.component';
+import { SupabaseService } from 'api/supabase.service';
 
 @NgModule({
   declarations: [
@@ -93,6 +94,13 @@ import { ShoppingListBellComponent } from './shopping-list/shopping-list-bell/sh
     provideAuth(() => getAuth()),
   ],
   providers: [
+    SupabaseService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (supabaseService: SupabaseService) => () => supabaseService.initialize(),
+      deps: [SupabaseService],
+      multi: true,
+    },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,

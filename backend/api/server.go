@@ -1,36 +1,36 @@
 package api
 
 import (
-	"context"
+	"os"
 
-	firebase "firebase.google.com/go/v4"
-	"firebase.google.com/go/v4/auth"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/moriHe/smart-nutri/storage"
-	"google.golang.org/api/option"
+	"github.com/nedpals/supabase-go"
 )
 
 type Server struct {
 	store storage.Storage
-	auth  *auth.Client
+	auth  *supabase.Client
 }
 
 func StartGinServer(store storage.Storage, url string) (*gin.Engine, error) {
 	router := gin.Default()
-	opt := option.WithCredentialsFile("/Users/moritzhettich/prv/smart-nutri/backend/firebase-private-key.json")
-	app, err := firebase.NewApp(context.Background(), nil, opt)
+	// opt := option.WithCredentialsFile("/Users/moritzhettich/prv/smart-nutri/backend/firebase-private-key.json")
+	// app, err := firebase.NewApp(context.Background(), nil, opt)
 
-	if err != nil {
-		return nil, err
-	}
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	authClient, err := app.Auth(context.Background())
-	if err != nil {
-		return nil, err
-	}
+	// authClient, err := app.Auth(context.Background())
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	server := &Server{store: store, auth: authClient}
+	supabase := supabase.CreateClient(os.Getenv("SUPABASE_URL"), os.Getenv("SUPABASE_KEY"))
+
+	server := &Server{store: store, auth: supabase}
 
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{"*"} // Update with your Angular app's origin

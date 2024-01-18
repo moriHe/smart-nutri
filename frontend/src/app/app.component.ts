@@ -2,6 +2,7 @@ import { Component, ChangeDetectorRef} from '@angular/core';
 import { UserService } from 'api/user/user.service';
 import { finalize, take } from 'rxjs';
 import {Auth, authState} from '@angular/fire/auth'
+import { SupabaseService } from 'api/supabase.service';
 
 @Component({
   selector: 'app-root',
@@ -12,19 +13,19 @@ export class AppComponent {
   title = 'Smart Nutri';
   isInitialized = false
   
-  // might not needed. seems to be working without
-  authSubscription = authState(this.auth).pipe(
-    take(1),
-    finalize(() => {
-      this.isInitialized = true
-      this.cdr.detectChanges()
-    })).subscribe()
+ 
 
-  ngOnDestroy(): void {
-    this.authSubscription.unsubscribe()
-  }
+    ngOnInit(): void {
+      this.supabaseService.authChanges((_, session) => {
+        this.supabaseService.setSession(session)
+        this.isInitialized = true
+      })
+    }
+
+
 
   constructor(
+    private supabaseService: SupabaseService,
     public userService: UserService, 
     private auth: Auth,
     private cdr: ChangeDetectorRef

@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -28,25 +29,25 @@ func (s *Server) GetIdToken(c *gin.Context) string {
 		return ""
 	}
 
-	token, err := s.auth.VerifyIDToken(c, idToken)
+	user, err := s.auth.Auth.User(c, idToken)
 	if err != nil {
 		return ""
 	}
-	return token.UID
+	return user.ID
 }
 
 func (s *Server) AuthMiddleWare() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		fireUid := s.GetIdToken(c)
 		if fireUid == "" {
-			responses.ErrorResponse(c, &types.RequestError{Status: http.StatusUnauthorized, Msg: "Not authorized"})
+			responses.ErrorResponse(c, &types.RequestError{Status: http.StatusUnauthorized, Msg: "Not authorized 3"})
 			c.Abort()
 			return
 		}
-
+		fmt.Println(fireUid)
 		user, err := s.store.GetUser(fireUid)
 		if err != nil {
-			responses.ErrorResponse(c, &types.RequestError{Status: http.StatusUnauthorized, Msg: "Not authorized"})
+			responses.ErrorResponse(c, &types.RequestError{Status: http.StatusUnauthorized, Msg: "Not authorized 4"})
 			c.Abort()
 			return
 		}

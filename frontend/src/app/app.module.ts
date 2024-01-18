@@ -40,6 +40,9 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import { NavigationButtonsComponent } from './header/navigation-buttons/navigation-buttons.component';
 import { ShoppingListComponent } from './shopping-list/shopping-list/shopping-list.component';
 import {MatCardModule} from '@angular/material/card';
+import { ShoppingListViewComponent } from './shopping-list/shopping-list-view/shopping-list-view.component';
+import { NotOnShoppingListViewComponent } from './shopping-list/not-on-shopping-list-view/not-on-shopping-list-view.component';
+import { ShoppingListBellComponent } from './shopping-list/shopping-list-bell/shopping-list-bell.component';
 
 @NgModule({
   declarations: [
@@ -59,7 +62,10 @@ import {MatCardModule} from '@angular/material/card';
     CreateMealplanBottomsheetComponent,
     MealplanCardsComponent,
     NavigationButtonsComponent,
-    ShoppingListComponent
+    ShoppingListComponent,
+    ShoppingListViewComponent,
+    NotOnShoppingListViewComponent,
+    ShoppingListBellComponent
   ],
   imports: [
     BrowserModule,

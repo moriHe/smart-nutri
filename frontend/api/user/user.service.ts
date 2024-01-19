@@ -20,6 +20,7 @@ export class UserService {
   }
 
   getUser(): Observable<number> {
+    // TODO should store user once to not trigger on each authguard
     return this.http.get<Response<User>>("http://localhost:8080/user").pipe(map((response: Response<User>) => {
         return response.data.activeFamilyId
     }))

@@ -43,6 +43,14 @@ export class SupabaseService {
     return false
   }
 
+  async login(email: string, password: string) {
+    return await this.supabase.auth.signInWithPassword({email, password})
+  }
+
+  async logout() {
+    return await this.supabase.auth.signOut()
+  }
+
   async initialize() {
     // You can include additional initialization logic if needed
     // ...
@@ -51,7 +59,7 @@ export class SupabaseService {
     const initialSession = await this.supabase.auth.getSession();
     this.setSession(initialSession.data.session);
   }
-
+  
   constructor() {
     this.supabase.auth.onAuthStateChange((_, session) => {
       this.sessionSubject.next(session);

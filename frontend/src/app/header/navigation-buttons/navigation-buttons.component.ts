@@ -1,5 +1,6 @@
 import { Component, Inject, Input } from '@angular/core';
 import { Router } from '@angular/router';
+import { SupabaseService } from 'api/supabase.service';
 import { UserService } from 'api/user/user.service';
 
 @Component({
@@ -33,12 +34,16 @@ export class NavigationButtonsComponent {
     }
   }
 
-  onLogout() {
-    this.userService.logout()
+  async onLogout() {
+    const {error} = await this.supabaseService.logout()
+    console.log(error)
+    this.supabaseService.setSession(null)
+    this.router.navigate(["/"])
   }
 
   constructor(
     private router: Router,
-    private userService: UserService
+    private userService: UserService,
+    private supabaseService: SupabaseService
   ) {}
 }

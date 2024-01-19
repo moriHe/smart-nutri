@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS familys(
 
 CREATE TABLE IF NOT EXISTS users(
     id SERIAL NOT NULL PRIMARY KEY,
-    fire_uid TEXT NOT NULL,
+    supabase_uid TEXT NOT NULL,
     active_family_id INTEGER REFERENCES familys (id)
 );
 

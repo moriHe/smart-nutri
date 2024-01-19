@@ -26,7 +26,7 @@ func marshalUser(user *types.User) (*types.User, error) {
 
 func (s *Storage) GetUser(fireUid string) (*types.User, error) {
 	var user types.User
-	err := s.Db.QueryRow(context.Background(), "select id, active_family_id from users where fire_uid = $1", fireUid).Scan(&user.Id, &user.ActiveFamilyId)
+	err := s.Db.QueryRow(context.Background(), "select id, active_family_id from users where supabase_uid = $1", fireUid).Scan(&user.Id, &user.ActiveFamilyId)
 
 	if err != nil {
 		return nil, &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("No user: %s", err)}
@@ -37,7 +37,7 @@ func (s *Storage) GetUser(fireUid string) (*types.User, error) {
 func (s *Storage) PostUser(fireUid string) (*int, error) {
 	var userId int
 
-	err := s.Db.QueryRow(context.Background(), "insert into users (fire_uid) values ($1) returning id", fireUid).Scan(&userId)
+	err := s.Db.QueryRow(context.Background(), "insert into users (supabase_uid) values ($1) returning id", fireUid).Scan(&userId)
 
 	if err != nil {
 		return nil, &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Step 1: Failed to create user: %s", err)}

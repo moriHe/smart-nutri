@@ -21,7 +21,7 @@ export class SupabaseService {
   private isAppInitializedSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
   isAppIntialized$: Observable<boolean> = this.isAppInitializedSubject.asObservable()
 
-  private sessionSubject: BehaviorSubject<AuthSession | null> = new BehaviorSubject<AuthSession | null>(null);
+  sessionSubject: BehaviorSubject<AuthSession | null> = new BehaviorSubject<AuthSession | null>(null);
   // Observable for session changes
   session$: Observable<AuthSession | null> = this.sessionSubject.asObservable();
 

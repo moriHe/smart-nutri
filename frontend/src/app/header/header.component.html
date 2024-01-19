@@ -1,3 +1,22 @@
-<header>
-    <div>Header Component</div>
+<header class="h-full" *ngIf="isMobile">
+    <mat-sidenav-container class="h-full">
+        <mat-sidenav fixedInViewport="true" #sidenav class="w-2/3" mode="over">
+            <app-navigation-buttons [isMobile]="isMobile"></app-navigation-buttons>
+        </mat-sidenav>
+        <div class="flex justify-end items-center h-full bg-emerald-700 pr-5">
+            <button 
+            (click)="sidenav.toggle()"
+            mat-fab color="primary" 
+            aria-label="menu"
+            >
+                <mat-icon>menu</mat-icon>
+        </button>
+        </div>
+      
+      </mat-sidenav-container>
+</header>
+<header class="h-full" *ngIf="!isMobile">
+    <div class="flex justify-end h-full bg-emerald-700">
+    <app-navigation-buttons [isMobile]="isMobile"></app-navigation-buttons>
+</div>
 </header>

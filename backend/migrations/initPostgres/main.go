@@ -11,11 +11,10 @@ import (
 )
 
 func main() {
-	err := godotenv.Load()
+	err := godotenv.Load("/Users/moritzhettich/prv/smart-nutri/.env")
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
-	// TODO bind file path to this file instead of make file
 	// Call from root with initPostgresDev script
 	m, err := migrate.New("file://migrations/initPostgres", os.Getenv("DATABASE_URL"))
 	if err != nil {

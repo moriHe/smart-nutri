@@ -2,9 +2,10 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Response } from 'api';
-import { ShallowRecipe } from 'api/recipes/recipes.interface';
+import { RecipeWithoutIngredients } from 'api/recipes/recipes.interface';
 import { RecipesService } from 'api/recipes/recipes.service';
 import { CreateRecipeDialogComponent } from '../create-recipe-dialog/create-recipe-dialog.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-my-recipes',
@@ -12,10 +13,11 @@ import { CreateRecipeDialogComponent } from '../create-recipe-dialog/create-reci
   styleUrls: ['./my-recipes.component.css']
 })
 export class MyRecipesComponent {
-  recipes: ShallowRecipe[] = []
+  recipes: RecipeWithoutIngredients[] = []
+  private recipesSubscription!: Subscription
 
   ngOnInit(): void {
-    this.recipesService.getRecipes().subscribe((response: ShallowRecipe[]) => {
+    this.recipesSubscription = this.recipesService.getRecipes().subscribe((response: RecipeWithoutIngredients[]) => {
       this.recipes = response
     })
   }
@@ -36,14 +38,20 @@ export class MyRecipesComponent {
           defaultMeal: result.selectedMeal,
           defaultPortions: Number(result.defaultPortions),
           recipeIngredients: []
-        }).subscribe((response: Response<{id: number}>) => {
+        }).subscribe((response: Response<{id: number}> | null) => {
+          if (response) {
           this.router.navigateByUrl(`rezept/${response.data.id}`)
+        }
         })
       }
     })
-
   }
 
+  ngOnDestroy(): void {
+    if (this.recipesSubscription) {
+      this.recipesSubscription.unsubscribe();
+    }
+  }
 
 
   constructor(

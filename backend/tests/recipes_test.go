@@ -10,7 +10,10 @@ import (
 )
 
 func TestGetAllRecipesSucc(t *testing.T) {
-	r := startServer()
+	r, err := startServer()
+	if err != nil {
+		return
+	}
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/familys/1/recipes", nil)
@@ -21,8 +24,10 @@ func TestGetAllRecipesSucc(t *testing.T) {
 }
 
 func TestGetRecipeByIdSucc(t *testing.T) {
-	r := startServer()
-	// TODO Return all fields
+	r, err := startServer()
+	if err != nil {
+		return
+	}
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/recipes/1", nil)
 	r.ServeHTTP(w, req)
@@ -36,7 +41,10 @@ func TestGetRecipeByIdSucc(t *testing.T) {
 }
 
 func TestGetRecipeByIdBadReq(t *testing.T) {
-	r := startServer()
+	r, err := startServer()
+	if err != nil {
+		return
+	}
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/recipes/1000", nil)
 	r.ServeHTTP(w, req)
@@ -46,7 +54,10 @@ func TestGetRecipeByIdBadReq(t *testing.T) {
 }
 
 func TestPostRecipeSuccNoIngredients(t *testing.T) {
-	r := startServer()
+	r, err := startServer()
+	if err != nil {
+		return
+	}
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/familys/1/recipes", bytes.NewBuffer([]byte(`{
 		"name": "Wantan",
@@ -60,9 +71,11 @@ func TestPostRecipeSuccNoIngredients(t *testing.T) {
 	assert.Equal(t, `{"data":{"id":3}}`, w.Body.String())
 }
 
-// TODO TestPostRecipeSuccIngredients fails running indivudually since it builds up on TestPostRecipeSuccNoIngredients
 func TestPostRecipeSuccIngredients(t *testing.T) {
-	r := startServer()
+	r, err := startServer()
+	if err != nil {
+		return
+	}
 	w := httptest.NewRecorder()
 	body := `{"name": "Wantan","defaultPortions":1.5,"defaultMeal":"DINNER","recipeIngredients": [{"ingredientId": 1,` +
 		`"amountPerPortion": 100,"unit": "GRAM","market": "REWE","isBio": true},{"ingredientId": 2,` +
@@ -72,14 +85,14 @@ func TestPostRecipeSuccIngredients(t *testing.T) {
 	r.ServeHTTP(w, req)
 
 	assert.Equal(t, 200, w.Code)
-	// TODO: Return payload in response
 	assert.Equal(t, `{"data":{"id":4}}`, w.Body.String())
 }
 
-// TODO: Add bad request tests for missing ingriedientId, amountPerPortion etc
-// TODO: Also add test family id not correct
 func TestPostRecipeBadReq(t *testing.T) {
-	r := startServer()
+	r, err := startServer()
+	if err != nil {
+		return
+	}
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/familys/1/recipes", bytes.NewBuffer([]byte(`{
 		"hello": "world",
@@ -94,7 +107,10 @@ func TestPostRecipeBadReq(t *testing.T) {
 }
 
 func TestPostRecipeIngredientSucc(t *testing.T) {
-	r := startServer()
+	r, err := startServer()
+	if err != nil {
+		return
+	}
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/recipes/2/recipeingredient", bytes.NewBuffer([]byte(`{
 		"ingredientId": 2,
@@ -111,7 +127,10 @@ func TestPostRecipeIngredientSucc(t *testing.T) {
 }
 
 func TestPostRecipeIngredientBadReq(t *testing.T) {
-	r := startServer()
+	r, err := startServer()
+	if err != nil {
+		return
+	}
 	w := httptest.NewRecorder()
 
 	req, _ := http.NewRequest("POST", "/recipes/1000/recipeingredient", bytes.NewBuffer([]byte(`{
@@ -127,7 +146,10 @@ func TestPostRecipeIngredientBadReq(t *testing.T) {
 }
 
 func TestPatchRecipeNameSucc(t *testing.T) {
-	r := startServer()
+	r, err := startServer()
+	if err != nil {
+		return
+	}
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("PATCH", "/recipes/2", bytes.NewBuffer([]byte(`{
 		"name": "Beyond Burger"
@@ -140,7 +162,10 @@ func TestPatchRecipeNameSucc(t *testing.T) {
 }
 
 func TestPatchRecipeNameBadReqNoName(t *testing.T) {
-	r := startServer()
+	r, err := startServer()
+	if err != nil {
+		return
+	}
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("PATCH", "/recipes/2", bytes.NewBuffer([]byte(`{
 		"hello": "world"
@@ -153,7 +178,10 @@ func TestPatchRecipeNameBadReqNoName(t *testing.T) {
 }
 
 func TestPatchRecipeNameBadReqNoId(t *testing.T) {
-	r := startServer()
+	r, err := startServer()
+	if err != nil {
+		return
+	}
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("PATCH", "/recipes/1000", bytes.NewBuffer([]byte(`{
 		"name": "Pasta"
@@ -166,7 +194,10 @@ func TestPatchRecipeNameBadReqNoId(t *testing.T) {
 }
 
 func TestDeleteRecipeSucc(t *testing.T) {
-	r := startServer()
+	r, err := startServer()
+	if err != nil {
+		return
+	}
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("DELETE", "/recipes/2", nil)
 
@@ -177,7 +208,10 @@ func TestDeleteRecipeSucc(t *testing.T) {
 }
 
 func TestDeleteRecipeBadReq(t *testing.T) {
-	r := startServer()
+	r, err := startServer()
+	if err != nil {
+		return
+	}
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("DELETE", "/recipes/1000", nil)
 
@@ -188,7 +222,10 @@ func TestDeleteRecipeBadReq(t *testing.T) {
 }
 
 func TestDeleteRecipeIngredientSucc(t *testing.T) {
-	r := startServer()
+	r, err := startServer()
+	if err != nil {
+		return
+	}
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("DELETE", "/recipes/recipeingredient/1", nil)
 
@@ -198,7 +235,10 @@ func TestDeleteRecipeIngredientSucc(t *testing.T) {
 	assert.Equal(t, `{"data":"Recipe ingredient deleted"}`, w.Body.String())
 }
 func TestDeleteRecipeIngredientBadReq(t *testing.T) {
-	r := startServer()
+	r, err := startServer()
+	if err != nil {
+		return
+	}
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("DELETE", "/recipes/recipeingredient/1000", nil)
 

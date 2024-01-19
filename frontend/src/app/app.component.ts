@@ -1,4 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef} from '@angular/core';
+import { UserService } from 'api/user/user.service';
+import { SupabaseService } from 'api/supabase.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +10,15 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'Smart Nutri';
+  isInitialized = this.supabaseService.isAppIntialized$
+  
+ 
+
+
+
+
+
+  constructor(
+    private supabaseService: SupabaseService, 
+    ) {}
 }

@@ -1,7 +1,6 @@
-import { NgModule } from '@angular/core';
+import { NgModule, LOCALE_ID, APP_INITIALIZER } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
-
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
@@ -22,8 +21,26 @@ import {MatChipsModule} from '@angular/material/chips';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { CreateRecipeDialogComponent } from './create-recipe-dialog/create-recipe-dialog.component';
 import {CdkAccordionModule} from '@angular/cdk/accordion';
-
-
+import { SignupSuccessComponent } from './signup-success/signup-success.component';
+import { LandingPageComponent } from './landing-page/landing-page.component';
+import { AuthInterceptor } from './auth.interceptor';
+import { MealplansComponent } from './mealplans/mealplans/mealplans.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { CommonModule, DatePipe } from '@angular/common';
+import { CreateMealplanDialogComponent } from './mealplans/create-mealplan-dialog/create-mealplan-dialog.component';
+import { CreateMealplanBottomsheetComponent } from './mealplans/create-mealplan-bottomsheet/create-mealplan-bottomsheet.component';
+import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
+import { MealplanCardsComponent } from './mealplans/mealplan-cards/mealplan-cards.component';
+import {MatSidenavModule} from '@angular/material/sidenav';
+import { NavigationButtonsComponent } from './header/navigation-buttons/navigation-buttons.component';
+import { ShoppingListComponent } from './shopping-list/shopping-list/shopping-list.component';
+import {MatCardModule} from '@angular/material/card';
+import { ShoppingListViewComponent } from './shopping-list/shopping-list-view/shopping-list-view.component';
+import { NotOnShoppingListViewComponent } from './shopping-list/not-on-shopping-list-view/not-on-shopping-list-view.component';
+import { ShoppingListBellComponent } from './shopping-list/shopping-list-bell/shopping-list-bell.component';
+import { SupabaseService } from 'api/supabase.service';
+import { SignupComponent } from './signup/signup.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +51,19 @@ import {CdkAccordionModule} from '@angular/cdk/accordion';
     RecipeDetailsComponent,
     SearchComponent,
     SearchIngredientDialogComponent,
-    CreateRecipeDialogComponent
+    CreateRecipeDialogComponent,
+    SignupComponent,
+    SignupSuccessComponent,
+    LandingPageComponent,
+    MealplansComponent,
+    CreateMealplanDialogComponent,
+    CreateMealplanBottomsheetComponent,
+    MealplanCardsComponent,
+    NavigationButtonsComponent,
+    ShoppingListComponent,
+    ShoppingListViewComponent,
+    NotOnShoppingListViewComponent,
+    ShoppingListBellComponent
   ],
   imports: [
     BrowserModule,
@@ -51,9 +80,33 @@ import {CdkAccordionModule} from '@angular/cdk/accordion';
     MatSelectModule,
     MatChipsModule,
     MatSnackBarModule,
-    CdkAccordionModule
+    CdkAccordionModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    CommonModule,
+    MatBottomSheetModule,
+    MatSidenavModule,
+    MatCardModule
   ],
-  providers: [],
+  providers: [
+    SupabaseService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (supabaseService: SupabaseService) => () => supabaseService.initialize(),
+      deps: [SupabaseService],
+      multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    },
+    {
+      provide: LOCALE_ID,
+      useValue: 'de'
+    },
+    DatePipe
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

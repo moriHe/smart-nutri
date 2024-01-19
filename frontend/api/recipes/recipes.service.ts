@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Api, Response } from 'api';
-import { Observable, map } from 'rxjs';
-import { FullRecipe, RecipeBody, RecipeIngredientBody, ShallowRecipe } from './recipes.interface';
+import { Response } from 'api';
+import { Observable, Subscription, map, of, switchMap, take } from 'rxjs';
+import { FullRecipe, RecipeBody, RecipeIngredientBody, RecipeWithoutIngredients } from './recipes.interface';
+import { RecipesEndpointsService } from './recipes.endpoints.service';
 
 
 
@@ -9,32 +10,36 @@ import { FullRecipe, RecipeBody, RecipeIngredientBody, ShallowRecipe } from './r
   providedIn: 'root'
 })
 export class RecipesService {
-  getRecipes(): Observable<ShallowRecipe[]> {
-    return this.api.fetchRecipes().pipe(
-      map((response: {data: ShallowRecipe[]}) => response.data)
-    );
+
+
+  getRecipes(): Observable<RecipeWithoutIngredients[]> {
+    return this.recipesEndpointService.fetchRecipes().pipe(
+      map((response: { data: RecipeWithoutIngredients[] }) => response ? response.data : [])
+    )
   }
 
   getRecipe(id: number): Observable<FullRecipe>{
-    return this.api.fetchRecipe(id).pipe(map((response: Response<FullRecipe>) => response.data))
+    return this.recipesEndpointService.fetchRecipe(id).pipe(map((response: Response<FullRecipe>) => response.data))
   }
 
-  addRecipe(body: RecipeBody): Observable<Response<{id: number}>>{
-    return this.api.postRecipe(body).pipe(map((response: Response<{id: number}>) => response))
+  addRecipe(body: RecipeBody): Observable<Response<{id: number}> | null>{
+    return this.recipesEndpointService.postRecipe(body)
   }
 
   removeRecipe(id: number): Observable<string>{
-    return this.api.deleteRecipe(id).pipe(map((response: Response<string>) => response.data))
+    return this.recipesEndpointService.deleteRecipe(id).pipe(take(1), map((response: Response<string>) => response.data))
   }
 
   addRecipeIngredient(recipeId: number, body: RecipeIngredientBody): Observable<number>{
-    return this.api.postRecipeIngredient(recipeId, body).pipe(map((response: Response<number>) => response.data))
+    return this.recipesEndpointService.postRecipeIngredient(recipeId, body).pipe(map((response: Response<number>) => response.data))
   }
 
   removeRecipeIngredient(recipeIngredientId: number): Observable<string>{
-    return this.api.deleteRecipeIngredient(recipeIngredientId).pipe(map((response: Response<string>) => response.data))
+    return this.recipesEndpointService.deleteRecipeIngredient(recipeIngredientId).pipe(map((response: Response<string>) => response.data))
   }
 
-  constructor(private api: Api) {}
+  constructor(
+    private recipesEndpointService: RecipesEndpointsService,
+    ) {}
 
 }

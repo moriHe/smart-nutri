@@ -1,8 +1,7 @@
-import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Component } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import { Meals } from 'api/recipes/recipes.interface';
 import { MealsService } from 'services/meals.service';
-
 @Component({
   selector: 'app-create-recipe-dialog',
   templateUrl: './create-recipe-dialog.component.html',

@@ -5,28 +5,32 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	contextmethods "github.com/moriHe/smart-nutri/api/contextMethods"
+	"github.com/moriHe/smart-nutri/api/responses"
 	"github.com/moriHe/smart-nutri/types"
 )
 
 func (s *Server) mealPlanRoutes(r *gin.Engine) {
-	r.GET("/familys/:familyId/mealplan/:date", s.handleGetMealPlan)
+	r.GET("/mealplan/:date", s.handleGetMealPlan)
 	r.GET("/mealplan/item/:id", s.handleGetMealPlanItem)
-	r.POST("/familys/:familyId/mealplan", s.handlePostMealPlanItem)
+	r.POST("/mealplan", s.handlePostMealPlanItem)
 	r.DELETE("/mealplan/item/:id", s.handleDeleteMealPlanItem)
 }
 
 func (s *Server) handleGetMealPlan(c *gin.Context) {
-	familyId := c.Param("familyId")
-	date := c.Param("date")
-	_, err := time.Parse("2006-01-02", date)
+	user := contextmethods.GetUserFromContext(c)
+	dateStr := c.Param("date")
+	forShoppingListStr := c.Query("forShoppingList")
+	date, err := time.Parse(time.RFC3339, dateStr)
+	formattedTimestamp := date.Truncate(24 * time.Hour).Format("2006-01-02 15:04:05.999")
 
 	if err != nil {
-		errorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Invalid Date. Use format YYYY-MM-DD"})
+		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Invalid UTC Date"})
 		return
 	}
 
-	mealPlan, err := s.store.GetMealPlan(familyId, date)
-	handleResponse[*[]types.ShallowMealPlanItem](c, mealPlan, err)
+	mealPlan, err := s.store.GetMealPlan(user.ActiveFamilyId, formattedTimestamp, forShoppingListStr)
+	responses.HandleResponse[*[]types.ShallowMealPlanItem](c, mealPlan, err)
 }
 
 func (s *Server) handleGetMealPlanItem(c *gin.Context) {
@@ -34,22 +38,22 @@ func (s *Server) handleGetMealPlanItem(c *gin.Context) {
 
 	mealPlanItem, err := s.store.GetMealPlanItem(id)
 
-	handleResponse[*types.FullMealPlanItem](c, mealPlanItem, err)
+	responses.HandleResponse[*types.FullMealPlanItem](c, mealPlanItem, err)
 }
 
 func (s *Server) handlePostMealPlanItem(c *gin.Context) {
-	familyId := c.Param("familyId")
+	user := contextmethods.GetUserFromContext(c)
 	var payload types.PostMealPlanItem
 
 	if err := c.BindJSON(&payload); err != nil {
-		errorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Payload malformed"})
+		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Payload malformed"})
 	} else {
-		handleResponse[string](c, "Added mealplan item", s.store.PostMealPlanItem(familyId, payload))
+		responses.HandleResponse[string](c, "Added mealplan item", s.store.PostMealPlanItem(user.ActiveFamilyId, payload))
 	}
 }
 
 func (s *Server) handleDeleteMealPlanItem(c *gin.Context) {
 	id := c.Param("id")
 
-	handleResponse[string](c, "Deleted mealplan item", s.store.DeleteMealPlanItem(id))
+	responses.HandleResponse[string](c, "Deleted mealplan item", s.store.DeleteMealPlanItem(id))
 }

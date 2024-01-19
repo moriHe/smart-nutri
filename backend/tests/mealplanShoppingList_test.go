@@ -10,7 +10,10 @@ import (
 )
 
 func TestGetMealplanItemsShoppingListSuccHasItems(t *testing.T) {
-	r := startServer()
+	r, err := startServer()
+	if err != nil {
+		return
+	}
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/familys/1/mealplan/shopping-list", nil)
@@ -24,7 +27,10 @@ func TestGetMealplanItemsShoppingListSuccHasItems(t *testing.T) {
 }
 
 func TestGetMealplanItemsShoppingListSuccNoItems(t *testing.T) {
-	r := startServer()
+	r, err := startServer()
+	if err != nil {
+		return
+	}
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/familys/2/mealplan/shopping-list", nil)
@@ -35,7 +41,10 @@ func TestGetMealplanItemsShoppingListSuccNoItems(t *testing.T) {
 }
 
 func TestPostMealplanItemShoppingListSucc(t *testing.T) {
-	r := startServer()
+	r, err := startServer()
+	if err != nil {
+		return
+	}
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/familys/1/mealplan/1/shopping-list", bytes.NewBuffer([]byte(`{
@@ -49,7 +58,10 @@ func TestPostMealplanItemShoppingListSucc(t *testing.T) {
 }
 
 func TestPostMealplanItemShoppingListBadReq(t *testing.T) {
-	r := startServer()
+	r, err := startServer()
+	if err != nil {
+		return
+	}
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/familys/1000/mealplan/1000/shopping-list", bytes.NewBuffer([]byte(`{
@@ -59,13 +71,16 @@ func TestPostMealplanItemShoppingListBadReq(t *testing.T) {
 	}`)))
 	r.ServeHTTP(w, req)
 	response := `{"error":{"status":400,"message":"Error: Failed to post mealplan item shopping list: ERROR: insert or ` +
-		`update on table \"mealplans_shopping_list\" violates foreign key constraint \"mealplans_shopping_list_family_id_fkey\" (SQLSTATE 23503)"}}`
+		`update on table \"shopping_list\" violates foreign key constraint \"shopping_list_family_id_fkey\" (SQLSTATE 23503)"}}`
 	assert.Equal(t, 400, w.Code)
 	assert.Equal(t, response, w.Body.String())
 }
 
 func TestDeleteMealplanItemShoppingListSucc(t *testing.T) {
-	r := startServer()
+	r, err := startServer()
+	if err != nil {
+		return
+	}
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("DELETE", "/mealplan/shopping-list/1", nil)
@@ -75,7 +90,10 @@ func TestDeleteMealplanItemShoppingListSucc(t *testing.T) {
 }
 
 func TestDeleteMealplanItemShoppingListBadReq(t *testing.T) {
-	r := startServer()
+	r, err := startServer()
+	if err != nil {
+		return
+	}
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("DELETE", "/mealplan/shopping-list/1000", nil)

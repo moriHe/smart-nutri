@@ -1,0 +1,7 @@
+
+<ng-container *ngIf="isShoppingListView; else addItemsView">
+  <app-shopping-list-view [openAddItemsView]="openAddItemsView"></app-shopping-list-view>
+</ng-container>
+<ng-template #addItemsView>
+  <app-not-on-shopping-list-view [openShoppingListView]="openShoppingListView"></app-not-on-shopping-list-view>
+</ng-template>

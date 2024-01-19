@@ -11,17 +11,17 @@ import (
 	"github.com/moriHe/smart-nutri/types"
 )
 
-func (s *Storage) GetAllRecipes(familyId string) (*[]types.ShallowRecipe, error) {
-	rows, _ := s.Db.Query(context.Background(), "select id, name from recipes where family_id=$1", familyId)
-
+func (s *Storage) GetAllRecipes(user *types.User) (*[]types.RecipeWithoutIngredients, error) {
+	rows, _ := s.Db.Query(context.Background(), "select recipes.id, name, default_portions, meal from recipes join meals on recipes.default_meal = meals.id where family_id=$1", user.ActiveFamilyId)
+	// error handling um silent errors zu vermeiden (hatte id anstatt recipes nach einbau von join, was n silent error warf)
 	defer rows.Close()
 
-	var recipes []types.ShallowRecipe
+	var recipes []types.RecipeWithoutIngredients
 
 	for rows.Next() {
-		var recipe types.ShallowRecipe
+		var recipe types.RecipeWithoutIngredients
 
-		err := rows.Scan(&recipe.Id, &recipe.Name)
+		err := rows.Scan(&recipe.Id, &recipe.Name, &recipe.DefaultPortions, &recipe.DefaultMeal)
 		if err != nil {
 			return nil, &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Scan recipes table failed: %s", err)}
 		}
@@ -31,11 +31,11 @@ func (s *Storage) GetAllRecipes(familyId string) (*[]types.ShallowRecipe, error)
 	return &recipes, nil
 }
 
-func (s *Storage) GetRecipeById(id string) (*types.FullRecipe, error) {
+func (s *Storage) GetRecipeById(id string, activeFamilyId *int) (*types.FullRecipe, error) {
 
 	recipe := types.FullRecipe{RecipeIngredients: []types.RecipeIngredient{}}
-	query := "select recipes.id, name, default_portions, meal from recipes join meals on recipes.default_meal = meals.id where recipes.id = $1"
-	err := s.Db.QueryRow(context.Background(), query, id).Scan(&recipe.Id, &recipe.Name, &recipe.DefaultPortions, &recipe.DefaultMeal)
+	query := "select recipes.id, name, default_portions, meal from recipes join meals on recipes.default_meal = meals.id where recipes.id = $1 and family_id = $2"
+	err := s.Db.QueryRow(context.Background(), query, id, activeFamilyId).Scan(&recipe.Id, &recipe.Name, &recipe.DefaultPortions, &recipe.DefaultMeal)
 
 	if err != nil {
 		return nil, &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Bad Request: No recipe found with id %s", id)}
@@ -68,12 +68,11 @@ func (s *Storage) GetRecipeById(id string) (*types.FullRecipe, error) {
 var postRecipeIngredientQuery = "insert into recipes_ingredients(recipe_id, " +
 	"ingredient_id, amount_per_portion, unit, market, is_bio) values ($1, $2, $3, $4, $5, $6) returning id"
 
-func (s *Storage) PostRecipe(familyId string, payload types.PostRecipe) (*types.Id, error) {
+func (s *Storage) PostRecipe(familyId *int, payload types.PostRecipe) (*types.Id, error) {
 	var defaultMealId int
 	err := s.Db.QueryRow(context.Background(), "select (id) from meals where meals.meal = $1", payload.DefaultMeal).Scan(&defaultMealId)
 	if err != nil {
-		// TODO: Should probably be a Bad Request or check if no unitId then bad request. I think queryRow throws error if nothing found
-		return nil, &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Step 1: Failed to find meals name: %s", err)}
+		return nil, &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Step 1: Failed to find meals name: %s", err)}
 	}
 	var recipeId int
 	if payload.Name == "" {
@@ -123,19 +122,16 @@ func (s *Storage) PostRecipeIngredient(recipeId string, payload types.PostRecipe
 	err := s.Db.QueryRow(context.Background(), "select (id) from units where units.name = $1", payload.Unit).Scan(&unitId)
 
 	if err != nil {
-		// TODO: Should probably be a Bad Request or check if no unitId then bad request. I think queryRow throws error if nothing found
-		return nil, &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Step 1a: Failed to create recipe_ingredient: %s", err)}
+		return nil, &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Step 1a: Failed to create recipe_ingredient: %s", err)}
 	}
 
 	var marketId int
 	err = s.Db.QueryRow(context.Background(), "select (id) from markets where markets.name = $1", payload.Market).Scan(&marketId)
 	if err != nil {
-		// TODO: Should probably be a Bad Request or check if no unitId then bad request. I think queryRow throws error if nothing found
-		return nil, &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Step 1b: Failed to create recipe_ingredient: %s", err)}
+		return nil, &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Step 1b: Failed to create recipe_ingredient: %s", err)}
 	}
 	var id int
 	err = s.Db.QueryRow(context.Background(), postRecipeIngredientQuery, recipeId, payload.IngredientId, payload.AmountPerPortion, unitId, marketId, payload.IsBio).Scan(&id)
-	// err = s.Db.Exec(context.Background(), postRecipeIngredientQuery, recipeId, payload.IngredientId, payload.AmountPerPortion, unitId, marketId, payload.IsBio)
 
 	if err != nil {
 		return nil, &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Step 2: Failed to post recipe_ingredient: %s", err)}
@@ -174,7 +170,7 @@ func (s *Storage) DeleteRecipe(recipeId string) error {
 		if err != nil {
 			return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Delete recipe failed 1: %s", err)}
 		}
-		_, err = s.Db.Exec(context.Background(), "delete from mealplans_shopping_list where mealplan_id = $1", mealplanId)
+		_, err = s.Db.Exec(context.Background(), "delete from shopping_list where mealplan_id = $1", mealplanId)
 		if err != nil {
 			return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Delete recipe failed 2: %s", err)}
 		}
@@ -206,7 +202,7 @@ func (s *Storage) DeleteRecipe(recipeId string) error {
 }
 
 func (s *Storage) DeleteRecipeIngredient(recipeIngredientId string) error {
-	_, err := s.Db.Exec(context.Background(), "delete from mealplans_shopping_list where recipes_ingredients_id = $1", recipeIngredientId)
+	_, err := s.Db.Exec(context.Background(), "delete from shopping_list where recipes_ingredients_id = $1", recipeIngredientId)
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to delete recipe row: %v\n", err)

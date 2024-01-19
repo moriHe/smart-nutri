@@ -5,20 +5,25 @@ import (
 )
 
 type Storage interface {
-	GetAllRecipes(familyId string) (*[]types.ShallowRecipe, error)
-	GetRecipeById(recipeId string) (*types.FullRecipe, error)
-	PostRecipe(familyId string, payload types.PostRecipe) (*types.Id, error)
+	GetUser(fireUid string) (*types.User, error)
+	// header instead of body?
+	PostUser(fireUid string) (*int, error)
+	PostFamily(name string, userId int) error
+
+	GetAllRecipes(user *types.User) (*[]types.RecipeWithoutIngredients, error)
+	GetRecipeById(recipeId string, activeFamilyId *int) (*types.FullRecipe, error)
+	PostRecipe(familyId *int, payload types.PostRecipe) (*types.Id, error)
 	PostRecipeIngredient(recipeId string, payload types.PostRecipeIngredient) (*int, error)
 	PatchRecipeName(recipeId string, payload types.PatchRecipeName) error
 	DeleteRecipe(recipeId string) error
 	DeleteRecipeIngredient(recipeIngredientId string) error
 
-	GetMealPlan(familyId string, date string) (*[]types.ShallowMealPlanItem, error)
+	GetMealPlan(familyId *int, date string, forShoppingListStr string) (*[]types.ShallowMealPlanItem, error)
 	GetMealPlanItem(id string) (*types.FullMealPlanItem, error)
-	PostMealPlanItem(familyId string, payload types.PostMealPlanItem) error
+	PostMealPlanItem(familyId *int, payload types.PostMealPlanItem) error
 	DeleteMealPlanItem(id string) error
 
-	GetMealPlanItemsShoppingList(familyId string) (*[]types.ShoppingListMealplanItem, error)
-	PostMealPlanItemShoppingList(payload types.PostShoppingListMealplanItem) error
+	GetMealPlanItemsShoppingList(familyId *int) (*[]types.ShoppingListMealplanItem, error)
+	PostShoppingList(payload []types.PostShoppingListMealplanItem, activeFamilyId *int, mealplanId string) error
 	DeleteMealPlanItemShoppingList(id string) error
 }

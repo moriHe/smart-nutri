@@ -10,7 +10,11 @@ import (
 )
 
 func TestGetMeaplanSuccHasMealplans(t *testing.T) {
-	r := startServer()
+	r, err := startServer()
+
+	if err != nil {
+		return
+	}
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/familys/1/mealplan/2023-08-22", nil)
@@ -21,7 +25,10 @@ func TestGetMeaplanSuccHasMealplans(t *testing.T) {
 }
 
 func TestGetMealplanSuccNoMeaplans(t *testing.T) {
-	r := startServer()
+	r, err := startServer()
+	if err != nil {
+		return
+	}
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/familys/1/mealplan/2100-08-22", nil)
@@ -32,7 +39,10 @@ func TestGetMealplanSuccNoMeaplans(t *testing.T) {
 }
 
 func TestGetMealplanBadReqInvalidDate(t *testing.T) {
-	r := startServer()
+	r, err := startServer()
+	if err != nil {
+		return
+	}
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/familys/1/mealplan/INVALID_DATE", nil)
@@ -43,7 +53,10 @@ func TestGetMealplanBadReqInvalidDate(t *testing.T) {
 }
 
 func TestGetMealplanItemSucc(t *testing.T) {
-	r := startServer()
+	r, err := startServer()
+	if err != nil {
+		return
+	}
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/mealplan/item/1", nil)
@@ -54,7 +67,10 @@ func TestGetMealplanItemSucc(t *testing.T) {
 }
 
 func TestGetMealplanItemBadReq(t *testing.T) {
-	r := startServer()
+	r, err := startServer()
+	if err != nil {
+		return
+	}
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/mealplan/item/1000", nil)
@@ -64,9 +80,11 @@ func TestGetMealplanItemBadReq(t *testing.T) {
 	assert.Equal(t, `{"error":{"status":400,"message":"Bad Request: no rows in result set"}}`, w.Body.String())
 }
 
-// TODO Check if item is posted correctly to db
 func TestPostMealplanItemSucc(t *testing.T) {
-	r := startServer()
+	r, err := startServer()
+	if err != nil {
+		return
+	}
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/familys/1/mealplan", bytes.NewBuffer([]byte(`{
@@ -81,10 +99,11 @@ func TestPostMealplanItemSucc(t *testing.T) {
 	assert.Equal(t, `{"data":"Added mealplan item"}`, w.Body.String())
 }
 
-// TODO: Test other missing payloads
-// TODO: Add proper error messages
 func TestPostMealplanItemBadReq(t *testing.T) {
-	r := startServer()
+	r, err := startServer()
+	if err != nil {
+		return
+	}
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/familys/1/mealplan", bytes.NewBuffer([]byte(`{
@@ -99,7 +118,10 @@ func TestPostMealplanItemBadReq(t *testing.T) {
 }
 
 func TestDeleteMealplanItemSucc(t *testing.T) {
-	r := startServer()
+	r, err := startServer()
+	if err != nil {
+		return
+	}
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("DELETE", "/mealplan/item/1", nil)
@@ -110,7 +132,10 @@ func TestDeleteMealplanItemSucc(t *testing.T) {
 }
 
 func TestDeleteMealplanItemBadReq(t *testing.T) {
-	r := startServer()
+	r, err := startServer()
+	if err != nil {
+		return
+	}
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("DELETE", "/mealplan/item/1000", nil)

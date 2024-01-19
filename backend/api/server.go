@@ -1,21 +1,36 @@
 package api
 
 import (
-	"net/http"
+	"os"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/moriHe/smart-nutri/storage"
-	"github.com/moriHe/smart-nutri/types"
+	"github.com/nedpals/supabase-go"
 )
 
 type Server struct {
 	store storage.Storage
+	auth  *supabase.Client
 }
 
-func StartGinServer(store storage.Storage, url string) *gin.Engine {
+func StartGinServer(store storage.Storage, url string) (*gin.Engine, error) {
 	router := gin.Default()
-	server := &Server{store: store}
+	// opt := option.WithCredentialsFile("/Users/moritzhettich/prv/smart-nutri/backend/firebase-private-key.json")
+	// app, err := firebase.NewApp(context.Background(), nil, opt)
+
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	// authClient, err := app.Auth(context.Background())
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	supabase := supabase.CreateClient(os.Getenv("SUPABASE_URL"), os.Getenv("SUPABASE_KEY"))
+
+	server := &Server{store: store, auth: supabase}
 
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{"*"} // Update with your Angular app's origin
@@ -25,38 +40,15 @@ func StartGinServer(store storage.Storage, url string) *gin.Engine {
 	// Use the CORS middleware
 	router.Use(cors.New(config))
 
+	server.userRoutes(router)
+	router.Use(server.AuthMiddleWare())
 	server.recipeRoutes(router)
 	server.mealPlanRoutes(router)
 	server.mealplanShoppingListRoutes(router)
+	server.familyRoutes(router)
 
 	router.Run(url)
 
-	return router
+	return router, nil
 
-}
-
-func errorResponse(c *gin.Context, err error) bool {
-	if err != nil {
-		if requestErr, ok := err.(*types.RequestError); ok {
-			c.JSON(requestErr.Status, gin.H{"error": requestErr})
-		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Something went wrong"})
-		}
-		return true
-	}
-
-	return false
-}
-
-func handleResponse[T any](c *gin.Context, successResponse T, err error) {
-	if err != nil {
-		if requestErr, ok := err.(*types.RequestError); ok {
-			c.JSON(requestErr.Status, gin.H{"error": requestErr})
-		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Something went wrong"})
-		}
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"data": successResponse})
 }

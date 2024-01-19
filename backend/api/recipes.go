@@ -4,14 +4,15 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	contextmethods "github.com/moriHe/smart-nutri/api/contextMethods"
+	"github.com/moriHe/smart-nutri/api/responses"
 	"github.com/moriHe/smart-nutri/types"
 )
 
 func (s *Server) recipeRoutes(r *gin.Engine) {
-	r.GET("/familys/:familyId/recipes", s.handleGetAllRecipes)
-	// todo familyId
+	r.GET("/recipes", s.handleGetAllRecipes)
 	r.GET("/recipes/:id", s.handleGetRecipeById)
-	r.POST("/familys/:familyId/recipes", s.handlePostRecipe)
+	r.POST("/recipes", s.handlePostRecipe)
 	r.POST("/recipes/:id/recipeingredient", s.handlePostRecipeIngredient)
 	r.PATCH("/recipes/:id", s.handlePatchRecipeName)
 	r.DELETE("/recipes/:id", s.handleDeleteRecipe)
@@ -19,40 +20,49 @@ func (s *Server) recipeRoutes(r *gin.Engine) {
 }
 
 func (s *Server) handleGetAllRecipes(c *gin.Context) {
-	familyId := c.Param("familyId")
-	recipes, err := s.store.GetAllRecipes(familyId)
-	handleResponse[*[]types.ShallowRecipe](c, recipes, err)
+	user := contextmethods.GetUserFromContext(c)
+
+	if user.ActiveFamilyId == nil {
+		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "No Family"})
+	}
+	recipes, err := s.store.GetAllRecipes(user)
+	responses.HandleResponse[*[]types.RecipeWithoutIngredients](c, recipes, err)
 }
 
 func (s *Server) handleGetRecipeById(c *gin.Context) {
 	id := c.Param("id")
+	user := contextmethods.GetUserFromContext(c)
 
-	recipe, err := s.store.GetRecipeById(id)
-	handleResponse[*types.FullRecipe](c, recipe, err)
+	if user.ActiveFamilyId == nil {
+		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "No Family"})
+	}
+
+	recipe, err := s.store.GetRecipeById(id, user.ActiveFamilyId)
+	responses.HandleResponse[*types.FullRecipe](c, recipe, err)
 
 }
 
 func (s *Server) handlePostRecipe(c *gin.Context) {
-	familyId := c.Param("familyId")
+	user := contextmethods.GetUserFromContext(c)
+
 	var payload types.PostRecipe
 
 	if err := c.BindJSON(&payload); err != nil {
-		errorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: err.Error()})
+		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: err.Error()})
 	} else {
-		response, err := s.store.PostRecipe(familyId, payload)
-		handleResponse[*types.Id](c, response, err)
+		response, err := s.store.PostRecipe(user.ActiveFamilyId, payload)
+		responses.HandleResponse[*types.Id](c, response, err)
 	}
 }
 
 func (s *Server) handlePostRecipeIngredient(c *gin.Context) {
 	recipeId := c.Param("id")
 	var payload types.PostRecipeIngredient
-	// TODO add test because of change  from err return to int, err return
 	if err := c.BindJSON(&payload); err != nil {
-		errorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Payload malformed"})
+		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Payload malformed"})
 	} else {
 		id, err := s.store.PostRecipeIngredient(recipeId, payload)
-		handleResponse[*int](c, id, err)
+		responses.HandleResponse[*int](c, id, err)
 	}
 }
 
@@ -61,19 +71,18 @@ func (s *Server) handlePatchRecipeName(c *gin.Context) {
 	var payload types.PatchRecipeName
 
 	if err := c.BindJSON(&payload); err != nil {
-		errorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Payload malformed"})
+		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Payload malformed"})
 	} else {
-		handleResponse[string](c, "Recipe name updated", s.store.PatchRecipeName(recipeId, payload))
+		responses.HandleResponse[string](c, "Recipe name updated", s.store.PatchRecipeName(recipeId, payload))
 	}
 }
 
-// TODO: handlePatchRecipeIngredient (amount, unit, market, isBio)
 func (s *Server) handleDeleteRecipe(c *gin.Context) {
 	recipeId := c.Param("id")
-	handleResponse[string](c, "Recipe deleted", s.store.DeleteRecipe(recipeId))
+	responses.HandleResponse[string](c, "Recipe deleted", s.store.DeleteRecipe(recipeId))
 }
 
 func (s *Server) handleDeleteRecipeIngredient(c *gin.Context) {
 	recipeId := c.Param("id")
-	handleResponse[string](c, "Recipe ingredient deleted", s.store.DeleteRecipeIngredient(recipeId))
+	responses.HandleResponse[string](c, "Recipe ingredient deleted", s.store.DeleteRecipeIngredient(recipeId))
 }

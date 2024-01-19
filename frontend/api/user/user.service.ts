@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Response } from 'api';
 import { BehaviorSubject, Observable, map } from 'rxjs';
-import { Auth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
@@ -25,12 +24,7 @@ export class UserService {
         return response.data.activeFamilyId
     }))
   }
+  
 
-  logout(): void {
-    this.auth.signOut().then(() => {
-      this.router.navigate([""])
-    })
-  }
-
-  constructor(private http: HttpClient, private auth: Auth, private router: Router) { }
+  constructor(private http: HttpClient, private router: Router) { }
 }

@@ -1,6 +1,4 @@
 import { Component } from '@angular/core';
-import { signInWithEmailAndPassword } from "firebase/auth";
-import {Auth} from '@angular/fire/auth'
 import { FormBuilder } from '@angular/forms';
 import { SupabaseService } from 'api/supabase.service';
 import { Router } from '@angular/router';
@@ -31,7 +29,6 @@ export class LandingPageComponent {
     constructor(
       private router: Router,
       private supabaseService: SupabaseService,
-      private auth: Auth, 
       private formBuilder: FormBuilder,
       ) {}
   }

@@ -1,7 +1,5 @@
 import { Component, ChangeDetectorRef} from '@angular/core';
 import { UserService } from 'api/user/user.service';
-import { finalize, take } from 'rxjs';
-import {Auth, authState} from '@angular/fire/auth'
 import { SupabaseService } from 'api/supabase.service';
 
 @Component({
@@ -27,7 +25,6 @@ export class AppComponent {
   constructor(
     private supabaseService: SupabaseService,
     public userService: UserService, 
-    private auth: Auth,
     private cdr: ChangeDetectorRef
     ) {}
 }

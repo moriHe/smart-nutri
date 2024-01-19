@@ -5,8 +5,7 @@ import {
   HttpEvent,
   HttpInterceptor
 } from '@angular/common/http';
-import { Observable, filter, switchMap } from 'rxjs';
-import {Auth, idToken} from "@angular/fire/auth"
+import { Observable } from 'rxjs';
 import { SupabaseService } from 'api/supabase.service';
 
 @Injectable()
@@ -27,5 +26,5 @@ export class AuthInterceptor implements HttpInterceptor {
     
   }
   
-  constructor(private auth: Auth, private supabaseService: SupabaseService) {}
+  constructor(private supabaseService: SupabaseService) {}
 }

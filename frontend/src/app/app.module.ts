@@ -21,10 +21,6 @@ import {MatChipsModule} from '@angular/material/chips';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { CreateRecipeDialogComponent } from './create-recipe-dialog/create-recipe-dialog.component';
 import {CdkAccordionModule} from '@angular/cdk/accordion';
-import { SignupComponent } from './signup/signup.component';
-import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
-import { getAuth, provideAuth } from '@angular/fire/auth';
-import { environment } from 'src/environments/environment.development';
 import { SignupSuccessComponent } from './signup-success/signup-success.component';
 import { LandingPageComponent } from './landing-page/landing-page.component';
 import { AuthInterceptor } from './auth.interceptor';
@@ -44,6 +40,7 @@ import { ShoppingListViewComponent } from './shopping-list/shopping-list-view/sh
 import { NotOnShoppingListViewComponent } from './shopping-list/not-on-shopping-list-view/not-on-shopping-list-view.component';
 import { ShoppingListBellComponent } from './shopping-list/shopping-list-bell/shopping-list-bell.component';
 import { SupabaseService } from 'api/supabase.service';
+import { SignupComponent } from './signup/signup.component';
 
 @NgModule({
   declarations: [
@@ -89,9 +86,7 @@ import { SupabaseService } from 'api/supabase.service';
     CommonModule,
     MatBottomSheetModule,
     MatSidenavModule,
-    MatCardModule,
-    provideFirebaseApp(() => initializeApp(environment.firebase)),
-    provideAuth(() => getAuth()),
+    MatCardModule
   ],
   providers: [
     SupabaseService,

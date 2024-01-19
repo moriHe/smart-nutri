@@ -1,12 +1,8 @@
 <h1 class="text-center">Jetzt loslegen und registrieren</h1>
-<section class="flex w-full justify-center">
-        <div class="shadow-md p-10 my-5" id="firebaseui-auth-container"></div>
-</section>
-<div class="signin-container">
+<div class="signin-container mx-auto md:w-1/3 mt-10">
         <mat-card>
-          <mat-card-title>Sign In</mat-card-title>
           <mat-card-content>
-            <form (ngSubmit)="signUp()" #signInForm="ngForm">
+            <form class="flex flex-col w-1/2 mx-auto" (ngSubmit)="signUp()" #signInForm="ngForm">
               <mat-form-field>
                 <input matInput placeholder="Email" type="email" [(ngModel)]="email" name="email" required>
               </mat-form-field>

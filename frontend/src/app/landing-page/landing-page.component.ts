@@ -8,19 +8,16 @@ import { Router } from '@angular/router';
   styleUrls: ['./landing-page.component.css']
 })
 export class LandingPageComponent {
-  loginInput = this.formBuilder.group({
-    email: "",
-    password: ""
-  })
+  email: string = '';
+  password: string = '';
 
   async onLogin() {
-    if (this.loginInput.value.email && this.loginInput.value.password) {
-      const response = await this.supabaseService.login(this.loginInput.value.email, this.loginInput.value.password)
+      const response = await this.supabaseService.login(this.email, this.password)
       if (response.data.session) {
         this.supabaseService.setSession(response.data.session)
         this.router.navigate(['/meine-rezepte']);
       }
-    }
+    
     }
   
 

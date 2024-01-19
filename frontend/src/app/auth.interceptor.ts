@@ -14,7 +14,6 @@ export class AuthInterceptor implements HttpInterceptor {
   
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const token = this.supabaseService.session?.access_token
-    console.log(token)
     const authRequest = request.clone({
       setHeaders: {
         Authorization: token ? `Bearer ${token}` : ""

@@ -64,7 +64,6 @@ export class NotOnShoppingListViewComponent {
           if (response.length > 0) {
             this.mealplansService.getMealplanItem(response[0].id).pipe(take(1))
               .subscribe((response) => {
-                console.log(response)
               this.mealplanItem = response
 
               })

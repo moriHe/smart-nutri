@@ -18,7 +18,9 @@ export class SignupComponent {
     const isSuccess = await this.supabaseService.signUp(this.email, this.password)
     if (isSuccess) {
       this.userService.addUser().subscribe(() => {
-        this.router.navigate(['/willkommen']);
+        this.userService.getUser().subscribe(() => {
+          this.router.navigate(['/willkommen']);
+        })
       })
     }
   }

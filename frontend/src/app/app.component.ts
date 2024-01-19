@@ -1,6 +1,7 @@
 import { Component, ChangeDetectorRef} from '@angular/core';
 import { UserService } from 'api/user/user.service';
 import { SupabaseService } from 'api/supabase.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -9,22 +10,15 @@ import { SupabaseService } from 'api/supabase.service';
 })
 export class AppComponent {
   title = 'Smart Nutri';
-  isInitialized = false
+  isInitialized = this.supabaseService.isAppIntialized$
   
  
 
-    ngOnInit(): void {
-      this.supabaseService.authChanges((_, session) => {
-        this.supabaseService.setSession(session)
-        this.isInitialized = true
-      })
-    }
+
 
 
 
   constructor(
-    private supabaseService: SupabaseService,
-    public userService: UserService, 
-    private cdr: ChangeDetectorRef
+    private supabaseService: SupabaseService, 
     ) {}
 }

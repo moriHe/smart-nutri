@@ -20,10 +20,14 @@ export class SignupSuccessComponent {
     this.familysService.createFamily(this.name).subscribe(
       {
         next: () => {
-          this.router.navigateByUrl("meine-rezepte")
+          this.userService.getUser().subscribe(
+            {next: () => {
+              this.router.navigateByUrl("meine-rezepte")
+            }}
+          )
         }
     })
   }
 
-  constructor(private familysService: FamilysService, private router: Router) {}
+  constructor(private userService: UserService, private familysService: FamilysService, private router: Router) {}
 }

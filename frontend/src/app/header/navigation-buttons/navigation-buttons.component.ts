@@ -36,7 +36,7 @@ export class NavigationButtonsComponent {
 
   async onLogout() {
     const {error} = await this.supabaseService.logout()
-    console.log(error)
+    this.userService.setUserNull()
     this.supabaseService.setSession(null)
     this.router.navigate(["/"])
   }

@@ -1,10 +1,7 @@
 import { Component } from '@angular/core';
-import { Result, TypesenseService } from 'api/ingredient-search/typesense.service';
-import { SearchResponseHit } from 'typesense/lib/Typesense/Documents';
 import { RecipesService } from 'api/recipes/recipes.service';
 import { ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { debounceTime, switchMap, take } from 'rxjs';
+import { Subject, debounceTime, take } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { SearchIngredientDialogComponent } from '../search-ingredient-dialog/search-ingredient-dialog.component';
 import { MatSnackBar, MatSnackBarRef, SimpleSnackBar } from '@angular/material/snack-bar';
@@ -25,9 +22,10 @@ type AlgoliaResult = {
   styleUrls: ['./search.component.css']
 })
 export class SearchComponent {
+  private searchSubject = new Subject<string>();
+
   currentIngredientName!: string
   recipe!: FullRecipe
-  results: SearchResponseHit<Result>[] = []
 
   searchClient = algoliasearch(environment.algoliaAppId, environment.algoliaSearchOnlyApiKey);
   index = this.searchClient.initIndex(environment.indexName);
@@ -36,21 +34,17 @@ export class SearchComponent {
   algoliaResults: AlgoliaResult[] = [];
 
   onSearch(): void {
-    if (this.query.length > 0) {
-      this.index.search<AlgoliaResult>(this.query).then(({ hits }) => {
-        this.algoliaResults = hits
-      });
-    } else {
-      this.results = [];
-    }
+    this.searchSubject.next(this.query);
   }
 
-  ngOnInit(): void {
-    this.route.params.subscribe(params => {
-     this.recipesService.getRecipe(params['recipeId']).pipe(take(1)).subscribe((response: FullRecipe) => {
-      this.recipe = response
-    });
-    })
+  private performSearch(query: string, initial = false): void {
+    if (initial || query.length > 0) {
+      this.index.search<AlgoliaResult>(query).then(({ hits }) => {
+        this.algoliaResults = hits;
+      });
+    } else {
+      this.algoliaResults = [];
+    }
   }
 
   openDialog(ingredientId: number, ingredientName: string): void {
@@ -99,10 +93,22 @@ export class SearchComponent {
   }
 }
 
+ngOnInit(): void {
+  this.route.params.subscribe(params => {
+   this.recipesService.getRecipe(params['recipeId']).pipe(take(1)).subscribe((response: FullRecipe) => {
+    this.recipe = response
+  });
+  })
+
+  this.performSearch("", true)
+  this.searchSubject.pipe(debounceTime(500)).subscribe((query) => {
+    this.performSearch(query);
+  });
+}
+
   constructor(
     private route: ActivatedRoute,
     private recipesService: RecipesService,
-    private formBuilder: FormBuilder,
     public dialog: MatDialog,
     private snackbar: MatSnackBar,
     ) { }

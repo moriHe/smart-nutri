@@ -1,10 +1,6 @@
 <mat-form-field class="w-full">
     <input matInput placeholder="Suche..." [(ngModel)]="query" type="search" name="search" (input)="onSearch()">
   </mat-form-field>
-<ul>
-  <li *ngFor="let result of results">
-  </li>
-</ul>
 <section class="flex flex-wrap gap-10 justify-center select-none">
     <div
     *ngFor="let result of algoliaResults"

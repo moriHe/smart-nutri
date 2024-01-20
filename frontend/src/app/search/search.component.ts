@@ -9,6 +9,15 @@ import { MatDialog } from '@angular/material/dialog';
 import { SearchIngredientDialogComponent } from '../search-ingredient-dialog/search-ingredient-dialog.component';
 import { MatSnackBar, MatSnackBarRef, SimpleSnackBar } from '@angular/material/snack-bar';
 import { FullRecipe } from 'api/recipes/recipes.interface';
+import algoliasearch from 'algoliasearch/lite';
+import { environment } from 'src/environments/environment.development';
+
+type AlgoliaResult = {
+  objectID: string
+  id: number
+  name: string
+  brands: string
+}
 
 @Component({
   selector: 'app-search',
@@ -16,13 +25,25 @@ import { FullRecipe } from 'api/recipes/recipes.interface';
   styleUrls: ['./search.component.css']
 })
 export class SearchComponent {
+  currentIngredientName!: string
   recipe!: FullRecipe
   results: SearchResponseHit<Result>[] = []
 
-  ingredientInput!: FormGroup
+  searchClient = algoliasearch(environment.algoliaAppId, environment.algoliaSearchOnlyApiKey);
+  index = this.searchClient.initIndex(environment.indexName);
 
-  ingredientId!: number
-  ingredientName!: string
+  query: string = '';
+  algoliaResults: AlgoliaResult[] = [];
+
+  onSearch(): void {
+    if (this.query.length > 0) {
+      this.index.search<AlgoliaResult>(this.query).then(({ hits }) => {
+        this.algoliaResults = hits
+      });
+    } else {
+      this.results = [];
+    }
+  }
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
@@ -30,41 +51,16 @@ export class SearchComponent {
       this.recipe = response
     });
     })
-
-
-
-    this.ingredientInput = this.formBuilder.group({
-      query: ""
-    })
-
-    this.typesenseService.search("*").then((res) => {
-      if (res) {
-        this.results = res
-      }
-     })
-
-    this.ingredientInput.get("query")?.valueChanges.pipe(
-      debounceTime(800),
-      switchMap((query: string) => this.typesenseService.search(query))
-    ).subscribe((res) => {
-      if (res) {
-        return this.results = res
-      }
-      return this.results = []
-    })
-    
-  
   }
 
   openDialog(ingredientId: number, ingredientName: string): void {
-    this.ingredientId = ingredientId
-    this.ingredientName = ingredientName
+    this.currentIngredientName = ingredientName
     const dialogRef = this.dialog.open(SearchIngredientDialogComponent);
 
     dialogRef.afterClosed().subscribe(result => {
       if (this.recipe.id && result) {
         this.recipesService.addRecipeIngredient(this.recipe.id, {
-          ingredientId: this.ingredientId,
+          ingredientId,
           amountPerPortion: Number(result.amountPerPortion) / this.recipe.defaultPortions,
           isBio: result.isBio,
           market: result.selectedMarket,
@@ -85,7 +81,7 @@ export class SearchComponent {
   openSnackbar({type, recipeIngredientId = 0}: {type: "SUCCESS" | "ERROR", recipeIngredientId?: number}) {
     if (type === "SUCCESS") {
       const snackBarRef: MatSnackBarRef<SimpleSnackBar> = this.snackbar.open(
-        `Hinzugefügt: ${this.ingredientName}`,
+        `Hinzugefügt: ${this.currentIngredientName}`,
          "Rückgängig", 
          {
         horizontalPosition: "start",
@@ -105,7 +101,6 @@ export class SearchComponent {
 
   constructor(
     private route: ActivatedRoute,
-    private typesenseService: TypesenseService,
     private recipesService: RecipesService,
     private formBuilder: FormBuilder,
     public dialog: MatDialog,

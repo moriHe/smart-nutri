@@ -1,15 +1,16 @@
-<form class="flex justify-center" [formGroup]="ingredientInput">
-    <mat-form-field class="w-2/5">
-        <mat-label for="query">Suche Zutat</mat-label>
-        <input id="query" formControlName="query" matInput>
-    </mat-form-field>
-</form>
+<mat-form-field class="w-full">
+    <input matInput placeholder="Suche..." [(ngModel)]="query" type="search" name="search" (input)="onSearch()">
+  </mat-form-field>
+<ul>
+  <li *ngFor="let result of results">
+  </li>
+</ul>
 <section class="flex flex-wrap gap-10 justify-center select-none">
     <div
-    *ngFor="let result of results"
-    (click)="openDialog(result.document.ingredientId, result.document.name)" 
+    *ngFor="let result of algoliaResults"
+    (click)="openDialog(result.id, result.name)" 
     class="flex items-center justify-center w-1/5 h-20 border border-1 rounded-lg text-xs cursor-pointer"
     >
-        <p class="text-center">{{result.document.name}}</p>
+        <p class="text-center">{{result.name}}</p>
     </div>
 </section>

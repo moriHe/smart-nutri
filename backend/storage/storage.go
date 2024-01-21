@@ -27,6 +27,6 @@ type Storage interface {
 	PostShoppingList(payload []types.PostShoppingListMealplanItem, activeFamilyId *int, mealplanId string) error
 	DeleteMealPlanItemShoppingList(id string) error
 
-	GetInvitationLink(familyId *int) (string, error)
+	GetInvitationLink(user *types.User) (string, error)
 	AcceptInvitation(userId int, token string) error
 }

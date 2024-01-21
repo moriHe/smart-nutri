@@ -3,12 +3,12 @@ package postgres
 import (
 	"context"
 	"crypto/rand"
-	"database/sql"
 	"encoding/hex"
 	"fmt"
 	"net/http"
 	"time"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/moriHe/smart-nutri/types"
 )
 
@@ -24,7 +24,21 @@ func generateSecureToken() (string, error) {
 	return token, nil
 }
 
-func (s *Storage) GetInvitationLink(familyId *int) (string, error) {
+func (s *Storage) GetInvitationLink(user *types.User) (string, error) {
+	var userRole string
+	err := s.Db.QueryRow(
+		context.Background(),
+		"select user_role from users_familys where family_id = $1 and user_id = $2",
+		user.ActiveFamilyId, user.Id).Scan(&userRole)
+
+	if err != nil || err == pgx.ErrNoRows {
+		return "", &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("Something went wrong")}
+	}
+
+	if userRole != "OWNER" {
+		return "", &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("No permission")}
+	}
+
 	token, err := generateSecureToken()
 	if err != nil {
 		return "", &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("Something went wrong")}
@@ -36,7 +50,7 @@ func (s *Storage) GetInvitationLink(familyId *int) (string, error) {
 		"(created_at, token, family_id) values ($1, $2, $3) returning token"
 
 	var dbToken string
-	err = s.Db.QueryRow(context.Background(), query, currentTime, token, familyId).Scan(&dbToken)
+	err = s.Db.QueryRow(context.Background(), query, currentTime, token, user.ActiveFamilyId).Scan(&dbToken)
 
 	if err != nil || dbToken == "" {
 		return "", &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("Something went wrong")}
@@ -67,7 +81,7 @@ func (s *Storage) AcceptInvitation(userId int, token string) error {
 		"select user_role from users_familys where family_id = $1 and user_id = $2",
 		familyId, userId).Scan(&userRole)
 
-	if err != sql.ErrNoRows || err != nil {
+	if err != nil || err != pgx.ErrNoRows {
 		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("Already part of this community")}
 	}
 

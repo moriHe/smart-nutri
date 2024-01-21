@@ -15,6 +15,6 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 	store := postgres.NewStorage(os.Getenv("DATABASE_URL"))
-	api.StartGinServer(store, os.Getenv("SERVER_URL"))
+	api.StartGinServer(store, os.Getenv("GIN_SERVER_URL"))
 
 }

@@ -16,18 +16,6 @@ type Server struct {
 
 func StartGinServer(store storage.Storage, url string) (*gin.Engine, error) {
 	router := gin.Default()
-	// opt := option.WithCredentialsFile("/Users/moritzhettich/prv/smart-nutri/backend/firebase-private-key.json")
-	// app, err := firebase.NewApp(context.Background(), nil, opt)
-
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// authClient, err := app.Auth(context.Background())
-	// if err != nil {
-	// 	return nil, err
-	// }
-
 	supabase := supabase.CreateClient(os.Getenv("SUPABASE_URL"), os.Getenv("SUPABASE_KEY"))
 
 	server := &Server{store: store, auth: supabase}
@@ -46,6 +34,7 @@ func StartGinServer(store storage.Storage, url string) (*gin.Engine, error) {
 	server.mealPlanRoutes(router)
 	server.mealplanShoppingListRoutes(router)
 	server.familyRoutes(router)
+	server.invitationRoutes(router)
 
 	router.Run(url)
 

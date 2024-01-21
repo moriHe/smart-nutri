@@ -19,6 +19,7 @@ func (s *Server) mealPlanRoutes(r *gin.Engine) {
 
 func (s *Server) handleGetMealPlan(c *gin.Context) {
 	user := contextmethods.GetUserFromContext(c)
+	// error handling if user nil?
 	dateStr := c.Param("date")
 	forShoppingListStr := c.Query("forShoppingList")
 	date, err := time.Parse(time.RFC3339, dateStr)

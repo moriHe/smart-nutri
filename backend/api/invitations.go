@@ -19,7 +19,7 @@ func (s *Server) invitationRoutes(r *gin.Engine) {
 
 func (s *Server) handleGetInvitationLink(c *gin.Context) {
 	user := contextmethods.GetUserFromContext(c)
-
+	// TODO Check that user is OWNER
 	token, err := s.store.GetInvitationLink(user.ActiveFamilyId)
 
 	if err != nil {

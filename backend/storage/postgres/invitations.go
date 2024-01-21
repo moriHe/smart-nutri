@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"crypto/rand"
+	"database/sql"
 	"encoding/hex"
 	"fmt"
 	"net/http"
@@ -58,6 +59,16 @@ func (s *Storage) AcceptInvitation(userId int, token string) error {
 
 	if err != nil || familyId == 0 {
 		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("Something went wrong")}
+	}
+
+	var userRole string
+	err = tx.QueryRow(
+		context.Background(),
+		"select user_role from users_familys where family_id = $1 and user_id = $2",
+		familyId, userId).Scan(&userRole)
+
+	if err != sql.ErrNoRows || err != nil {
+		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("Already part of this community")}
 	}
 
 	_, err = tx.Exec(

@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/moriHe/smart-nutri/types"
 )
 
@@ -31,17 +32,13 @@ func (s *Storage) GetInvitationLink(user *types.User) (string, error) {
 		"select user_role from users_familys where family_id = $1 and user_id = $2",
 		user.ActiveFamilyId, user.Id).Scan(&userRole)
 
-	if err != nil || err == pgx.ErrNoRows {
-		return "", &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("Something went wrong")}
-	}
-
 	if userRole != "OWNER" {
-		return "", &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("No permission")}
+		return "", &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("No permition")}
 	}
 
 	token, err := generateSecureToken()
 	if err != nil {
-		return "", &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("Something went wrong")}
+		return "", &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("Something went wrong 7")}
 	}
 
 	currentTime := time.Now().Format(time.RFC3339)
@@ -52,18 +49,17 @@ func (s *Storage) GetInvitationLink(user *types.User) (string, error) {
 	var dbToken string
 	err = s.Db.QueryRow(context.Background(), query, currentTime, token, user.ActiveFamilyId).Scan(&dbToken)
 
-	if err != nil || dbToken == "" {
-		return "", &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("Something went wrong")}
+	if err != nil || err == pgx.ErrNoRows {
+		return "", &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("Something went wrong 8")}
 	}
 	return dbToken, nil
 
 }
 
-// For future: Maybe an additional step where token includes username and it can be checked if users_familys has
-// it listed as PROSPECTIVE
-func (s *Storage) AcceptInvitation(userId int, token string) error {
+func addUserToFamily(db *pgxpool.Pool, userId int, token string) error {
 	var familyId int
-	tx, err := s.Db.Begin(context.Background())
+
+	tx, err := db.Begin(context.Background())
 	if err != nil {
 		return &types.RequestError{Status: http.StatusInternalServerError, Msg: "Failed to begin transaction"}
 	}
@@ -71,8 +67,8 @@ func (s *Storage) AcceptInvitation(userId int, token string) error {
 
 	err = tx.QueryRow(context.Background(), "select family_id from invitations where token = $1", token).Scan(&familyId)
 
-	if err != nil || familyId == 0 {
-		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("Something went wrong")}
+	if err != nil || err == pgx.ErrNoRows {
+		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("Something went wrong 1")}
 	}
 
 	var userRole string
@@ -81,7 +77,8 @@ func (s *Storage) AcceptInvitation(userId int, token string) error {
 		"select user_role from users_familys where family_id = $1 and user_id = $2",
 		familyId, userId).Scan(&userRole)
 
-	if err != nil || err != pgx.ErrNoRows {
+	// If row exists, user is already part of the family
+	if err != pgx.ErrNoRows {
 		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("Already part of this community")}
 	}
 
@@ -90,23 +87,35 @@ func (s *Storage) AcceptInvitation(userId int, token string) error {
 		"insert into users_familys (family_id, user_id, user_role) values ($1, $2, $3)",
 		familyId, userId, "MEMBER")
 	if err != nil {
-		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("Something went wrong")}
+		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("Something went wrong 2")}
 	}
 
 	_, err = tx.Exec(context.Background(), "update users set active_family_id = $1 where users.id = $2", familyId, userId)
 	if err != nil {
-		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("Something went wrong")}
-	}
-
-	_, err = tx.Exec(context.Background(), "delete from invitations where token = $1", token)
-	if err != nil {
-		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("Something went wrong")}
+		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("Something went wrong 3")}
 	}
 
 	err = tx.Commit(context.Background())
 	if err != nil {
 		return &types.RequestError{Status: http.StatusInternalServerError, Msg: "Failed to commit transaction"}
 	}
-
 	return nil
+}
+
+// TODO: proper rollback and delete invitation link no matter what
+func (s *Storage) AcceptInvitation(userId int, token string) error {
+	var queryErr error = nil
+	err := addUserToFamily(s.Db, userId, token)
+	if err != nil {
+		queryErr = err
+	}
+	_, err = s.Db.Exec(context.Background(), "delete from invitations where token = $1", token)
+	if err != nil {
+		if queryErr != nil {
+			return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("Something went wrong 4")}
+		}
+		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("Could not delete invitation")}
+	}
+
+	return queryErr
 }

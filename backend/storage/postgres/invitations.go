@@ -38,7 +38,7 @@ func (s *Storage) GetInvitationLink(user *types.User) (string, error) {
 
 	token, err := generateSecureToken()
 	if err != nil {
-		return "", &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("Something went wrong 7")}
+		return "", &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("Could not generate token")}
 	}
 
 	currentTime := time.Now().Format(time.RFC3339)
@@ -50,7 +50,7 @@ func (s *Storage) GetInvitationLink(user *types.User) (string, error) {
 	err = s.Db.QueryRow(context.Background(), query, currentTime, token, user.ActiveFamilyId).Scan(&dbToken)
 
 	if err != nil || err == pgx.ErrNoRows {
-		return "", &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("Something went wrong 8")}
+		return "", &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("No token found")}
 	}
 	return dbToken, nil
 
@@ -68,7 +68,7 @@ func addUserToFamily(db *pgxpool.Pool, userId int, token string) error {
 	err = tx.QueryRow(context.Background(), "select family_id from invitations where token = $1", token).Scan(&familyId)
 
 	if err != nil || err == pgx.ErrNoRows {
-		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("Something went wrong 1")}
+		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("Invitation not found")}
 	}
 
 	var userRole string
@@ -87,12 +87,12 @@ func addUserToFamily(db *pgxpool.Pool, userId int, token string) error {
 		"insert into users_familys (family_id, user_id, user_role) values ($1, $2, $3)",
 		familyId, userId, "MEMBER")
 	if err != nil {
-		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("Something went wrong 2")}
+		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("Could not add user to family")}
 	}
 
 	_, err = tx.Exec(context.Background(), "update users set active_family_id = $1 where users.id = $2", familyId, userId)
 	if err != nil {
-		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("Something went wrong 3")}
+		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("Could not update user active family")}
 	}
 
 	err = tx.Commit(context.Background())
@@ -112,7 +112,7 @@ func (s *Storage) AcceptInvitation(userId int, token string) error {
 	_, err = s.Db.Exec(context.Background(), "delete from invitations where token = $1", token)
 	if err != nil {
 		if queryErr != nil {
-			return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("Something went wrong 4")}
+			return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("Delete invitation failed")}
 		}
 		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("Could not delete invitation")}
 	}

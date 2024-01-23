@@ -25,6 +25,8 @@ type Storage interface {
 	PostMealPlanItem(familyId *int, payload types.PostMealPlanItem) error
 	DeleteMealPlanItem(id string) error
 
+	GetShoppingListSorted(familyId *int) (*[]types.TestWrapper, error)
+
 	GetMealPlanItemsShoppingList(familyId *int) (*[]types.ShoppingListMealplanItem, error)
 	PostShoppingList(payload []types.PostShoppingListMealplanItem, activeFamilyId *int, mealplanId string) error
 	DeleteMealPlanItemShoppingList(id string) error

@@ -4,12 +4,110 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"math"
 	"net/http"
+	"time"
 
 	"github.com/moriHe/smart-nutri/types"
 )
 
-var getQuery = "select shopping_list.id, mealplans.id, markets.name, shopping_list.is_bio, recipes.id, recipes.name, mealplans.date, mealplans.portions, meals.meal, recipes_ingredients.id, " +
+var newQuery = "select shopping_list.id, markets.name, shopping_list.is_bio, recipes.name, mealplans.date, mealplans.portions, mealplans.is_shopping_list_item, recipes_ingredients.id, " +
+	"ingredients.id, ingredients.name, recipes_ingredients.amount_per_portion, units.name from shopping_list " +
+	"left join mealplans on mealplan_id = mealplans.id left join recipes on mealplans.recipe_id = recipes.id left join recipes_ingredients on " +
+	"recipes_ingredients_id = recipes_ingredients.id left join meals on mealplans.meal = meals.id left join units on recipes_ingredients.unit = units.id " +
+	"left join markets on shopping_list.market = markets.id left join ingredients on recipes_ingredients.ingredient_id = ingredients.id " +
+	"where shopping_list.family_id = $1;"
+
+	// type ShoppingList struct {
+
+	// }
+
+func (s *Storage) GetShoppingListSorted(familyId *int) (*[]types.TestWrapper, error) {
+	currentDate := time.Now().UTC()
+
+	rows, _ := s.Db.Query(context.Background(), newQuery, familyId)
+	defer rows.Close()
+	shoppingList := []types.TestWrapper{}
+
+	for rows.Next() {
+		var item types.ShoppingList
+		err := rows.Scan(
+			&item.Id,
+			&item.Market,
+			&item.IsBio,
+			&item.RecipeName,
+			&item.MealplanDate,
+			&item.MealPlanPortions,
+			&item.IsShoppingListItem,
+			&item.RecipeIngredientId,
+			&item.IngredientId,
+			&item.IngredientName,
+			&item.IngredientAmountPerPortion,
+			&item.IngredientUnit,
+		)
+		if err != nil {
+			return nil, &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Scan Get menu plan shopping list failed: %s", err)}
+		}
+
+		roundedAmount := math.Round(float64(item.IngredientAmountPerPortion)*float64(item.MealPlanPortions)*10) / 10
+		isDueToday := !item.MealplanDate.IsZero() &&
+			item.MealplanDate.Year() == currentDate.Year() &&
+			item.MealplanDate.Month() == currentDate.Month() &&
+			item.MealplanDate.Day() == currentDate.Day()
+
+		found := false
+		for i, existingItem := range shoppingList {
+			if existingItem.Market == item.Market &&
+				existingItem.IsBio == item.IsBio &&
+				existingItem.IngredientId == item.IngredientId &&
+				existingItem.IngredientUnit == item.IngredientUnit {
+				// Matching item found, append to its Items array
+				shoppingList[i].IsDueToday = shoppingList[i].IsDueToday || isDueToday
+				shoppingList[i].TotalAmount = math.Round((float64(shoppingList[i].TotalAmount)+roundedAmount)*10) / 10
+				shoppingList[i].Items = append(existingItem.Items, types.TestItem{
+					Id:                         item.Id,
+					RecipeName:                 item.RecipeName,
+					MealplanDate:               item.MealplanDate,
+					MealPlanPortions:           item.MealPlanPortions,
+					IngredientAmountPerPortion: item.IngredientAmountPerPortion,
+					RecipeIngredientId:         item.RecipeIngredientId,
+				})
+				found = true
+				break
+			}
+		}
+
+		if !found {
+			shoppingList = append(shoppingList, types.TestWrapper{
+				Market:         item.Market,
+				IsBio:          item.IsBio,
+				IngredientId:   item.IngredientId,
+				IngredientName: item.IngredientName,
+				IngredientUnit: item.IngredientUnit,
+				Items: []types.TestItem{
+					{
+						Id:                         item.Id,
+						RecipeName:                 item.RecipeName,
+						MealplanDate:               item.MealplanDate,
+						MealPlanPortions:           item.MealPlanPortions,
+						IngredientAmountPerPortion: item.IngredientAmountPerPortion,
+						RecipeIngredientId:         item.RecipeIngredientId,
+					},
+				},
+				IsDueToday:  isDueToday,
+				TotalAmount: float64(roundedAmount),
+			})
+		}
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Something went wrong: %s", err)}
+	}
+
+	return &shoppingList, nil
+}
+
+var getQuery = "select shopping_list.id, mealplans.is_shopping_list_item, mealplans.id, markets.name, shopping_list.is_bio, recipes.id, recipes.name, mealplans.date, mealplans.portions, meals.meal, recipes_ingredients.id, " +
 	"ingredients.name, ingredients.id, recipes_ingredients.amount_per_portion, units.name from shopping_list " +
 	"left join mealplans on mealplan_id = mealplans.id left join recipes on mealplans.recipe_id = recipes.id left join recipes_ingredients on " +
 	"recipes_ingredients_id = recipes_ingredients.id left join meals on mealplans.meal = meals.id left join units on recipes_ingredients.unit = units.id " +
@@ -26,6 +124,7 @@ func (s *Storage) GetMealPlanItemsShoppingList(familyId *int) (*[]types.Shopping
 		var item types.ShoppingListMealplanItem
 		err := rows.Scan(
 			&item.Id,
+			&item.MealplanItem.IsShoppingListItem,
 			&item.MealplanItem.Id,
 			&item.Market,
 			&item.IsBio,

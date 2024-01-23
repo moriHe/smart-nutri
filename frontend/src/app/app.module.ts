@@ -41,6 +41,8 @@ import { NotOnShoppingListViewComponent } from './shopping-list/not-on-shopping-
 import { ShoppingListBellComponent } from './shopping-list/shopping-list-bell/shopping-list-bell.component';
 import { SupabaseService } from 'api/supabase.service';
 import { SignupComponent } from './signup/signup.component';
+import { FamilySpaceComponent } from './family-space/family-space.component';
+import { AcceptInviationComponent } from './family-space/accept-inviation/accept-inviation.component';
 
 @NgModule({
   declarations: [
@@ -63,7 +65,9 @@ import { SignupComponent } from './signup/signup.component';
     ShoppingListComponent,
     ShoppingListViewComponent,
     NotOnShoppingListViewComponent,
-    ShoppingListBellComponent
+    ShoppingListBellComponent,
+    FamilySpaceComponent,
+    AcceptInviationComponent
   ],
   imports: [
     BrowserModule,

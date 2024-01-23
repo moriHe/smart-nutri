@@ -1,0 +1,10 @@
+<div *ngIf="!isInitialized; else initializedBlock">Loading</div>
+<ng-template #initializedBlock>
+    <div *ngIf="!!errorMessage; else successBlock">
+        Etwas ging schief. Versuchen Sie es mit einem neuen Link.
+    </div>
+    <ng-template #successBlock>
+        <h1>Geschafft!</h1>
+        <p>Sie sind jetzt Teil der Gemeinschaft. Klicken Sie auf weiter, um zu den gemeinsamen Rezepten zu gelangen.</p>
+    </ng-template>
+</ng-template>

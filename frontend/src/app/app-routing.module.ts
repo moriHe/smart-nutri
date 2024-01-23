@@ -13,6 +13,8 @@ import { noFamilyGuard } from 'guards/no-family.guard';
 import { familyGuard } from 'guards/family.guard';
 import { MealplansComponent } from './mealplans/mealplans/mealplans.component';
 import { ShoppingListComponent } from './shopping-list/shopping-list/shopping-list.component';
+import { AcceptInviationComponent } from './family-space/accept-inviation/accept-inviation.component';
+import { FamilySpaceComponent } from './family-space/family-space.component';
 
 const routes: Routes = [
   { path: 'heroes', component: HeroesComponent },
@@ -23,7 +25,9 @@ const routes: Routes = [
   {path: "registrieren", component: SignupComponent, canActivate: [noUserGuard]},
   {path: "willkommen", component: SignupSuccessComponent, canActivate: [authGuard, noFamilyGuard]},
   {path: "essensplan", component: MealplansComponent, canActivate: [authGuard, familyGuard]},
-  {path: "einkaufszettel", component: ShoppingListComponent, canActivate: [authGuard, familyGuard]}
+  {path: "einkaufszettel", component: ShoppingListComponent, canActivate: [authGuard, familyGuard]},
+  {path: "einladung/akzeptieren", component: AcceptInviationComponent, canActivate: [authGuard]},
+  {path: "gemeinschaftsraum", component: FamilySpaceComponent, canActivate: [authGuard, familyGuard]}
 ];
 
 @NgModule({

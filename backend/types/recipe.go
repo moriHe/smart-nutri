@@ -6,6 +6,7 @@ type Id struct {
 
 type RecipeIngredientShoppingList struct {
 	Id               int     `json:"id"`
+	IngredientId     int     `json:"ingredientId"`
 	Name             string  `json:"name"`
 	AmountPerPortion float32 `json:"amountPerPortion"`
 	Unit             string  `json:"unit"`
@@ -13,6 +14,7 @@ type RecipeIngredientShoppingList struct {
 
 type RecipeIngredient struct {
 	Id               int     `json:"id"`
+	IngredientId     int     `json:"ingredientId"`
 	Name             string  `json:"name"`
 	AmountPerPortion float32 `json:"amountPerPortion"`
 	Unit             string  `json:"unit"`

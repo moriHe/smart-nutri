@@ -10,7 +10,7 @@ import (
 )
 
 var getQuery = "select shopping_list.id, mealplans.id, markets.name, shopping_list.is_bio, recipes.id, recipes.name, mealplans.date, mealplans.portions, meals.meal, recipes_ingredients.id, " +
-	"ingredients.name, recipes_ingredients.amount_per_portion, units.name from shopping_list " +
+	"ingredients.name, ingredients.id, recipes_ingredients.amount_per_portion, units.name from shopping_list " +
 	"left join mealplans on mealplan_id = mealplans.id left join recipes on mealplans.recipe_id = recipes.id left join recipes_ingredients on " +
 	"recipes_ingredients_id = recipes_ingredients.id left join meals on mealplans.meal = meals.id left join units on recipes_ingredients.unit = units.id " +
 	"left join markets on shopping_list.market = markets.id left join ingredients on recipes_ingredients.ingredient_id = ingredients.id " +
@@ -36,6 +36,7 @@ func (s *Storage) GetMealPlanItemsShoppingList(familyId *int) (*[]types.Shopping
 			&item.MealplanItem.Meal,
 			&item.RecipeIngredient.Id,
 			&item.RecipeIngredient.Name,
+			&item.RecipeIngredient.IngredientId,
 			&item.RecipeIngredient.AmountPerPortion,
 			&item.RecipeIngredient.Unit,
 		)
@@ -50,6 +51,7 @@ func (s *Storage) GetMealPlanItemsShoppingList(familyId *int) (*[]types.Shopping
 	return &shoppingList, nil
 }
 
+// maybe of use for posting individual items
 // func (s *Storage) PostMealPlanItemShoppingList(payload types.PostShoppingListMealplanItem) error {
 // 	var marketId int
 // 	err := s.Db.QueryRow(context.Background(), "select (id) from markets where markets.name = $1", payload.Market).Scan(&marketId)

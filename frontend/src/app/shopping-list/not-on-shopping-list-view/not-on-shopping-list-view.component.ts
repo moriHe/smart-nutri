@@ -50,7 +50,7 @@ export class NotOnShoppingListViewComponent {
         recipe: {
           ...this.mealplanItem.recipe,
           recipeIngredients: this.mealplanItem.recipe.recipeIngredients.filter(
-            (ingredient: RecipeIngredientItem) => ingredient.id != recipeIngredientId)
+            (recipeIngredient: RecipeIngredientItem) => recipeIngredient.id !== recipeIngredientId)
         }
       }
     }

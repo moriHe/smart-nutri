@@ -34,6 +34,7 @@ export enum Units {
 
 export interface RecipeIngredient {
   id: number,
+  ingredientId: number,
   amountPerPortion: number,
   isBio: boolean,
   market: Markets,

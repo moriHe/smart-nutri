@@ -59,7 +59,7 @@ func (s *Storage) GetMealPlanItem(id string) (*types.FullMealPlanItem, error) {
 
 	query := "select mealplans.id, mealplans.date, meals.meal, portions, is_shopping_list_item, recipes.id " +
 		"as recipeId, recipes.name, jsonb_agg(jsonb_build_object(" +
-		"'id', recipes_ingredients.id, 'name', ingredients.name, 'unit', units.name, " +
+		"'id', recipes_ingredients.id, 'ingredientId', ingredients.id, 'name', ingredients.name, 'unit', units.name, " +
 		"'amountPerPortion', recipes_ingredients.amount_per_portion, 'isBio', recipes_ingredients.is_bio, " +
 		"'market', markets.name" +
 		")) as recipesIngredients from mealplans join meals on mealplans.meal = meals.id " +

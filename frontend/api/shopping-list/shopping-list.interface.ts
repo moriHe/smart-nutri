@@ -18,6 +18,7 @@ import { Markets, Units } from "api/recipes/recipes.interface"
 
 export type RecipeIngredientItem = {
     id: number
+    ingredientId: number
     name: string
     amountPerPortion: number
     unit: Units

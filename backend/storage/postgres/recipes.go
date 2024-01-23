@@ -41,7 +41,7 @@ func (s *Storage) GetRecipeById(id string, activeFamilyId *int) (*types.FullReci
 		return nil, &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Bad Request: No recipe found with id %s", id)}
 	}
 
-	recipeIngredientsQuery := "select recipes_ingredients.id, ingredients.name, amount_per_portion, " +
+	recipeIngredientsQuery := "select recipes_ingredients.id, ingredients.id, ingredients.name, amount_per_portion, " +
 		"units.name, markets.name, is_bio from recipes_ingredients " +
 		"join ingredients on recipes_ingredients.ingredient_id = ingredients.id " +
 		"join units on recipes_ingredients.unit = units.id " +
@@ -53,7 +53,7 @@ func (s *Storage) GetRecipeById(id string, activeFamilyId *int) (*types.FullReci
 	for rows.Next() {
 		var ingredient types.RecipeIngredient
 
-		err = rows.Scan(&ingredient.Id, &ingredient.Name, &ingredient.AmountPerPortion, &ingredient.Unit, &ingredient.Market, &ingredient.IsBio)
+		err = rows.Scan(&ingredient.Id, &ingredient.IngredientId, &ingredient.Name, &ingredient.AmountPerPortion, &ingredient.Unit, &ingredient.Market, &ingredient.IsBio)
 
 		if err != nil {
 			return nil, &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Scan recipe_ingredients table failed: %s", err)}

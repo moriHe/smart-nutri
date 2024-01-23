@@ -15,6 +15,7 @@ func (s *Server) userRoutes(r *gin.Engine) {
 	userGroup.Use(s.AuthMiddleWare())
 	userGroup.GET("", s.handleGetUser)
 	userGroup.GET("/familys", s.handleGetUserFamilys)
+	userGroup.PATCH("", s.handlePatchUser)
 }
 
 func (s *Server) handleGetUser(c *gin.Context) {
@@ -39,4 +40,17 @@ func (s *Server) handleGetUserFamilys(c *gin.Context) {
 	user := contextmethods.GetUserFromContext(c)
 	familys, err := s.store.GetUserFamilys(user.Id)
 	responses.HandleResponse[*[]types.UserFamily](c, familys, err)
+}
+
+func (s *Server) handlePatchUser(c *gin.Context) {
+	user := contextmethods.GetUserFromContext(c)
+	var payload types.PatchUser
+
+	if err := c.BindJSON(&payload); err != nil {
+		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: err.Error()})
+	} else {
+		err := s.store.PatchUser(user.Id, payload.NewActiveFamilyId)
+		responses.HandleResponse[string](c, "Patch succeeded", err)
+	}
+
 }

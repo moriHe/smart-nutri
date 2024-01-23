@@ -11,3 +11,7 @@ type UserFamily struct {
 	FamilyName string `json:"familyName"`
 	Role       string `json:"role"`
 }
+
+type PatchUser struct {
+	NewActiveFamilyId int `json:"newActiveFamilyId"`
+}

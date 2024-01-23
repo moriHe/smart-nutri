@@ -7,7 +7,6 @@ import { UserService } from 'api/user/user.service';
   styleUrls: ['./family-space.component.css']
 })
 export class FamilySpaceComponent {
-  // TODO query users_familys returning id, family_id, user_role and family.name
   // TODO add update user -> activeFamilyId
   // TODO display familys in frontend
   // TODO display activeFamily separated on top

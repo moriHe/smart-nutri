@@ -46,6 +46,11 @@ func (s *Storage) PostUser(fireUid string) (*int, error) {
 	return &userId, nil
 }
 
+func (s *Storage) PatchUser(userId int, newActiveFamilyId int) error {
+	// todo check that userId is part of family via users_familys
+	return nil
+}
+
 func (s *Storage) GetUserFamilys(userId int) (*[]types.UserFamily, error) {
 	rows, err := s.Db.Query(context.Background(), "select uf.id, uf.family_id, familys.name, uf.user_role from users_familys as uf join familys on uf.family_id = familys.id where uf.user_id = $1", userId)
 	if err != nil {

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/moriHe/smart-nutri/types"
 )
 
@@ -47,7 +48,21 @@ func (s *Storage) PostUser(fireUid string) (*int, error) {
 }
 
 func (s *Storage) PatchUser(userId int, newActiveFamilyId int) error {
-	// todo check that userId is part of family via users_familys
+	var familyId int
+	err := s.Db.QueryRow(context.Background(), "select id from users_familys where user_id = $1 and family_id = $2", userId, newActiveFamilyId).Scan(&familyId)
+	if err != nil || err == pgx.ErrNoRows {
+		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Not part of the community: %s", err)}
+	}
+
+	if familyId == newActiveFamilyId {
+		return nil
+	}
+
+	_, err = s.Db.Exec(context.Background(), "update users set active_family_id = $1 where id = $2", newActiveFamilyId, userId)
+	if err != nil {
+		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Failed to patch active family id: %s", err)}
+	}
+
 	return nil
 }
 

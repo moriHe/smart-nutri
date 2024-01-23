@@ -14,11 +14,6 @@ export class FamilySpaceComponent {
   activeFamily?: UserFamily
   familys: UserFamilys = []
   invitationLink: string = ""
-  // TODO display familys in frontend
-  // TODO display activeFamily separated on top
-  // TODO if activeFamily role of user is OWNER, he/she can generate the link
-  // TODO display the link with a copy button
-  // TODO let user switch family space (dont forget to refetch user)
 
   switchFamily(familyId: number) {
     this.userService.updateUserFamily(familyId).subscribe((response) => {

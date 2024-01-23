@@ -16,8 +16,8 @@ type ShoppingListMealplanItem struct {
 	RecipeIngredient RecipeIngredientShoppingList `json:"recipeIngredient"`
 }
 
-type ShoppingList struct {
-	Id                         int       `json:"id"`
+type ScanShoppingList struct {
+	ShoppingListId             int       `json:"shoppingListId"`
 	Market                     string    `json:"market"`
 	IsBio                      bool      `json:"isBio"`
 	RecipeName                 string    `json:"recipeName"`
@@ -31,18 +31,18 @@ type ShoppingList struct {
 	IngredientUnit             string    `json:"unit"`
 }
 
-type TestWrapper struct {
-	Market         string     `json:"market"`
-	IsBio          bool       `json:"isBio"`
-	IngredientId   int        `json:"ingredientId"`
-	IngredientName string     `json:"ingredientName"`
-	IngredientUnit string     `json:"unit"`
-	Items          []TestItem `json:"items"`
-	IsDueToday     bool       `json:"isDueToday"`
-	TotalAmount    float64    `json:"totalAmount"`
+type ShoppingList struct {
+	Market         string             `json:"market"`
+	IsBio          bool               `json:"isBio"`
+	IngredientId   int                `json:"ingredientId"`
+	IngredientName string             `json:"ingredientName"`
+	IngredientUnit string             `json:"unit"`
+	Items          []ShoppingListItem `json:"items"`
+	IsDueToday     bool               `json:"isDueToday"`
+	TotalAmount    float64            `json:"totalAmount"`
 }
-type TestItem struct {
-	Id                         int       `json:"id"`
+type ShoppingListItem struct {
+	ShoppingListId             int       `json:"shoppigListId"`
 	RecipeName                 string    `json:"recipeName"`
 	MealplanDate               time.Time `json:"mealplanDate"`
 	MealPlanPortions           float32   `json:"mealplanPortions"`

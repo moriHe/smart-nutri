@@ -22,17 +22,17 @@ var newQuery = "select shopping_list.id, markets.name, shopping_list.is_bio, rec
 
 	// }
 
-func (s *Storage) GetShoppingListSorted(familyId *int) (*[]types.TestWrapper, error) {
+func (s *Storage) GetShoppingListSorted(familyId *int) (*[]types.ShoppingList, error) {
 	currentDate := time.Now().UTC()
 
 	rows, _ := s.Db.Query(context.Background(), newQuery, familyId)
 	defer rows.Close()
-	shoppingList := []types.TestWrapper{}
+	shoppingList := []types.ShoppingList{}
 
 	for rows.Next() {
-		var item types.ShoppingList
+		var item types.ScanShoppingList
 		err := rows.Scan(
-			&item.Id,
+			&item.ShoppingListId,
 			&item.Market,
 			&item.IsBio,
 			&item.RecipeName,
@@ -64,8 +64,8 @@ func (s *Storage) GetShoppingListSorted(familyId *int) (*[]types.TestWrapper, er
 				// Matching item found, append to its Items array
 				shoppingList[i].IsDueToday = shoppingList[i].IsDueToday || isDueToday
 				shoppingList[i].TotalAmount = math.Round((float64(shoppingList[i].TotalAmount)+roundedAmount)*10) / 10
-				shoppingList[i].Items = append(existingItem.Items, types.TestItem{
-					Id:                         item.Id,
+				shoppingList[i].Items = append(existingItem.Items, types.ShoppingListItem{
+					ShoppingListId:             item.ShoppingListId,
 					RecipeName:                 item.RecipeName,
 					MealplanDate:               item.MealplanDate,
 					MealPlanPortions:           item.MealPlanPortions,
@@ -78,15 +78,15 @@ func (s *Storage) GetShoppingListSorted(familyId *int) (*[]types.TestWrapper, er
 		}
 
 		if !found {
-			shoppingList = append(shoppingList, types.TestWrapper{
+			shoppingList = append(shoppingList, types.ShoppingList{
 				Market:         item.Market,
 				IsBio:          item.IsBio,
 				IngredientId:   item.IngredientId,
 				IngredientName: item.IngredientName,
 				IngredientUnit: item.IngredientUnit,
-				Items: []types.TestItem{
+				Items: []types.ShoppingListItem{
 					{
-						Id:                         item.Id,
+						ShoppingListId:             item.ShoppingListId,
 						RecipeName:                 item.RecipeName,
 						MealplanDate:               item.MealplanDate,
 						MealPlanPortions:           item.MealPlanPortions,

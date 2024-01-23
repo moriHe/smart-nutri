@@ -45,5 +45,5 @@ func (s *Server) handleGetShoppingList(c *gin.Context) {
 	user := contextmethods.GetUserFromContext(c)
 
 	shoppingList, err := s.store.GetShoppingListSorted(user.ActiveFamilyId)
-	responses.HandleResponse[*[]types.TestWrapper](c, shoppingList, err)
+	responses.HandleResponse[*[]types.ShoppingList](c, shoppingList, err)
 }

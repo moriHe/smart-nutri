@@ -27,7 +27,7 @@ const routes: Routes = [
   {path: "essensplan", component: MealplansComponent, canActivate: [authGuard, familyGuard]},
   {path: "einkaufszettel", component: ShoppingListComponent, canActivate: [authGuard, familyGuard]},
   {path: "einladung/akzeptieren", component: AcceptInviationComponent, canActivate: [authGuard]},
-  {path: "gemeinschaftsraum", component: FamilySpaceComponent, canActivate: [authGuard, familyGuard]}
+  {path: "gemeinschaften", component: FamilySpaceComponent, canActivate: [authGuard, familyGuard]}
 ];
 
 @NgModule({

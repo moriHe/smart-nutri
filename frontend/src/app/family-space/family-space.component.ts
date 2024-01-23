@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { UserService } from 'api/user/user.service';
 
 @Component({
   selector: 'app-family-space',
@@ -6,5 +7,16 @@ import { Component } from '@angular/core';
   styleUrls: ['./family-space.component.css']
 })
 export class FamilySpaceComponent {
+  // TODO query users_familys returning id, family_id, user_role and family.name
+  // TODO add update user -> activeFamilyId
+  // TODO display familys in frontend
+  // TODO display activeFamily separated on top
+  // TODO if activeFamily role of user is OWNER, he/she can generate the link
+  // TODO display the link with a copy button
+  // TODO let user switch family space (dont forget to refetch user)
+  ngOnInit(): void {
+    this.userService.user$.subscribe(user => console.log(user)) 
+  }
 
+  constructor(private userService: UserService) {}
 }

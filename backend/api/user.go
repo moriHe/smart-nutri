@@ -14,6 +14,7 @@ func (s *Server) userRoutes(r *gin.Engine) {
 	userGroup.POST("", s.handlePostUser)
 	userGroup.Use(s.AuthMiddleWare())
 	userGroup.GET("", s.handleGetUser)
+	userGroup.GET("/familys", s.handleGetUserFamilys)
 }
 
 func (s *Server) handleGetUser(c *gin.Context) {
@@ -32,4 +33,10 @@ func (s *Server) handlePostUser(c *gin.Context) {
 		responses.HandleResponse[*int](c, userId, err)
 	}
 
+}
+
+func (s *Server) handleGetUserFamilys(c *gin.Context) {
+	user := contextmethods.GetUserFromContext(c)
+	familys, err := s.store.GetUserFamilys(user.Id)
+	responses.HandleResponse[*[]types.UserFamily](c, familys, err)
 }

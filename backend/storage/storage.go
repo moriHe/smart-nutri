@@ -6,6 +6,7 @@ import (
 
 type Storage interface {
 	GetUser(fireUid string) (*types.User, error)
+	GetUserFamilys(userId int) (*[]types.UserFamily, error)
 	// header instead of body?
 	PostUser(fireUid string) (*int, error)
 	PostFamily(name string, userId int) error

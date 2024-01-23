@@ -45,3 +45,26 @@ func (s *Storage) PostUser(fireUid string) (*int, error) {
 
 	return &userId, nil
 }
+
+func (s *Storage) GetUserFamilys(userId int) (*[]types.UserFamily, error) {
+	rows, err := s.Db.Query(context.Background(), "select uf.id, uf.family_id, familys.name, uf.user_role from users_familys as uf join familys on uf.family_id = familys.id where uf.user_id = $1", userId)
+	if err != nil {
+		return nil, &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Failed to query users_familys: %s", err)}
+	}
+
+	defer rows.Close()
+
+	var familys []types.UserFamily
+	for rows.Next() {
+		fmt.Println("here")
+		var family types.UserFamily
+		if err = rows.Scan(&family.Id, &family.FamilyId, &family.FamilyName, &family.Role); err != nil {
+			return nil, &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Failed to scan users_familys: %s", err)}
+		}
+		familys = append(familys, family)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Failed querying users_familys: %s", err)}
+	}
+	return &familys, nil
+}

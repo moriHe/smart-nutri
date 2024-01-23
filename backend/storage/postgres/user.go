@@ -76,7 +76,6 @@ func (s *Storage) GetUserFamilys(userId int) (*[]types.UserFamily, error) {
 
 	var familys []types.UserFamily
 	for rows.Next() {
-		fmt.Println("here")
 		var family types.UserFamily
 		if err = rows.Scan(&family.Id, &family.FamilyId, &family.FamilyName, &family.Role); err != nil {
 			return nil, &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Failed to scan users_familys: %s", err)}

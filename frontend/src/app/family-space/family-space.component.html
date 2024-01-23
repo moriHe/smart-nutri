@@ -1,1 +1,32 @@
-<p>family-space works!</p>
+<section *ngIf="!isLoading" class="md:w-1/2 mx-auto">
+    <h2>Derzeitige Gemeinschaft:</h2>
+    <mat-card>
+        <mat-card-content class="p-5">
+            <div class="flex justify-between">
+                <p class="font-bold">{{activeFamily?.familyName}}</p>
+                <button *ngIf="activeFamily?.role === 'OWNER'" 
+                (click)="generateInvitationLink()"
+                mat-raised-button 
+                color="primary" >
+                Generiere Einladungslink
+                </button>
+            </div>
+        </mat-card-content>
+    </mat-card>
+    <h2>Weitere Gemeinschaften:</h2>
+    <div *ngFor="let family of familys">
+        <mat-card>
+            <mat-card-content class="p-5">
+                <div class="flex justify-between">
+                    <p class="font-bold">{{family.familyName}}</p>
+                    <button
+                        (click)="switchFamily(family.familyId)"
+                        mat-raised-button 
+                        color="primary" >
+                        Switch
+                    </button>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</section>

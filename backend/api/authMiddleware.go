@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -44,7 +43,6 @@ func (s *Server) AuthMiddleWare() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		fmt.Println(fireUid)
 		user, err := s.store.GetUser(fireUid)
 		if err != nil {
 			responses.ErrorResponse(c, &types.RequestError{Status: http.StatusUnauthorized, Msg: "Not authorized 4"})

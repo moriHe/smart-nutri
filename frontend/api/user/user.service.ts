@@ -4,10 +4,19 @@ import { BehaviorSubject, Observable, catchError, map } from 'rxjs';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
-export type User ={
+export type User = {
   id: number,
   activeFamilyId: number
 }
+
+export type UserFamily = {
+  id: number
+  familyId: number
+  familyName: string
+  role: "OWNER" | "MEMBER"
+}
+
+export type UserFamilys = UserFamily[]
 @Injectable({
   providedIn: 'root'
 })
@@ -35,6 +44,17 @@ export class UserService {
         return response.data?.activeFamilyId
     })
     )
+  }
+
+  getUserFamilys(): Observable<UserFamilys> {
+    return this.http.get<Response<UserFamilys>>("http://localhost:8080/user/familys").pipe(map((response) => response.data))
+  }
+
+  updateUserFamily(newActiveFamilyId: number): Observable<string> {
+    return this.http.patch<Response<string>>("http://localhost:8080/user", {newActiveFamilyId}).pipe(map((response) => {
+      console.log(response)
+      return response.data
+    }))
   }
 
   constructor(private http: HttpClient, private router: Router) { }

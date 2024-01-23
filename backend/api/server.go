@@ -21,8 +21,10 @@ func StartGinServer(store storage.Storage, url string) (*gin.Engine, error) {
 	server := &Server{store: store, auth: supabase}
 
 	config := cors.DefaultConfig()
+
+	// setup before going live
 	config.AllowOrigins = []string{"*"} // Update with your Angular app's origin
-	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE"}
+	config.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE"}
 	config.AllowHeaders = []string{"Content-Type", "Authorization"}
 
 	// Use the CORS middleware

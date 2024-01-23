@@ -45,7 +45,6 @@ func (s *Server) handleGetUserFamilys(c *gin.Context) {
 func (s *Server) handlePatchUser(c *gin.Context) {
 	user := contextmethods.GetUserFromContext(c)
 	var payload types.PatchUser
-
 	if err := c.BindJSON(&payload); err != nil {
 		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: err.Error()})
 	} else {

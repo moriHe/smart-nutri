@@ -31,7 +31,7 @@ type ScanShoppingList struct {
 	IngredientUnit             string    `json:"unit"`
 }
 
-type ShoppingList struct {
+type ShoppingListItemsCommonProps struct {
 	Identifier     int                `json:"identifier"`
 	Market         string             `json:"market"`
 	IsBio          bool               `json:"isBio"`
@@ -50,4 +50,15 @@ type ShoppingListItem struct {
 	IngredientAmountPerPortion float32   `json:"amountPerPortion"`
 	RecipeIngredientId         int       `json:"recipeIngredientId"`
 	IngredientUnit             string    `json:"ingredientUnit"`
+}
+
+type ShoppingListByategory struct {
+	TODAY         []ShoppingListItemsCommonProps `json:"TODAY"`
+	REWE          []ShoppingListItemsCommonProps `json:"REWE"`
+	EDEKA         []ShoppingListItemsCommonProps `json:"EDEKA"`
+	BIO_COMPANY   []ShoppingListItemsCommonProps `json:"BIO_COMPANY"`
+	WEEKLY_MARKET []ShoppingListItemsCommonProps `json:"WEEKLY_MARKET"`
+	ALDI          []ShoppingListItemsCommonProps `json:"ALDI"`
+	LIDL          []ShoppingListItemsCommonProps `json:"LIDL"`
+	NONE          []ShoppingListItemsCommonProps `json:"NONE"`
 }

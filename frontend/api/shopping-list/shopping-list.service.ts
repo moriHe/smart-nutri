@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ShoppingListEndpointService } from './shopping-list.endpoint.service';
-import { AddToShoppingList, ShoppingListItems } from './shopping-list.interface';
+import { AddToShoppingList, ShoppingListByCategory } from './shopping-list.interface';
 import { map } from 'rxjs';
 
 @Injectable({
@@ -10,7 +10,7 @@ export class ShoppingListService {
 
   getShoppingList() {
     return this.shoppingListEndpointService.fetchShoppingList().pipe(
-      map((response: {data: ShoppingListItems}) => response ? response.data : [])
+      map((response: {data: ShoppingListByCategory}) => response?.data)
     )
   }
 

@@ -1,9 +1,4 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
-import { FullMealplanItem, Mealplans } from 'api/mealplans/mealplans.interface';
-import { Markets } from 'api/recipes/recipes.interface';
-import { AddToShoppingList, RecipeIngredientItem, ShoppingListItems } from 'api/shopping-list/shopping-list.interface';
-import { ShoppingListService } from 'api/shopping-list/shopping-list.service';
-import { take } from 'rxjs';
 import { MarketsService } from 'services/markets.service';
 import { UnitsService } from 'services/units.service';
 

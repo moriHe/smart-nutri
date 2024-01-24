@@ -29,7 +29,7 @@ export enum Units {
   'GRAM' = 'GRAM',
   'MILLILITER' = 'MILLILITER',
   'TABLESPOON' = 'TABLESPOON',
-  'TEASPOON' = 'TEASPOON'
+  'TEASPOON' = 'TEASPOON',
 }
 
 export interface RecipeIngredient {

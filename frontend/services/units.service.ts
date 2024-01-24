@@ -10,8 +10,10 @@ export class UnitsService {
     [Units.GRAM]: "g",
     [Units.MILLILITER]: "ml",
     [Units.TABLESPOON]: "EL",
-    [Units.TEASPOON]: "TL"
+    [Units.TEASPOON]: "TL",
   }
+
+  ShoppingListUnitDisplay = {...this.UnitDisplay, PARTIAL: ""}
 
   constructor() { }
 }

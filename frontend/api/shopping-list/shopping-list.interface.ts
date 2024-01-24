@@ -1,18 +1,3 @@
-// type ShoppingListMealplanItem struct {
-// 	Id               int                          `json:"id"`
-// 	Market           string                       `json:"market"`
-// 	IsBio            bool                         `json:"isBio"`
-// 	MealplanItem     ShallowMealPlanItem          `json:"mealplanItem"`
-// 	RecipeIngredient RecipeIngredientShoppingList `json:"recipeIngredient"`
-// }
-
-// type RecipeIngredientShoppingList struct {
-// 	Id               int     `json:"id"`
-// 	Name             string  `json:"name"`
-// 	AmountPerPortion float32 `json:"amountPerPortion"`
-// 	Unit             string  `json:"unit"`
-// }
-
 import { ShallowMealplanItem } from "api/mealplans/mealplans.interface"
 import { Markets, Units } from "api/recipes/recipes.interface"
 
@@ -24,15 +9,33 @@ export type RecipeIngredientItem = {
     unit: Units
 }
 
-export type ShoppingListItem = {
-    id: number
-    market: Markets
-    isBio: boolean
-    mealplanItem: ShallowMealplanItem
-    recipeIngredient: RecipeIngredientItem
+export const shoppingListCategories = ["TODAY", "REWE", "EDEKA", "BIO_COMPANY", "WEEKLY_MARKET", "ALDI", "LIDL", "NONE"] as const;
+export type ShoppingListByCategory = {
+    [Key in typeof shoppingListCategories[number]]: ShoppingListCommonProps[]
 }
 
-export type ShoppingListItems = ShoppingListItem[]
+export type ShoppingListCommonProps = {
+    identifier: number
+    market: Markets
+    isBio: boolean
+    ingredientId: number
+    ingredientName: string
+    unit: Units | "PARTIAL"
+    items: ShoppingListItem[]
+    isDueToday: boolean
+    totalAmount: number | null
+}
+
+export type ShoppingListItem = {
+    shoppingListId: number
+    recipeName: string
+    mealplanDate: Date
+    mealplanPortions: number
+    amountPerPortion: number
+    recipeIngredientId: number
+    ingredientUnit: Units
+}
+
 
 export type AddToShoppingList = {
     recipeIngredientId: number

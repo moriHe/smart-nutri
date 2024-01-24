@@ -22,13 +22,13 @@ var newQuery = "select shopping_list.id, markets.name, shopping_list.is_bio, rec
 
 	// }
 
-func (s *Storage) GetShoppingListSorted(familyId *int) (*[]types.ShoppingList, error) {
+func (s *Storage) GetShoppingListSorted(familyId *int) (*types.ShoppingListByategory, error) {
 	currentDate := time.Now().UTC()
 	idCounter := 1
 
 	rows, _ := s.Db.Query(context.Background(), newQuery, familyId)
 	defer rows.Close()
-	shoppingList := []types.ShoppingList{}
+	shoppingList := []types.ShoppingListItemsCommonProps{}
 
 	for rows.Next() {
 		var item types.ScanShoppingList
@@ -97,7 +97,7 @@ func (s *Storage) GetShoppingListSorted(familyId *int) (*[]types.ShoppingList, e
 		}
 
 		if !found && (item.IngredientUnit == "TABLESPOON" || item.IngredientUnit == "TEASPOON") {
-			shoppingList = append(shoppingList, types.ShoppingList{
+			shoppingList = append(shoppingList, types.ShoppingListItemsCommonProps{
 				Identifier:     idCounter,
 				Market:         item.Market,
 				IsBio:          item.IsBio,
@@ -120,7 +120,7 @@ func (s *Storage) GetShoppingListSorted(familyId *int) (*[]types.ShoppingList, e
 			})
 			idCounter++
 		} else if !found {
-			shoppingList = append(shoppingList, types.ShoppingList{
+			shoppingList = append(shoppingList, types.ShoppingListItemsCommonProps{
 				Identifier:     idCounter,
 				Market:         item.Market,
 				IsBio:          item.IsBio,
@@ -149,7 +149,40 @@ func (s *Storage) GetShoppingListSorted(familyId *int) (*[]types.ShoppingList, e
 		return nil, &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Something went wrong: %s", err)}
 	}
 
-	return &shoppingList, nil
+	categorizedItems := types.ShoppingListByategory{
+		TODAY:         []types.ShoppingListItemsCommonProps{},
+		REWE:          []types.ShoppingListItemsCommonProps{},
+		EDEKA:         []types.ShoppingListItemsCommonProps{},
+		BIO_COMPANY:   []types.ShoppingListItemsCommonProps{},
+		WEEKLY_MARKET: []types.ShoppingListItemsCommonProps{},
+		ALDI:          []types.ShoppingListItemsCommonProps{},
+		LIDL:          []types.ShoppingListItemsCommonProps{},
+		NONE:          []types.ShoppingListItemsCommonProps{},
+	}
+	for _, item := range shoppingList {
+		if item.IsDueToday {
+			categorizedItems.TODAY = append(categorizedItems.TODAY, item)
+		} else {
+			switch item.Market {
+			case "REWE":
+				categorizedItems.REWE = append(categorizedItems.REWE, item)
+			case "EDEKA":
+				categorizedItems.EDEKA = append(categorizedItems.EDEKA, item)
+			case "BIO_COMPANY":
+				categorizedItems.BIO_COMPANY = append(categorizedItems.BIO_COMPANY, item)
+			case "WEEKLY_MARKET":
+				categorizedItems.WEEKLY_MARKET = append(categorizedItems.WEEKLY_MARKET, item)
+			case "ALDI":
+				categorizedItems.ALDI = append(categorizedItems.ALDI, item)
+			case "LIDL":
+				categorizedItems.LIDL = append(categorizedItems.LIDL, item)
+			default:
+				categorizedItems.NONE = append(categorizedItems.NONE, item)
+			}
+		}
+	}
+
+	return &categorizedItems, nil
 }
 
 var getQuery = "select shopping_list.id, mealplans.is_shopping_list_item, mealplans.id, markets.name, shopping_list.is_bio, recipes.id, recipes.name, mealplans.date, mealplans.portions, meals.meal, recipes_ingredients.id, " +

@@ -63,8 +63,9 @@ func (s *Storage) GetShoppingListSorted(familyId *int) (*[]types.ShoppingList, e
 				existingItem.IngredientId == item.IngredientId &&
 				existingItem.IngredientUnit == item.IngredientUnit {
 				// Matching item found, append to its Items array
+				amount := math.Round((float64(*shoppingList[i].TotalAmount)+roundedAmount)*10) / 10
 				shoppingList[i].IsDueToday = shoppingList[i].IsDueToday || isDueToday
-				shoppingList[i].TotalAmount = math.Round((float64(shoppingList[i].TotalAmount)+roundedAmount)*10) / 10
+				shoppingList[i].TotalAmount = &amount
 				shoppingList[i].Items = append(existingItem.Items, types.ShoppingListItem{
 					ShoppingListId:             item.ShoppingListId,
 					RecipeName:                 item.RecipeName,
@@ -75,10 +76,50 @@ func (s *Storage) GetShoppingListSorted(familyId *int) (*[]types.ShoppingList, e
 				})
 				found = true
 				break
+			} else if existingItem.Market == item.Market &&
+				existingItem.IsBio == item.IsBio &&
+				existingItem.IngredientId == item.IngredientId &&
+				existingItem.IngredientUnit == "PARTIAL" &&
+				(item.IngredientUnit == "TABLESPOON" || item.IngredientUnit == "TEASPOON") {
+				shoppingList[i].IsDueToday = shoppingList[i].IsDueToday || isDueToday
+				shoppingList[i].Items = append(existingItem.Items, types.ShoppingListItem{
+					ShoppingListId:             item.ShoppingListId,
+					RecipeName:                 item.RecipeName,
+					MealplanDate:               item.MealplanDate,
+					MealPlanPortions:           item.MealPlanPortions,
+					IngredientAmountPerPortion: item.IngredientAmountPerPortion,
+					RecipeIngredientId:         item.RecipeIngredientId,
+					IngredientUnit:             item.IngredientUnit,
+				})
+				found = true
+				break
 			}
 		}
 
-		if !found {
+		if !found && (item.IngredientUnit == "TABLESPOON" || item.IngredientUnit == "TEASPOON") {
+			shoppingList = append(shoppingList, types.ShoppingList{
+				Identifier:     idCounter,
+				Market:         item.Market,
+				IsBio:          item.IsBio,
+				IngredientId:   item.IngredientId,
+				IngredientName: item.IngredientName,
+				IngredientUnit: "PARTIAL",
+				Items: []types.ShoppingListItem{
+					{
+						ShoppingListId:             item.ShoppingListId,
+						RecipeName:                 item.RecipeName,
+						MealplanDate:               item.MealplanDate,
+						MealPlanPortions:           item.MealPlanPortions,
+						IngredientAmountPerPortion: item.IngredientAmountPerPortion,
+						RecipeIngredientId:         item.RecipeIngredientId,
+						IngredientUnit:             item.IngredientUnit,
+					},
+				},
+				IsDueToday:  isDueToday,
+				TotalAmount: nil,
+			})
+			idCounter++
+		} else if !found {
 			shoppingList = append(shoppingList, types.ShoppingList{
 				Identifier:     idCounter,
 				Market:         item.Market,
@@ -94,10 +135,11 @@ func (s *Storage) GetShoppingListSorted(familyId *int) (*[]types.ShoppingList, e
 						MealPlanPortions:           item.MealPlanPortions,
 						IngredientAmountPerPortion: item.IngredientAmountPerPortion,
 						RecipeIngredientId:         item.RecipeIngredientId,
+						IngredientUnit:             item.IngredientUnit,
 					},
 				},
 				IsDueToday:  isDueToday,
-				TotalAmount: float64(roundedAmount),
+				TotalAmount: &roundedAmount,
 			})
 			idCounter++
 		}

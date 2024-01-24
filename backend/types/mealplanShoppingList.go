@@ -40,7 +40,7 @@ type ShoppingList struct {
 	IngredientUnit string             `json:"unit"`
 	Items          []ShoppingListItem `json:"items"`
 	IsDueToday     bool               `json:"isDueToday"`
-	TotalAmount    float64            `json:"totalAmount"`
+	TotalAmount    *float64           `json:"totalAmount"`
 }
 type ShoppingListItem struct {
 	ShoppingListId             int       `json:"shoppigListId"`
@@ -49,4 +49,5 @@ type ShoppingListItem struct {
 	MealPlanPortions           float32   `json:"mealplanPortions"`
 	IngredientAmountPerPortion float32   `json:"amountPerPortion"`
 	RecipeIngredientId         int       `json:"recipeIngredientId"`
+	IngredientUnit             string    `json:"ingredientUnit"`
 }

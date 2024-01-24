@@ -24,7 +24,6 @@ var newQuery = "select shopping_list.id, markets.name, shopping_list.is_bio, rec
 
 func (s *Storage) GetShoppingListSorted(familyId *int) (*types.ShoppingListByategory, error) {
 	currentDate := time.Now().UTC()
-	idCounter := 1
 
 	rows, _ := s.Db.Query(context.Background(), newQuery, familyId)
 	defer rows.Close()
@@ -98,7 +97,6 @@ func (s *Storage) GetShoppingListSorted(familyId *int) (*types.ShoppingListByate
 
 		if !found && (item.IngredientUnit == "TABLESPOON" || item.IngredientUnit == "TEASPOON") {
 			shoppingList = append(shoppingList, types.ShoppingListItemsCommonProps{
-				Identifier:     idCounter,
 				Market:         item.Market,
 				IsBio:          item.IsBio,
 				IngredientId:   item.IngredientId,
@@ -118,10 +116,8 @@ func (s *Storage) GetShoppingListSorted(familyId *int) (*types.ShoppingListByate
 				IsDueToday:  isDueToday,
 				TotalAmount: nil,
 			})
-			idCounter++
 		} else if !found {
 			shoppingList = append(shoppingList, types.ShoppingListItemsCommonProps{
-				Identifier:     idCounter,
 				Market:         item.Market,
 				IsBio:          item.IsBio,
 				IngredientId:   item.IngredientId,
@@ -141,7 +137,6 @@ func (s *Storage) GetShoppingListSorted(familyId *int) (*types.ShoppingListByate
 				IsDueToday:  isDueToday,
 				TotalAmount: &roundedAmount,
 			})
-			idCounter++
 		}
 	}
 

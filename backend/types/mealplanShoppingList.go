@@ -32,6 +32,7 @@ type ScanShoppingList struct {
 }
 
 type ShoppingList struct {
+	Identifier     int                `json:"identifier"`
 	Market         string             `json:"market"`
 	IsBio          bool               `json:"isBio"`
 	IngredientId   int                `json:"ingredientId"`

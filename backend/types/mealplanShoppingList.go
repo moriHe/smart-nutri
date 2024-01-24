@@ -32,23 +32,24 @@ type ScanShoppingList struct {
 }
 
 type ShoppingListItemsCommonProps struct {
-	Market         string             `json:"market"`
-	IsBio          bool               `json:"isBio"`
-	IngredientId   int                `json:"ingredientId"`
-	IngredientName string             `json:"ingredientName"`
-	IngredientUnit string             `json:"unit"`
-	Items          []ShoppingListItem `json:"items"`
-	IsDueToday     bool               `json:"isDueToday"`
-	TotalAmount    *float64           `json:"totalAmount"`
+	ShoppingListIds []int              `json:"shoppingListIds"`
+	Market          string             `json:"market"`
+	IsBio           bool               `json:"isBio"`
+	IngredientId    int                `json:"ingredientId"`
+	IngredientName  string             `json:"ingredientName"`
+	IngredientUnit  string             `json:"unit"`
+	Items           []ShoppingListItem `json:"items"`
+	IsDueToday      bool               `json:"isDueToday"`
+	TotalAmount     *float64           `json:"totalAmount"`
 }
 type ShoppingListItem struct {
-	ShoppingListId             int       `json:"shoppigListId"`
-	RecipeName                 string    `json:"recipeName"`
-	MealplanDate               time.Time `json:"mealplanDate"`
-	MealPlanPortions           float32   `json:"mealplanPortions"`
-	IngredientAmountPerPortion float32   `json:"amountPerPortion"`
-	RecipeIngredientId         int       `json:"recipeIngredientId"`
-	IngredientUnit             string    `json:"ingredientUnit"`
+	ShoppingListId                   int       `json:"shoppingListId"`
+	RecipeName                       string    `json:"recipeName"`
+	MealplanDate                     time.Time `json:"mealplanDate"`
+	MealPlanPortions                 float32   `json:"mealplanPortions"`
+	RecipeIngredientAmountPerPortion float32   `json:"recipeIngredientAmountPerPortion"`
+	RecipeIngredientId               int       `json:"recipeIngredientId"`
+	RecipeIngredientUnit             string    `json:"recipeIngredientUnit"`
 }
 
 type ShoppingListByategory struct {

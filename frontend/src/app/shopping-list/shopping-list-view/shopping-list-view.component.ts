@@ -41,6 +41,7 @@ export class ShoppingListViewComponent {
 
       this.shoppingListService.getShoppingList().pipe(take(1)).subscribe((response) => {
         if (response) {
+          console.log(response)
         this.shoppingListByCategory = response
       }
       })

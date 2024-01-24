@@ -15,6 +15,7 @@ export type ShoppingListByCategory = {
 }
 
 export type ShoppingListCommonProps = {
+    shoppingListIds: number[]
     market: Markets
     isBio: boolean
     ingredientId: number
@@ -30,9 +31,9 @@ export type ShoppingListItem = {
     recipeName: string
     mealplanDate: Date
     mealplanPortions: number
-    amountPerPortion: number
+    recipeIngredientAmountPerPortion: number
     recipeIngredientId: number
-    ingredientUnit: Units
+    recipeIngredientUnit: Units
 }
 
 

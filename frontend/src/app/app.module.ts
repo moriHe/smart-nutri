@@ -43,6 +43,7 @@ import { SupabaseService } from 'api/supabase.service';
 import { SignupComponent } from './signup/signup.component';
 import { FamilySpaceComponent } from './family-space/family-space.component';
 import { AcceptInviationComponent } from './family-space/accept-inviation/accept-inviation.component';
+import {MatExpansionModule} from '@angular/material/expansion';
 
 @NgModule({
   declarations: [
@@ -90,7 +91,8 @@ import { AcceptInviationComponent } from './family-space/accept-inviation/accept
     CommonModule,
     MatBottomSheetModule,
     MatSidenavModule,
-    MatCardModule
+    MatCardModule,
+    MatExpansionModule
   ],
   providers: [
     SupabaseService,

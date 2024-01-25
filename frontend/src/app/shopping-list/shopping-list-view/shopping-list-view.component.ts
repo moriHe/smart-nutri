@@ -21,6 +21,7 @@ export class ShoppingListViewComponent {
 }
   mealplanNumberNotOnShoppingList = 0
 
+
 // todo add remove all logic
 
 newRemoveFromShoppingList(ids: number[]) {

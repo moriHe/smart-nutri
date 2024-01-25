@@ -5,7 +5,7 @@ class="md:w-3/4 mx-auto"
 *ngFor="let category of categories"
 >
   <div *ngIf="shoppingListByCategory[category].length > 0">
-    <h2>{{marketsService.ShoppingListDisplay[category]}}</h2>
+    <h2>Markt: {{marketsService.ShoppingListDisplay[category]}}</h2>
     <mat-accordion>
     <mat-expansion-panel 
       *ngFor="let item of shoppingListByCategory[category]"
@@ -48,21 +48,3 @@ class="md:w-3/4 mx-auto"
     </mat-accordion>
   </div>
 </div>
-<!-- 
-  <mat-card-content>
-        <div class="flex">
-        <p class="w-1/2">{{item.ingredientName}}</p>
-        <p>{{item.totalAmount}} <span>{{unitsService.ShoppingListUnitDisplay[item.unit]}}</span></p>
-        <div class="basis-1/5">
-          <img *ngIf="item.isBio" class="w-8 h-8 mx-auto" src="assets/organic.png" />
-      </div>
-      <button 
-      class="ml-auto"
-      (click)="newRemoveFromShoppingList(item.shoppingListIds)"
-      mat-mini-fab color="primary" 
-      aria-label="Example icon button with a menu icon">
-        <mat-icon>done</mat-icon>
-      </button>
-      </div>
-      </mat-card-content>
--->

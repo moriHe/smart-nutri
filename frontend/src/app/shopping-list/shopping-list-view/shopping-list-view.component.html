@@ -29,7 +29,7 @@ class="md:w-3/4 mx-auto"
             </div>
             <button 
               class="ml-auto pointer-events-auto"
-              (click)="newRemoveFromShoppingList(item.shoppingListIds, $event)"
+              (click)="removeFromShoppingList(item.shoppingListIds, $event)"
               mat-mini-fab color="primary" 
               aria-label="Example icon button with a menu icon">
                 <mat-icon>done</mat-icon>
@@ -41,7 +41,7 @@ class="md:w-3/4 mx-auto"
           <p class="w-1/3 text-xs text-slate-400">Rezept: {{individualItem.recipeName}}</p>
           <p class="w-1/5 text-xs text-slate-400">Menge: {{roundAmount(individualItem.mealplanPortions, individualItem.recipeIngredientAmountPerPortion)}} <span>{{unitsService.UnitDisplay[individualItem.recipeIngredientUnit]}}</span></p>
           <p class="text-xs text-slate-400">{{displayDate(individualItem.mealplanDate)}}</p>
-          <mat-icon color="primary" class="ml-auto cursor-pointer mr-5" (click)="newRemoveFromShoppingList([individualItem.shoppingListId], $event)">done</mat-icon>
+          <mat-icon color="primary" class="ml-auto cursor-pointer mr-5" (click)="removeFromShoppingList([individualItem.shoppingListId], $event)">done</mat-icon>
         </div>
       </div>
     </mat-expansion-panel>

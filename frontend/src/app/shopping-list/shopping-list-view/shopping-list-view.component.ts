@@ -22,8 +22,6 @@ export class ShoppingListViewComponent {
   }
   mealplanNumberNotOnShoppingList = 0
 
-// todo add remove all logic
-// todo show market in Heute
 displayDate(dateString: string): string {
   const mealplanDateStr = new Date(dateString).toDateString()
   const today = new Date()
@@ -49,7 +47,7 @@ roundAmount(portionAmount: number, amountPerPortion: number): string {
   return roundedAmount.endsWith(".0") ? parseInt(roundedAmount).toString() : roundedAmount
 }
 
-newRemoveFromShoppingList(ids: number[], event: Event) {
+removeFromShoppingList(ids: number[], event: Event) {
   event.stopPropagation()
   this.shoppingListService.newRemoveShoppingListItems(ids).pipe(take(1)).subscribe((response) => {
     if (response) {
@@ -57,16 +55,6 @@ newRemoveFromShoppingList(ids: number[], event: Event) {
     }
   })
 }
-// todo display sub stuff
-// todo delete single sub
-  removeFromShoppingList(id: number) {
-    this.shoppingListService.removeShoppingListItem(id).pipe(take(1)).subscribe((response) => {
-      if (response) {
-        this.updateListItems()
-      }
-    })
-  }
-
 
   updateListItems() {
     this.mealplansService.getMealplan({date: new Date().toISOString(), forShoppingList: true})

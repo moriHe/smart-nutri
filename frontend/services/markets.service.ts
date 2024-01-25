@@ -7,7 +7,7 @@ import { Markets } from 'api/recipes/recipes.interface';
 export class MarketsService {
   
   MarketDisplay = {
-    [Markets.NONE]: "-",
+    [Markets.NONE]: "Alle",
     [Markets.REWE]: "Rewe",
     [Markets.EDEKA]: "Edeka",
     [Markets.BIO_COMPANY]: "Bio Company",

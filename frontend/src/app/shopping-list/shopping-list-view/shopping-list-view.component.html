@@ -31,6 +31,11 @@ class="md:w-3/4 mx-auto"
             </button>
         </mat-panel-description>
       </mat-expansion-panel-header>
+      <div class="flex" *ngFor="let individualItem of item.items">
+        <p class="w-1/3">Für Rezept: {{individualItem.recipeName}}</p>
+        <p>{{displayDate(individualItem.mealplanDate)}}</p>
+        <p>Menge: {{roundAmount(individualItem.mealplanPortions, individualItem.recipeIngredientAmountPerPortion)}} <span>{{unitsService.UnitDisplay[individualItem.recipeIngredientUnit]}}</span></p>
+      </div>
     </mat-expansion-panel>
     </mat-accordion>
   </div>

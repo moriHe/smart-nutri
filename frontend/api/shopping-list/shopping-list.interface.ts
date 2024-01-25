@@ -29,7 +29,7 @@ export type ShoppingListCommonProps = {
 export type ShoppingListItem = {
     shoppingListId: number
     recipeName: string
-    mealplanDate: Date
+    mealplanDate: string
     mealplanPortions: number
     recipeIngredientAmountPerPortion: number
     recipeIngredientId: number

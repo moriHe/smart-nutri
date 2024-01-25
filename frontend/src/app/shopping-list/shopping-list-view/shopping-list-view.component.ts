@@ -24,7 +24,8 @@ export class ShoppingListViewComponent {
 
 // todo add remove all logic
 
-newRemoveFromShoppingList(ids: number[]) {
+newRemoveFromShoppingList(ids: number[], event: Event) {
+  event.stopPropagation()
   this.shoppingListService.newRemoveShoppingListItems(ids).pipe(take(1)).subscribe((response) => {
     if (response) {
       this.updateListItems()

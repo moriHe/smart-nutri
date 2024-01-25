@@ -23,8 +23,8 @@ class="md:w-3/4 mx-auto"
               <img *ngIf="item.isBio" class="w-8 h-8 mx-auto" src="assets/organic.png" />
             </div>
             <button 
-              class="ml-auto"
-              (click)="newRemoveFromShoppingList(item.shoppingListIds)"
+              class="ml-auto pointer-events-auto"
+              (click)="newRemoveFromShoppingList(item.shoppingListIds, $event)"
               mat-mini-fab color="primary" 
               aria-label="Example icon button with a menu icon">
                 <mat-icon>done</mat-icon>

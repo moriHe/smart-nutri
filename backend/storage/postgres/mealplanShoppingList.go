@@ -288,3 +288,22 @@ func (s *Storage) DeleteMealPlanItemShoppingList(id string) error {
 
 	return nil
 }
+
+func (s *Storage) DeleteShoppingListItems(ids string, familyId *int) error {
+	if len(ids) == 0 {
+		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("No id or ids provided")}
+	}
+
+	query := fmt.Sprintf("delete from shopping_list where shopping_list.id in (%s) and family_id = $1", ids)
+
+	item, err := s.Db.Exec(context.Background(), query, &familyId)
+	if err != nil {
+		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("Unable to delete shopping list item")}
+	}
+
+	if item.RowsAffected() == 0 {
+		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("Shopping list item(s) do not exist")}
+	}
+
+	return nil
+}

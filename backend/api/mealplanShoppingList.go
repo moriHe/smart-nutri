@@ -14,6 +14,7 @@ func (s *Server) mealplanShoppingListRoutes(r *gin.Engine) {
 	r.GET("shopping-list", s.handleGetShoppingList)
 	r.POST("/shopping-list/:mealplanId", s.handlePostShoppingList)
 	r.DELETE("/mealplan/shopping-list/:id", s.handleDeleteMealPlanItemShoppingList)
+	r.DELETE("shopping-list/items/:ids", s.handleDeleteShoppingListItems)
 }
 
 func (s *Server) handleGetMealplanItemsShoppingList(c *gin.Context) {
@@ -39,6 +40,12 @@ func (s *Server) handlePostShoppingList(c *gin.Context) {
 func (s *Server) handleDeleteMealPlanItemShoppingList(c *gin.Context) {
 	id := c.Param("id")
 	responses.HandleResponse[string](c, "Deleted shopping list item", s.store.DeleteMealPlanItemShoppingList(id))
+}
+
+func (s *Server) handleDeleteShoppingListItems(c *gin.Context) {
+	user := contextmethods.GetUserFromContext(c)
+	ids := c.Param("ids")
+	responses.HandleResponse[string](c, "Deleted shopping list items", s.store.DeleteShoppingListItems(ids, user.ActiveFamilyId))
 }
 
 func (s *Server) handleGetShoppingList(c *gin.Context) {

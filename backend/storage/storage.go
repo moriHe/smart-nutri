@@ -30,6 +30,7 @@ type Storage interface {
 	GetMealPlanItemsShoppingList(familyId *int) (*[]types.ShoppingListMealplanItem, error)
 	PostShoppingList(payload []types.PostShoppingListMealplanItem, activeFamilyId *int, mealplanId string) error
 	DeleteMealPlanItemShoppingList(id string) error
+	DeleteShoppingListItems(ids string, familyId *int) error
 
 	GetInvitationLink(user *types.User) (string, error)
 	AcceptInvitation(userId int, token string) error

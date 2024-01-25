@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AddToShoppingList, ShoppingListCommonProps, ShoppingListByCategory } from './shopping-list.interface';
 import { Response } from 'api';
@@ -16,6 +16,10 @@ export class ShoppingListEndpointService {
   
   deleteShoppingListItem(id: number) {
     return this.http.delete<Response<string>>(`http://localhost:8080/mealplan/shopping-list/${id}`)
+  }
+
+  newDeleteShoppingListItems(ids: number[]) {
+    return this.http.delete<Response<string>>(`http://localhost:8080/shopping-list/items/${ids.join(",")}`)
   }
 
   constructor(

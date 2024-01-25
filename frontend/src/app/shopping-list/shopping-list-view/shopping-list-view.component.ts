@@ -23,6 +23,7 @@ export class ShoppingListViewComponent {
   mealplanNumberNotOnShoppingList = 0
 
 // todo add remove all logic
+// todo show market in Heute
 displayDate(dateString: string): string {
   const mealplanDateStr = new Date(dateString).toDateString()
   const today = new Date()

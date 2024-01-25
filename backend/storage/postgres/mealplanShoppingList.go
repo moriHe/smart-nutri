@@ -73,6 +73,7 @@ func (s *Storage) GetShoppingListSorted(familyId *int) (*types.ShoppingListByate
 					MealPlanPortions:                 item.MealPlanPortions,
 					RecipeIngredientAmountPerPortion: item.IngredientAmountPerPortion,
 					RecipeIngredientId:               item.RecipeIngredientId,
+					RecipeIngredientUnit:             item.IngredientUnit,
 				})
 				found = true
 				break

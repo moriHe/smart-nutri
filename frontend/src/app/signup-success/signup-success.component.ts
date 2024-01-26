@@ -29,5 +29,18 @@ export class SignupSuccessComponent {
     })
   }
 
+  ngOnInit(): void {
+    this.userService.user$.subscribe(user => {
+      if (user) {
+        return
+      }
+      this.userService.addUser().subscribe(() => {
+        this.userService.getUser().subscribe()
+      })
+    })
+  }
+
   constructor(private userService: UserService, private familysService: FamilysService, private router: Router) {}
 }
+
+

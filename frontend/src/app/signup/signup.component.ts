@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { SupabaseService } from 'api/supabase.service';
 import { UserService } from 'api/user/user.service';
@@ -16,17 +16,13 @@ export class SignupComponent {
 
   async signUp() {
     const isSuccess = await this.supabaseService.signUp(this.email, this.password)
+    console.log(isSuccess)
     if (isSuccess) {
-      this.userService.addUser().subscribe(() => {
-        this.userService.getUser().subscribe(() => {
-          this.router.navigate(['/willkommen']);
-        })
-      })
+      this.hasRegistered = true
     }
   }
+
   constructor(
-    private supabaseService: SupabaseService,
-    private router: Router,
-    private userService: UserService
+    private supabaseService: SupabaseService
     ) { }
 }

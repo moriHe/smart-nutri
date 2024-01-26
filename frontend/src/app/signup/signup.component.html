@@ -1,16 +1,23 @@
-<h1 class="text-center">Jetzt loslegen und registrieren</h1>
-<div class="signin-container mx-auto md:w-1/3 mt-10">
-        <mat-card>
-          <mat-card-content>
-            <form class="flex flex-col w-1/2 mx-auto" (ngSubmit)="signUp()" #signInForm="ngForm">
-              <mat-form-field>
-                <input matInput placeholder="Email" type="email" [(ngModel)]="email" name="email" required>
-              </mat-form-field>
-              <mat-form-field>
-                <input matInput placeholder="Password" type="password" [(ngModel)]="password" name="password" required>
-              </mat-form-field>
-              <button mat-raised-button color="primary" type="submit" [disabled]="!signInForm.valid">Sign In</button>
-            </form>
-          </mat-card-content>
-        </mat-card>
-      </div>
+<div *ngIf="hasRegistered; else signUpTemplate">
+  <h2>Vielen Dank für die Registrierung</h2>
+  <p>Sie haben einen Bestätigungs-Link per E-Mail erhalten. Klicken Sie den Link um fortzufahren.</p>
+</div>
+
+<ng-template #signUpTemplate>
+  <h1 class="text-center">Jetzt loslegen und registrieren</h1>
+  <div class="signin-container mx-auto md:w-1/3 mt-10">
+    <mat-card>
+      <mat-card-content>
+        <form class="flex flex-col w-1/2 mx-auto" (ngSubmit)="signUp()" #signInForm="ngForm">
+          <mat-form-field>
+            <input matInput placeholder="Email" type="email" [(ngModel)]="email" name="email" required>
+          </mat-form-field>
+          <mat-form-field>
+            <input matInput placeholder="Password" type="password" [(ngModel)]="password" name="password" required>
+          </mat-form-field>
+          <button mat-raised-button color="primary" type="submit" [disabled]="!signInForm.valid">Sign In</button>
+        </form>
+      </mat-card-content>
+    </mat-card>
+</div>
+</ng-template>

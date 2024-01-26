@@ -61,8 +61,9 @@ export class SupabaseService {
     }
 
     try {
+      const initialSession = await this.supabase.auth.getSession();
+      this.setSession(initialSession.data.session);
       this.supabase.auth.onAuthStateChange((_, session) => {
-        console.log("test")
         this.sessionSubject.next(session);
       });
     await firstValueFrom(this.userService.getUser())

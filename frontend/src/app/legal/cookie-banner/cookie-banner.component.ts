@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-cookie-banner',
@@ -7,4 +8,9 @@ import { Component } from '@angular/core';
 })
 export class CookieBannerComponent {
 
+  ngOnInit(): void {
+    
+  }
+
+  constructor(public dialog: MatDialog) {}
 }

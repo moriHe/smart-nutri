@@ -55,11 +55,16 @@ export class SupabaseService {
   }
 
   async initialize() {
-    try {
+    const cookieConsent = localStorage.getItem("cookieConsent")
+    if (cookieConsent === null) {
+      return
+    }
 
-    
-    const initialSession = await this.supabase.auth.getSession();
-    this.setSession(initialSession.data.session);
+    try {
+      this.supabase.auth.onAuthStateChange((_, session) => {
+        console.log("test")
+        this.sessionSubject.next(session);
+      });
     await firstValueFrom(this.userService.getUser())
   } catch (error) {
     console.log(error)
@@ -68,9 +73,5 @@ export class SupabaseService {
   
   }
   
-  constructor(private userService: UserService) {
-    this.supabase.auth.onAuthStateChange((_, session) => {
-      this.sessionSubject.next(session);
-    });
-  }
+  constructor(private userService: UserService) {}
 }

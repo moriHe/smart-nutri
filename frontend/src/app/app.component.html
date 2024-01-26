@@ -1,10 +1,12 @@
 <div class="flex flex-col min-h-screen">
   <ng-container *ngIf="this.isInitialized else loadingTemplate">
   <app-header class="h-10vh"></app-header>
-  <main class="h-90vh">
+  <main style="min-height: 90vh;">
     <router-outlet></router-outlet>
   </main>
+  <section></section>
 </ng-container>
+<app-footer></app-footer>
 <ng-template #loadingTemplate>
   <div>Loading...</div>
 </ng-template>

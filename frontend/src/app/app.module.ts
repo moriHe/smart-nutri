@@ -46,6 +46,7 @@ import { AcceptInviationComponent } from './family-space/accept-inviation/accept
 import {MatExpansionModule} from '@angular/material/expansion';
 import { ImprintComponent } from './legal/imprint/imprint.component';
 import { DataProtectionComponent } from './legal/data-protection/data-protection.component';
+import { FooterComponent } from './footer/footer.component';
 
 @NgModule({
   declarations: [
@@ -72,7 +73,8 @@ import { DataProtectionComponent } from './legal/data-protection/data-protection
     FamilySpaceComponent,
     AcceptInviationComponent,
     ImprintComponent,
-    DataProtectionComponent
+    DataProtectionComponent,
+    FooterComponent
   ],
   imports: [
     BrowserModule,

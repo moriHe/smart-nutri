@@ -44,6 +44,8 @@ import { SignupComponent } from './signup/signup.component';
 import { FamilySpaceComponent } from './family-space/family-space.component';
 import { AcceptInviationComponent } from './family-space/accept-inviation/accept-inviation.component';
 import {MatExpansionModule} from '@angular/material/expansion';
+import { ImprintComponent } from './legal/imprint/imprint.component';
+import { DataProtectionComponent } from './legal/data-protection/data-protection.component';
 
 @NgModule({
   declarations: [
@@ -68,7 +70,9 @@ import {MatExpansionModule} from '@angular/material/expansion';
     NotOnShoppingListViewComponent,
     ShoppingListBellComponent,
     FamilySpaceComponent,
-    AcceptInviationComponent
+    AcceptInviationComponent,
+    ImprintComponent,
+    DataProtectionComponent
   ],
   imports: [
     BrowserModule,

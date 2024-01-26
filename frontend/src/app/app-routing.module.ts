@@ -15,6 +15,8 @@ import { MealplansComponent } from './mealplans/mealplans/mealplans.component';
 import { ShoppingListComponent } from './shopping-list/shopping-list/shopping-list.component';
 import { AcceptInviationComponent } from './family-space/accept-inviation/accept-inviation.component';
 import { FamilySpaceComponent } from './family-space/family-space.component';
+import { ImprintComponent } from './legal/imprint/imprint.component';
+import { DataProtectionComponent } from './legal/data-protection/data-protection.component';
 
 const routes: Routes = [
   { path: 'heroes', component: HeroesComponent },
@@ -27,7 +29,9 @@ const routes: Routes = [
   {path: "essensplan", component: MealplansComponent, canActivate: [authGuard, familyGuard]},
   {path: "einkaufszettel", component: ShoppingListComponent, canActivate: [authGuard, familyGuard]},
   {path: "einladung/akzeptieren", component: AcceptInviationComponent, canActivate: [authGuard]},
-  {path: "gemeinschaften", component: FamilySpaceComponent, canActivate: [authGuard, familyGuard]}
+  {path: "gemeinschaften", component: FamilySpaceComponent, canActivate: [authGuard, familyGuard]},
+  {path: "impressum", component: ImprintComponent},
+  {path: "datenschutz", component: DataProtectionComponent}
 ];
 
 @NgModule({

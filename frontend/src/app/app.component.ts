@@ -30,14 +30,12 @@ export class AppComponent {
       dialogRef.afterClosed().subscribe((result) => {
         if (result.cookieConsent) {
           localStorage.setItem("cookieConsent", "true")
-          this.supabaseService.initialize()
         }
       })
     }
   }
 
   constructor(
-    private supabaseService: SupabaseService, 
     public dialog: MatDialog
     ) {}
 }

@@ -14,6 +14,8 @@ type AlgoliaResult = {
   id: number
   name: string
   brands: string
+  url: string
+  code: string
 }
 
 @Component({

@@ -15,10 +15,8 @@ export class LandingPageComponent {
   async onLogin() {
       const response = await this.supabaseService.login(this.email, this.password)
       if (response.data.session) {
-        this.userService.getUser().subscribe(() => {
-          this.supabaseService.setSession(response.data.session)
-          this.router.navigate(['/meine-rezepte']);
-        })
+        await this.supabaseService.initialize()
+        this.router.navigate(['/meine-rezepte']);        
       }
     
     }

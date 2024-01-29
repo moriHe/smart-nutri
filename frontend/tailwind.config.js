@@ -3,6 +3,9 @@ module.exports = {
   content: ["./src/**/*.{html,ts}"],
   theme: {
     extend: {
+      fontSize: {
+        tiny: "0.5rem",
+      },
       height: {
         "90vh": "90vh",
         "10vh": "10vh",

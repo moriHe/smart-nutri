@@ -2,11 +2,19 @@
     <input matInput placeholder="Suche..." [(ngModel)]="query" type="search" name="search" (input)="onSearch()">
   </mat-form-field>
 <section class="flex flex-wrap gap-10 justify-center select-none">
-    <div
+    <mat-card
     *ngFor="let result of algoliaResults"
     (click)="openDialog(result.id, result.name)" 
-    class="flex items-center justify-center w-1/5 h-20 border border-1 rounded-lg text-xs cursor-pointer"
+    class="flex items-center justify-center md:w-1/4 w-full h-20 border border-1 rounded-lg text-xs cursor-pointer"
     >
-        <p class="text-center">{{result.name}}</p>
-    </div>
+    <mat-card-content>
+        <div>{{result.name}}</div>
+        <button 
+        (click)="openSource(result.url, $event)"
+        class="absolute bottom-0 left-0 text-tiny px-2 py-1 bg-slate-200 rounded"
+        >
+        Quelle: Open Food Facts
+        </button>
+    </mat-card-content>
+    </mat-card>
 </section>

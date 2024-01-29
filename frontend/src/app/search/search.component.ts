@@ -95,6 +95,11 @@ export class SearchComponent {
   }
 }
 
+openSource(url: string, event: Event) {
+  event.stopPropagation()
+  window.open(url, "_blank")
+}
+
 ngOnInit(): void {
   this.route.params.subscribe(params => {
    this.recipesService.getRecipe(params['recipeId']).pipe(take(1)).subscribe((response: FullRecipe) => {

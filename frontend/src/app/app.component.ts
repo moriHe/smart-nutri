@@ -4,6 +4,7 @@ import { SupabaseService } from 'api/supabase.service';
 import { finalize } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { CookieBannerComponent } from './legal/cookie-banner/cookie-banner.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -30,7 +31,7 @@ export class AppComponent {
     if (legalPages) {
       return
     }
-    if (cookieConsent === null) {
+    if (cookieConsent === null && this.isValidSecret) {
       const dialogRef = this.dialog.open(CookieBannerComponent, {disableClose: true, width: "50%", enterAnimationDuration: "1000ms", exitAnimationDuration: "1000ms"})
       dialogRef.afterClosed().subscribe((result) => {
         if (result.cookieConsent) {
@@ -41,6 +42,7 @@ export class AppComponent {
   }
 
   constructor(
+    private router: Router,
     public dialog: MatDialog,
     private supabaseService: SupabaseService
     ) {}

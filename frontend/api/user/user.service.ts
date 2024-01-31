@@ -52,7 +52,6 @@ export class UserService {
 
   updateUserFamily(newActiveFamilyId: number): Observable<string> {
     return this.http.patch<Response<string>>("http://localhost:8080/user", {newActiveFamilyId}).pipe(map((response) => {
-      console.log(response)
       return response.data
     }))
   }

@@ -48,6 +48,7 @@ import { ImprintComponent } from './legal/imprint/imprint.component';
 import { DataProtectionComponent } from './legal/data-protection/data-protection.component';
 import { FooterComponent } from './footer/footer.component';
 import { CookieBannerComponent } from './legal/cookie-banner/cookie-banner.component';
+import { RedirectComponentComponent } from './redirect-component/redirect-component.component';
 
 @NgModule({
   declarations: [
@@ -76,7 +77,8 @@ import { CookieBannerComponent } from './legal/cookie-banner/cookie-banner.compo
     ImprintComponent,
     DataProtectionComponent,
     FooterComponent,
-    CookieBannerComponent
+    CookieBannerComponent,
+    RedirectComponentComponent
   ],
   imports: [
     BrowserModule,

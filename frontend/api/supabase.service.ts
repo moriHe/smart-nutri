@@ -56,7 +56,7 @@ export class SupabaseService {
 
   async initialize(): Promise<void> {
     const cookieConsent = localStorage.getItem("cookieConsent");
-    if (cookieConsent === null) {
+    if (!cookieConsent === null) {
       return;
     }
   
@@ -64,16 +64,16 @@ export class SupabaseService {
       await new Promise<void>((resolve) => {
         this.supabase.auth.onAuthStateChange((_, session) => {
           this.sessionSubject.next(session);
-          if (session !== null) {
             resolve();
-          }
         })
       });
   
+      if (this.session) {
       await firstValueFrom(this.userService.getUser());
+    }
     } catch (error) {
       console.error(error);
-      throw error; // Propagate the error
+      throw error
     }
   
     this.isAppInitializedSubject.next(true);

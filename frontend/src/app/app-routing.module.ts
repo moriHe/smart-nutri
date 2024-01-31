@@ -17,6 +17,7 @@ import { AcceptInviationComponent } from './family-space/accept-inviation/accept
 import { FamilySpaceComponent } from './family-space/family-space.component';
 import { ImprintComponent } from './legal/imprint/imprint.component';
 import { DataProtectionComponent } from './legal/data-protection/data-protection.component';
+import { RedirectComponentComponent } from './redirect-component/redirect-component.component';
 
 const routes: Routes = [
   { path: 'heroes', component: HeroesComponent },
@@ -31,7 +32,8 @@ const routes: Routes = [
   {path: "einladung/akzeptieren", component: AcceptInviationComponent, canActivate: [authGuard]},
   {path: "gemeinschaften", component: FamilySpaceComponent, canActivate: [authGuard, familyGuard]},
   {path: "impressum", component: ImprintComponent},
-  {path: "datenschutz", component: DataProtectionComponent}
+  {path: "datenschutz", component: DataProtectionComponent},
+  {path: "**", component: RedirectComponentComponent}
 ];
 
 @NgModule({

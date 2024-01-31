@@ -16,7 +16,6 @@ export class SignupComponent {
 
   async signUp() {
     const isSuccess = await this.supabaseService.signUp(this.email, this.password)
-    console.log(isSuccess)
     if (isSuccess) {
       this.hasRegistered = true
     }

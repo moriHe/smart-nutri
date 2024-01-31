@@ -9,12 +9,7 @@
     >
     <mat-card-content>
         <div>{{result.name}}</div>
-        <button 
-        (click)="openSource(result.url, $event)"
-        class="absolute bottom-0 left-0 text-tiny px-2 py-1 bg-slate-200 rounded"
-        >
-        Quelle: Open Food Facts
-        </button>
+        <app-ingredient-source [url]="result.url"></app-ingredient-source>
     </mat-card-content>
     </mat-card>
 </section>

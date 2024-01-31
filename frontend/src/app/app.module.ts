@@ -49,6 +49,7 @@ import { DataProtectionComponent } from './legal/data-protection/data-protection
 import { FooterComponent } from './footer/footer.component';
 import { CookieBannerComponent } from './legal/cookie-banner/cookie-banner.component';
 import { RedirectComponentComponent } from './redirect-component/redirect-component.component';
+import { IngredientSourceComponent } from './ingredient-source/ingredient-source.component';
 
 @NgModule({
   declarations: [
@@ -78,7 +79,8 @@ import { RedirectComponentComponent } from './redirect-component/redirect-compon
     DataProtectionComponent,
     FooterComponent,
     CookieBannerComponent,
-    RedirectComponentComponent
+    RedirectComponentComponent,
+    IngredientSourceComponent
   ],
   imports: [
     BrowserModule,

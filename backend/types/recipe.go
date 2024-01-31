@@ -16,6 +16,7 @@ type RecipeIngredient struct {
 	Id               int     `json:"id"`
 	IngredientId     int     `json:"ingredientId"`
 	Name             string  `json:"name"`
+	SourceUrl        string  `json:"sourceUrl"`
 	AmountPerPortion float32 `json:"amountPerPortion"`
 	Unit             string  `json:"unit"`
 	Market           string  `json:"market"`

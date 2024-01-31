@@ -27,12 +27,14 @@ type ScanShoppingList struct {
 	RecipeIngredientId         int       `json:"recipeIngredientId"`
 	IngredientId               int       `json:"ingredientId"`
 	IngredientName             string    `json:"ingredientName"`
+	SourceUrl                  string    `json:"sourceUrl"`
 	IngredientAmountPerPortion float32   `json:"amountPerPortion"`
 	IngredientUnit             string    `json:"unit"`
 }
 
 type ShoppingListItemsCommonProps struct {
 	ShoppingListIds []int              `json:"shoppingListIds"`
+	SourceUrl       string             `json:"sourceUrl"`
 	Market          string             `json:"market"`
 	IsBio           bool               `json:"isBio"`
 	IngredientId    int                `json:"ingredientId"`

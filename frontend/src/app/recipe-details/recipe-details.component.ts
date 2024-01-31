@@ -19,6 +19,7 @@ export class RecipeDetailsComponent {
     this.route.params.subscribe(params => {
       const id = params['id']
       this.recipesService.getRecipe(id).subscribe((response: FullRecipe) => {
+        console.log(response)
         this.recipe = response
       });
     })

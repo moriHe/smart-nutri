@@ -29,6 +29,7 @@
         <cdk-accordion-item 
         #accordionItem="cdkAccordionItem"
         >
+        
 
         <div 
         (click)="accordionItem.toggle()"
@@ -59,9 +60,12 @@
              >delete_forever
              </mat-icon>
             </div>
+            
+            <div class="relative">
+                <app-ingredient-source [url]="ingredient.sourceUrl"></app-ingredient-source>
+            </div>
         </cdk-accordion-item >
     </div>
-
         </cdk-accordion>
     </div>
     </ng-container>

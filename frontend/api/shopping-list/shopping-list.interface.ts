@@ -16,6 +16,7 @@ export type ShoppingListByCategory = {
 
 export type ShoppingListCommonProps = {
     shoppingListIds: number[]
+    sourceUrl: string,
     market: Markets
     isBio: boolean
     ingredientId: number

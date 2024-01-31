@@ -70,6 +70,7 @@ removeFromShoppingList(ids: number[], event: Event) {
       }
       })
   }
+
   ngOnInit(): void {
     this.updateListItems()
   }

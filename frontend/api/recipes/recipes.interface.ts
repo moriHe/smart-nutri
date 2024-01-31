@@ -36,13 +36,14 @@ export interface RecipeIngredient {
   id: number,
   ingredientId: number,
   amountPerPortion: number,
+  sourceUrl: string,
   isBio: boolean,
   market: Markets,
   name: string,
   unit: Units
 }
 
-export type RecipeIngredientBody = Omit<RecipeIngredient, "name" | "id"> & {
+export type RecipeIngredientBody = Omit<RecipeIngredient, "name" | "id" | "sourceUrl"> & {
   ingredientId: number
 }
 

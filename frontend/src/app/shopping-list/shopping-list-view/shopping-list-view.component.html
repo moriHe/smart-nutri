@@ -6,13 +6,14 @@ class="md:w-3/4 mx-auto"
 >
   <div *ngIf="shoppingListByCategory[category].length > 0">
     <h2>Markt: {{marketsService.ShoppingListDisplay[category]}}</h2>
-    <mat-accordion>
-    <mat-expansion-panel 
-      *ngFor="let item of shoppingListByCategory[category]"
-      [hideToggle]="item.shoppingListIds.length <= 1"
-      [ngClass]="item.shoppingListIds.length <= 1 ? 'pointer-events-none' : ''"
-      style="margin-top: 10px; margin-bottom: 10px; padding: 5px" 
-      >
+    <div *ngFor="let item of shoppingListByCategory[category]"
+    [ngClass]="item.shoppingListIds.length <= 1 ? 'pointer-events-none' : ''"
+    style="margin-top: 25px; margin-bottom: 10px; padding: 5px">
+    <mat-accordion [hideToggle]="item.shoppingListIds.length <= 1">
+      <div class="relative pointer-events-auto">
+      <app-ingredient-source [url]="item.sourceUrl"></app-ingredient-source>
+    </div>
+    <mat-expansion-panel>
       <mat-expansion-panel-header>
         <mat-panel-title>
           {{item.ingredientName}}
@@ -34,7 +35,7 @@ class="md:w-3/4 mx-auto"
               aria-label="Example icon button with a menu icon">
                 <mat-icon>done</mat-icon>
             </button>
-        </mat-panel-description>
+          </mat-panel-description>
       </mat-expansion-panel-header>
       <div *ngFor="let individualItem of item.items">
         <div class="flex w-full">
@@ -46,5 +47,6 @@ class="md:w-3/4 mx-auto"
       </div>
     </mat-expansion-panel>
     </mat-accordion>
+  </div>
   </div>
 </div>

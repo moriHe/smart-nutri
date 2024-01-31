@@ -25,6 +25,9 @@ export class SupabaseService {
   // Observable for session changes
   session$: Observable<AuthSession | null> = this.sessionSubject.asObservable();
 
+  isValidSecretSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
+  isValidSecret$: Observable<boolean> = this.isValidSecretSubject.asObservable();
+
   get session(): AuthSession | null {
     return this.sessionSubject.value;
   }
@@ -54,12 +57,32 @@ export class SupabaseService {
     return await this.supabase.auth.signOut()
   }
 
-  async initialize(): Promise<void> {
-    const cookieConsent = localStorage.getItem("cookieConsent");
-    if (!cookieConsent === null) {
+  async initialize(): Promise<void> { 
+    const secret = localStorage.getItem("secret")
+    if (!secret) {
+      const  enteredSecret = prompt("Please enter the secret: ")
+      if (enteredSecret) {
+        localStorage.setItem("secret", enteredSecret)
+      }
+    }
+
+      try {
+        const response = await firstValueFrom(this.userService.getSecret())
+        if (response) {
+          this.isValidSecretSubject.next(true)
+        }
+      } catch(error) {
+        this.isValidSecretSubject.next(false)
+        this.sessionSubject.next(null)
+        return
+      }
+    
+      const cookieConsent = localStorage.getItem("cookieConsent");
+    if (!cookieConsent) {
       return;
     }
-  
+    
+
     try {
       await new Promise<void>((resolve) => {
         this.supabase.auth.onAuthStateChange((_, session) => {

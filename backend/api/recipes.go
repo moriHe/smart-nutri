@@ -24,6 +24,7 @@ func (s *Server) handleGetAllRecipes(c *gin.Context) {
 
 	if user.ActiveFamilyId == nil {
 		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "No Family"})
+		c.Abort() // TODO: abort where necessary
 	}
 	recipes, err := s.store.GetAllRecipes(user)
 	responses.HandleResponse[*[]types.RecipeWithoutIngredients](c, recipes, err)

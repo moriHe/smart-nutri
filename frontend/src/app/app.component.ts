@@ -13,12 +13,17 @@ import { CookieBannerComponent } from './legal/cookie-banner/cookie-banner.compo
 export class AppComponent {
   title = 'Smart Nutri';
   // isInitialized = this.supabaseService.isAppIntialized$
-  
+    isValidSecret!: boolean
  
 
 
 
   ngOnInit(): void {
+    this.supabaseService.isValidSecret$
+      .subscribe((value) => {
+        this.isValidSecret = value;
+      });
+
     const cookieConsent = localStorage.getItem("cookieConsent")
     const currentUrl = window.location.href
     const legalPages = currentUrl.endsWith("/datenschutz") || currentUrl.endsWith("/impressum")
@@ -36,6 +41,7 @@ export class AppComponent {
   }
 
   constructor(
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private supabaseService: SupabaseService
     ) {}
 }

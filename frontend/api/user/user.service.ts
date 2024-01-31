@@ -56,5 +56,12 @@ export class UserService {
     }))
   }
 
+  getSecret(): Observable<string> {
+    return this.http.get<Response<string>>("http://localhost:8080/secret").pipe(map((response) => {
+      return response.data
+    }))
+  }
+
+
   constructor(private http: HttpClient, private router: Router) { }
 }

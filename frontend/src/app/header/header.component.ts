@@ -1,5 +1,6 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Component } from '@angular/core';
+import { SupabaseService } from 'api/supabase.service';
 
 @Component({
   selector: 'app-header',
@@ -8,6 +9,7 @@ import { Component } from '@angular/core';
 })
 export class HeaderComponent {
   isMobile = false
+  isLoggedIn = false
 
   ngOnInit(): void {
     this.breakpointObserver.observe([
@@ -16,10 +18,19 @@ export class HeaderComponent {
     ]).subscribe(result => {
       this.isMobile = result.matches;
     });
+
+    this.supabaseService.session$.subscribe((session) => {
+      if (session) {
+        this.isLoggedIn = true
+      } else {
+        this.isLoggedIn = false
+      }
+    })
   }
 
   constructor(
-    private breakpointObserver: BreakpointObserver
+    private breakpointObserver: BreakpointObserver,
+    private supabaseService: SupabaseService
     ) {}
 }
 

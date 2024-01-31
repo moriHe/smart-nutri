@@ -60,7 +60,7 @@ export class SupabaseService {
   async initialize(): Promise<void> { 
     const secret = localStorage.getItem("secret")
     if (!secret) {
-      const  enteredSecret = prompt("Please enter the secret: ")
+      const  enteredSecret = prompt("This is a portfolio page and not open to the public. Please enter the secret to access the site: ")
       if (enteredSecret) {
         localStorage.setItem("secret", enteredSecret)
       }
@@ -81,7 +81,7 @@ export class SupabaseService {
     if (!cookieConsent) {
       return;
     }
-    
+
 
     try {
       await new Promise<void>((resolve) => {

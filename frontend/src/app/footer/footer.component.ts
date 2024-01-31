@@ -14,5 +14,9 @@ export class FooterComponent {
     this.router.navigate(["/datenschutz"])
   }
 
+  openOpenFoodFacts() {
+    this.router.navigate(["/datenbank-nahrungsmittel"])
+  }
+
   constructor(private router: Router) {}
 }

@@ -26,7 +26,7 @@ export class AppComponent {
 
     const cookieConsent = localStorage.getItem("cookieConsent")
     const currentUrl = window.location.href
-    const legalPages = currentUrl.endsWith("/datenschutz") || currentUrl.endsWith("/impressum")
+    const legalPages = currentUrl.endsWith("/datenschutz") || currentUrl.endsWith("/impressum") || currentUrl.endsWith("/datenbank-nahrungsmittel")
     if (legalPages) {
       return
     }

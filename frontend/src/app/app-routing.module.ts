@@ -18,6 +18,7 @@ import { FamilySpaceComponent } from './family-space/family-space.component';
 import { ImprintComponent } from './legal/imprint/imprint.component';
 import { DataProtectionComponent } from './legal/data-protection/data-protection.component';
 import { RedirectComponentComponent } from './redirect-component/redirect-component.component';
+import { IngredientDatabaseComponent } from './legal/ingredient-database/ingredient-database.component';
 
 const routes: Routes = [
   { path: 'heroes', component: HeroesComponent },
@@ -33,6 +34,7 @@ const routes: Routes = [
   {path: "gemeinschaften", component: FamilySpaceComponent, canActivate: [authGuard, familyGuard]},
   {path: "impressum", component: ImprintComponent},
   {path: "datenschutz", component: DataProtectionComponent},
+  {path: "datenbank-nahrungsmittel", component: IngredientDatabaseComponent},
   {path: "**", component: RedirectComponentComponent}
 ];
 

@@ -50,6 +50,7 @@ import { FooterComponent } from './footer/footer.component';
 import { CookieBannerComponent } from './legal/cookie-banner/cookie-banner.component';
 import { RedirectComponentComponent } from './redirect-component/redirect-component.component';
 import { IngredientSourceComponent } from './ingredient-source/ingredient-source.component';
+import { IngredientDatabaseComponent } from './legal/ingredient-database/ingredient-database.component';
 
 @NgModule({
   declarations: [
@@ -80,7 +81,8 @@ import { IngredientSourceComponent } from './ingredient-source/ingredient-source
     FooterComponent,
     CookieBannerComponent,
     RedirectComponentComponent,
-    IngredientSourceComponent
+    IngredientSourceComponent,
+    IngredientDatabaseComponent
   ],
   imports: [
     BrowserModule,

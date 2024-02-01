@@ -1,8 +1,10 @@
 package api
 
 import (
+	"io"
 	"net/http"
 	"os"
+	"path/filepath"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -34,6 +36,7 @@ func StartGinServer(store storage.Storage, url string) (*gin.Engine, error) {
 	router.Use(cors.New(config))
 
 	router.GET("/secret", server.handleGetSecret)
+	router.GET("/datenbank-nahrungsmittel", server.handleGetIngredientTable)
 	server.userRoutes(router)
 	router.Use(server.AuthMiddleWare())
 	server.recipeRoutes(router)
@@ -57,4 +60,27 @@ func (s *Server) handleGetSecret(c *gin.Context) {
 		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Permission denied"})
 	}
 	c.Abort()
+}
+
+func (s *Server) handleGetIngredientTable(c *gin.Context) {
+	filename := "ingredients.csv"
+	filePath := filepath.Join("assets", filename)
+
+	file, err := os.Open(filePath)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "File not found"})
+		return
+	}
+	defer file.Close()
+
+	// Set headers for CSV file download
+	c.Header("Content-Disposition", "attachment; filename="+filename)
+	c.Header("Content-Type", "text/csv")
+
+	// Copy the file contents to the response writer
+	_, err = io.Copy(c.Writer, file)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Something went wrong"})
+		return
+	}
 }

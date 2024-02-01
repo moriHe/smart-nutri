@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { map } from 'rxjs';
+import { environment } from 'src/environments/environment.development';
 
 @Component({
   selector: 'app-ingredient-database',
@@ -9,7 +9,7 @@ import { map } from 'rxjs';
 })
 export class IngredientDatabaseComponent {
   downloadTable() {
-    const downloadUrl = "http://localhost:8080/datenbank-nahrungsmittel";
+    const downloadUrl = `${environment.backendBaseUrl}/datenbank-nahrungsmittel`;
 
     this.http.get<Blob>(downloadUrl, { responseType: 'blob' as 'json' }).subscribe(blob => {
       const url = window.URL.createObjectURL(blob);

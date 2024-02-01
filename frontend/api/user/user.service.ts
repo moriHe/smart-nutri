@@ -3,6 +3,7 @@ import { Response } from 'api';
 import { BehaviorSubject, Observable, catchError, map } from 'rxjs';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment.development';
 
 export type User = {
   id: number,
@@ -26,7 +27,7 @@ export class UserService {
   user$: Observable<User | null> = this.userSubject.asObservable();
 
   addUser(): Observable<{userId: number}> {
-    return this.http.post<Response<{userId: number}>>("http://localhost:8080/user", {}).pipe(map((response: Response<{userId: number}>) => {
+    return this.http.post<Response<{userId: number}>>(`${environment.backendBaseUrl}/user`, {}).pipe(map((response: Response<{userId: number}>) => {
       return response.data
     }))
   }
@@ -37,7 +38,7 @@ export class UserService {
 
 
   getUser(): Observable<number> {
-    return this.http.get<Response<User>>("http://localhost:8080/user").pipe(map((response: Response<User>) => {
+    return this.http.get<Response<User>>(`${environment.backendBaseUrl}/user`).pipe(map((response: Response<User>) => {
       if (response.data?.id) {
         this.userSubject.next(response.data)
       }
@@ -47,17 +48,17 @@ export class UserService {
   }
 
   getUserFamilys(): Observable<UserFamilys> {
-    return this.http.get<Response<UserFamilys>>("http://localhost:8080/user/familys").pipe(map((response) => response.data))
+    return this.http.get<Response<UserFamilys>>(`${environment.backendBaseUrl}/user/familys`).pipe(map((response) => response.data))
   }
 
   updateUserFamily(newActiveFamilyId: number): Observable<string> {
-    return this.http.patch<Response<string>>("http://localhost:8080/user", {newActiveFamilyId}).pipe(map((response) => {
+    return this.http.patch<Response<string>>(`${environment.backendBaseUrl}/user`, {newActiveFamilyId}).pipe(map((response) => {
       return response.data
     }))
   }
 
   getSecret(): Observable<string> {
-    return this.http.get<Response<string>>("http://localhost:8080/secret").pipe(map((response) => {
+    return this.http.get<Response<string>>(`${environment.backendBaseUrl}/secret`).pipe(map((response) => {
       return response.data
     }))
   }

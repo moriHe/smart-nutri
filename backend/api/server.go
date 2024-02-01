@@ -19,6 +19,13 @@ type Server struct {
 	auth  *supabase.Client
 }
 
+func getOrigin() string {
+	if os.Getenv("ENVIRONMENT") == "DEVELOPMENT" {
+		return "*"
+	}
+	return "*"
+}
+
 func StartGinServer(store storage.Storage, url string) (*gin.Engine, error) {
 	router := gin.Default()
 	supabase := supabase.CreateClient(os.Getenv("SUPABASE_URL"), os.Getenv("SUPABASE_KEY"))
@@ -28,7 +35,7 @@ func StartGinServer(store storage.Storage, url string) (*gin.Engine, error) {
 	config := cors.DefaultConfig()
 
 	// setup before going live
-	config.AllowOrigins = []string{"*"} // Update with your Angular app's origin
+	config.AllowOrigins = []string{getOrigin()} // Update with your Angular app's origin
 	config.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE"}
 	config.AllowHeaders = []string{"Content-Type", "Authorization", "Secret"}
 

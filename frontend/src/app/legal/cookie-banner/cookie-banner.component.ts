@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import {environment} from "src/environments/environment.development"
 
 @Component({
   selector: 'app-cookie-banner',
@@ -7,7 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
   styleUrls: ['./cookie-banner.component.css']
 })
 export class CookieBannerComponent {
-
+  environment = environment
   ngOnInit(): void {
     
   }

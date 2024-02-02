@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "localize": ["de-DE"],
+            "localize": ["de"],
             "outputPath": "dist/frontend",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -92,7 +92,7 @@
         }
       },
       "i18n": {
-        "sourceLocale": "de-DE",
+        "sourceLocale": "de",
         "locales": { "en-US": "src/locale/en.us.xlf" }
       }
     }

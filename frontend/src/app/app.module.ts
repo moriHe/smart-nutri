@@ -123,7 +123,7 @@ import { IngredientDatabaseComponent } from './legal/ingredient-database/ingredi
     },
     {
       provide: LOCALE_ID,
-      useValue: 'de'
+      useValue: 'de-DE'
     },
     DatePipe
   ],

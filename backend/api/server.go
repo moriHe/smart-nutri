@@ -38,7 +38,7 @@ func StartGinServer(store storage.Storage, url string) (*gin.Engine, error) {
 	healthCorsConfig.AllowMethods = []string{"GET"}
 
 	// Define the /health endpoint with the specific CORS configuration
-	router.GET("/health", cors.New(healthCorsConfig), server.handleHealthCheck)
+	router.GET("/", cors.New(healthCorsConfig), server.handleHealthCheck)
 
 	config := cors.DefaultConfig()
 	// setup before going live

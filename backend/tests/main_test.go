@@ -12,6 +12,7 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/joho/godotenv"
 	"github.com/moriHe/smart-nutri/storage/postgres"
 	"github.com/ory/dockertest/v3"
 	"github.com/ory/dockertest/v3/docker"
@@ -20,10 +21,10 @@ import (
 var Db *postgres.Storage
 
 func TestMain(m *testing.M) {
-	// err := godotenv.Load("../../.env")
-	// if err != nil {
-	// 	log.Println("Error loading .env file")
-	// }
+	err := godotenv.Load("../../.env")
+	if err != nil {
+		log.Println("Error loading .env file")
+	}
 	// uses a sensible default on windows (tcp/http) and linux/osx (socket)
 	pool, err := dockertest.NewPool("")
 	if err != nil {

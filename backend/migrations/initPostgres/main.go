@@ -7,13 +7,14 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	"github.com/joho/godotenv"
 )
 
 func main() {
-	// err := godotenv.Load("/Users/moritzhettich/prv/smart-nutri/.env")
-	// if err != nil {
-	// 	log.Println("Error loading .env file")
-	// }
+	err := godotenv.Load("/Users/moritzhettich/prv/smart-nutri/.env")
+	if err != nil {
+		log.Println("Error loading .env file")
+	}
 	// Call from root with initPostgresDev script
 	m, err := migrate.New("file://migrations/initPostgres", os.Getenv("DATABASE_URL"))
 	if err != nil {

@@ -3,5 +3,5 @@ export const environment = {
     production: true,
     ...baseEnvironment,
     frontendBaseUrl: "https://goldfish-app-fid8j.ondigitalocean.app",
-    backendBaseUrl: "http://localhost:8080",
+    backendBaseUrl: "https://whale-app-lux4j.ondigitalocean.app",
 }

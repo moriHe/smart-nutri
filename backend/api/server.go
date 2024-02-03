@@ -27,7 +27,7 @@ func getOrigin() string {
 	return "*"
 }
 
-func StartGinServer(store storage.Storage, url string) (*gin.Engine, error) {
+func StartGinServer(store storage.Storage, port string) (*gin.Engine, error) {
 	router := gin.Default()
 	supabase := supabase.CreateClient(os.Getenv("SUPABASE_URL"), os.Getenv("SUPABASE_KEY"))
 
@@ -54,7 +54,7 @@ func StartGinServer(store storage.Storage, url string) (*gin.Engine, error) {
 	server.familyRoutes(router)
 	server.invitationRoutes(router)
 
-	router.Run(url)
+	router.Run(":" + port)
 
 	return router, nil
 

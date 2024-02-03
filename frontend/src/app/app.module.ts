@@ -1,4 +1,4 @@
-import { NgModule, LOCALE_ID, APP_INITIALIZER } from '@angular/core';
+import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
@@ -27,7 +27,7 @@ import { AuthInterceptor } from './auth.interceptor';
 import { MealplansComponent } from './mealplans/mealplans/mealplans.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { CommonModule, DatePipe, registerLocaleData } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { CreateMealplanDialogComponent } from './mealplans/create-mealplan-dialog/create-mealplan-dialog.component';
 import { CreateMealplanBottomsheetComponent } from './mealplans/create-mealplan-bottomsheet/create-mealplan-bottomsheet.component';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
@@ -51,8 +51,6 @@ import { CookieBannerComponent } from './legal/cookie-banner/cookie-banner.compo
 import { RedirectComponentComponent } from './redirect-component/redirect-component.component';
 import { IngredientSourceComponent } from './ingredient-source/ingredient-source.component';
 import { IngredientDatabaseComponent } from './legal/ingredient-database/ingredient-database.component';
-import localeDe from "@angular/common/locales/de"
-registerLocaleData(localeDe)
 
 @NgModule({
   declarations: [
@@ -122,10 +120,6 @@ registerLocaleData(localeDe)
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true
-    },
-    {
-      provide: LOCALE_ID,
-      useValue: 'de'
     },
     DatePipe
   ],

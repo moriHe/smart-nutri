@@ -2,6 +2,7 @@ package api
 
 import (
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -32,8 +33,14 @@ func StartGinServer(store storage.Storage, url string) (*gin.Engine, error) {
 
 	server := &Server{store: store, auth: supabase}
 
-	config := cors.DefaultConfig()
+	healthCorsConfig := cors.DefaultConfig()
+	healthCorsConfig.AllowOrigins = []string{"*"}
+	healthCorsConfig.AllowMethods = []string{"GET"}
 
+	// Define the /health endpoint with the specific CORS configuration
+	router.GET("/health", cors.New(healthCorsConfig), server.handleHealthCheck)
+
+	config := cors.DefaultConfig()
 	// setup before going live
 	config.AllowOrigins = []string{getOrigin()} // Update with your Angular app's origin
 	config.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE"}
@@ -90,4 +97,11 @@ func (s *Server) handleGetIngredientTable(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Something went wrong"})
 		return
 	}
+}
+
+func (s *Server) handleHealthCheck(c *gin.Context) {
+	log.Println("Health check received")
+	c.Status(http.StatusOK)
+	c.String(http.StatusOK, "OK")
+
 }

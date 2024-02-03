@@ -24,7 +24,7 @@ func getOrigin() string {
 	if os.Getenv("ENVIRONMENT") == "DEVELOPMENT" {
 		return "*"
 	}
-	return "*"
+	return os.Getenv("FRONTEND_URL")
 }
 
 func StartGinServer(store storage.Storage, port string) (*gin.Engine, error) {

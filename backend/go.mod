@@ -8,7 +8,6 @@ require (
 	github.com/go-playground/assert v1.2.1
 	github.com/golang-migrate/migrate/v4 v4.16.2
 	github.com/jackc/pgx/v5 v5.4.3
-	github.com/joho/godotenv v1.5.1
 	github.com/nedpals/supabase-go v0.4.0
 	github.com/ory/dockertest/v3 v3.10.0
 )

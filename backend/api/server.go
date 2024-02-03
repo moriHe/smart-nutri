@@ -33,12 +33,7 @@ func StartGinServer(store storage.Storage, url string) (*gin.Engine, error) {
 
 	server := &Server{store: store, auth: supabase}
 
-	healthCorsConfig := cors.DefaultConfig()
-	healthCorsConfig.AllowOrigins = []string{"*"}
-	healthCorsConfig.AllowMethods = []string{"GET"}
-
 	// Define the /health endpoint with the specific CORS configuration
-	router.GET("/", cors.New(healthCorsConfig), server.handleHealthCheck)
 
 	config := cors.DefaultConfig()
 	// setup before going live
@@ -48,7 +43,7 @@ func StartGinServer(store storage.Storage, url string) (*gin.Engine, error) {
 
 	// Use the CORS middleware
 	router.Use(cors.New(config))
-
+	router.GET("/", server.handleHealthCheck)
 	router.GET("/secret", server.handleGetSecret)
 	router.GET("/datenbank-nahrungsmittel", server.handleGetIngredientTable)
 	server.userRoutes(router)

@@ -10,6 +10,7 @@ import {
 import { BehaviorSubject, firstValueFrom, Observable, Subject } from 'rxjs';
 import { environment } from 'src/environments/environment.development';
 import { UserService } from './user/user.service';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -42,7 +43,7 @@ export class SupabaseService {
   }
 
   async signUp(email: string, password: string) {
-    const response = await this.supabase.auth.signUp({email, password, options: {emailRedirectTo: `${environment.frontendBaseUrl}/willkommen`}})
+    const response = await this.supabase.auth.signUp({email, password, options: {emailRedirectTo: "http://localhost:4200/willkommen/"}})
     if (!response.error) {
       return true
     }
@@ -95,12 +96,14 @@ export class SupabaseService {
       await firstValueFrom(this.userService.getUser());
     }
     } catch (error) {
+      if (this.router.url.includes("/willkommen")) {
+        return
+      }
       console.error(error);
-      throw error
     }
   
     this.isAppInitializedSubject.next(true);
   }
   
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService, private router: Router) {}
 }

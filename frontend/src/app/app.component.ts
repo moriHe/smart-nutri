@@ -42,7 +42,6 @@ export class AppComponent {
   }
 
   constructor(
-    private router: Router,
     public dialog: MatDialog,
     private supabaseService: SupabaseService
     ) {}

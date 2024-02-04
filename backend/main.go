@@ -20,11 +20,11 @@ func main() {
 
 	m, err := migrate.New("file://migrations", os.Getenv("DATABASE_URL"))
 	if err != nil {
-		log.Fatalf("Migration error: %s", err)
+		log.Printf("Migration error: %s", err)
 	}
 
 	if err := m.Up(); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	store := postgres.NewStorage(os.Getenv("DATABASE_URL"))

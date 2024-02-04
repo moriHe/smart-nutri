@@ -21,7 +21,12 @@ export class SignupComponent {
     }
   }
 
+  goToLogin() {
+    this.router.navigate(["/"])
+  }
+
   constructor(
+    private router: Router,
     private supabaseService: SupabaseService
     ) { }
 }

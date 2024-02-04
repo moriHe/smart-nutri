@@ -1,6 +1,6 @@
-<div *ngIf="hasRegistered; else signUpTemplate">
-  <h2>Vielen Dank für die Registrierung</h2>
-  <p>Sie haben einen Bestätigungs-Link per E-Mail erhalten. Klicken Sie den Link um fortzufahren.</p>
+<div class="mt-20" *ngIf="hasRegistered; else signUpTemplate">
+  <h2 class="text-center">Vielen Dank für die Registrierung</h2>
+  <p class="text-center">Sie haben einen Bestätigungs-Link per E-Mail erhalten. Klicken Sie den Link um fortzufahren.</p>
 </div>
 
 <ng-template #signUpTemplate>
@@ -19,5 +19,6 @@
         </form>
       </mat-card-content>
     </mat-card>
+    <button (click)="goToLogin()" class="text-slate-400 mt-1 cursor italic">Login</button>
 </div>
 </ng-template>

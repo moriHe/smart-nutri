@@ -4,7 +4,6 @@ import { SupabaseService } from 'api/supabase.service';
 import { finalize } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { CookieBannerComponent } from './legal/cookie-banner/cookie-banner.component';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',

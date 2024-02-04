@@ -1,5 +1,5 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Component } from '@angular/core';
+import { Component, HostListener, ViewChild } from '@angular/core';
 import { SupabaseService } from 'api/supabase.service';
 
 @Component({
@@ -10,6 +10,25 @@ import { SupabaseService } from 'api/supabase.service';
 export class HeaderComponent {
   isMobile = false
   isLoggedIn = false
+  @ViewChild('sidenav') sidenav: any;
+
+  @HostListener("document:click", ["$event"])
+  onDocumentClick(event: any): void {
+    if (this.sidenav._elementRef.nativeElement.contains(event.target)) {
+      return
+    }
+
+    if (event.target.classList.contains("mat-mdc-button-touch-target")) {
+      this.sidenav.toggle()
+      return
+    }
+    this.closeSidenav()
+  }
+
+  closeSidenav = () => {
+    this.sidenav.close()
+  }
+
 
   ngOnInit(): void {
     this.breakpointObserver.observe([

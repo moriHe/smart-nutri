@@ -1,4 +1,4 @@
-import { Component, Inject, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { SupabaseService } from 'api/supabase.service';
 import { UserService } from 'api/user/user.service';
@@ -10,9 +10,15 @@ import { UserService } from 'api/user/user.service';
 })
 export class NavigationButtonsComponent {
   @Input() isMobile!: boolean
+  @Input() closeSidenav!: () => void
+
 
   switchScreen(url: string) {
+    if (this.isScreenOpen(url)) {
+      return
+    }
     this.router.navigate([url])
+    this.closeSidenav()
   }
 
   isScreenOpen(url: string) {

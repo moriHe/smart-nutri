@@ -1,12 +1,11 @@
 <header class="h-full" *ngIf="isMobile">
     <div *ngIf="isLoggedIn">
-        <mat-sidenav-container class="h-full">
+        <mat-sidenav-container [attr.id]="isLoggedIn ? 'sidenav-container' : null" class="h-full">
             <mat-sidenav fixedInViewport="true" #sidenav class="w-2/3" mode="over">
-                <app-navigation-buttons [isMobile]="isMobile"></app-navigation-buttons>
+                <app-navigation-buttons [isMobile]="isMobile" [closeSidenav]="closeSidenav"></app-navigation-buttons>
             </mat-sidenav>
             <div class="flex justify-end items-center h-full bg-emerald-700 pr-5">
                 <button 
-                (click)="sidenav.toggle()"
                 mat-fab color="primary" 
                 aria-label="menu"
                 >

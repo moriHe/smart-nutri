@@ -21,13 +21,14 @@ export class LandingPageComponent {
     
     }
   
+    goToRegister() {
+      this.router.navigate(["/registrieren"])
+    }
 
 
 
     constructor(
       private router: Router,
-      private supabaseService: SupabaseService,
-      private formBuilder: FormBuilder,
-      private userService: UserService
+      private supabaseService: SupabaseService
       ) {}
   }

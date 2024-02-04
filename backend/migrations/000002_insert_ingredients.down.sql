@@ -1,0 +1,1 @@
+TRUNCATE TABLE "public"."ingredients" RESTART IDENTITY CASCADE;

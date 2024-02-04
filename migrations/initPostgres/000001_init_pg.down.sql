@@ -1,9 +1,0 @@
-DROP TABLE IF EXISTS shopping_list;
-DROP TABLE IF EXISTS recipes_ingredients;
-DROP TABLE IF EXISTS mealplans;
-DROP TABLE IF EXISTS recipes;
-DROP TABLE IF EXISTS familys;
-DROP TABLE IF EXISTS meals;
-DROP TABLE IF EXISTS ingredients;
-DROP TABLE IF EXISTS markets;
-DROP TABLE IF EXISTS units;

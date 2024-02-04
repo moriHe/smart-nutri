@@ -43,7 +43,7 @@ export class SupabaseService {
   }
 
   async signUp(email: string, password: string) {
-    const response = await this.supabase.auth.signUp({email, password, options: {emailRedirectTo: "http://localhost:4200/willkommen/"}})
+    const response = await this.supabase.auth.signUp({email, password, options: {emailRedirectTo: `${environment.frontendBaseUrl}/willkommen/`}})
     if (!response.error) {
       return true
     }

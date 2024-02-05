@@ -1,5 +1,5 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Component, HostListener, ViewChild } from '@angular/core';
+import { Component, HostListener, Input, ViewChild } from '@angular/core';
 import { SupabaseService } from 'api/supabase.service';
 
 @Component({
@@ -10,6 +10,8 @@ import { SupabaseService } from 'api/supabase.service';
 export class HeaderComponent {
   isMobile = false
   isLoggedIn = false
+  @Input() toggleIsMobileSidenavOpen!: () => void
+  @Input() setIsMobileSidenavOpenFalse!: () => void
   @ViewChild('sidenav') sidenav: any;
 
   @HostListener("document:click", ["$event"])
@@ -17,9 +19,9 @@ export class HeaderComponent {
     if (this.sidenav._elementRef.nativeElement.contains(event.target)) {
       return
     }
-
-    if (event.target.classList.contains("mat-mdc-button-touch-target")) {
+    if (event.target.parentElement.getAttribute("aria-label") === "menu") {
       this.sidenav.toggle()
+      this.toggleIsMobileSidenavOpen()
       return
     }
     this.closeSidenav()
@@ -27,6 +29,7 @@ export class HeaderComponent {
 
   closeSidenav = () => {
     this.sidenav.close()
+    this.setIsMobileSidenavOpenFalse()
   }
 
 

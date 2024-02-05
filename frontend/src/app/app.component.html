@@ -1,7 +1,7 @@
 <div *ngIf="isValidSecret; else noValidSecretBlock">
   <div class="flex flex-col min-h-screen">
-    <app-header class="h-10vh"></app-header>
-    <main style="min-height: 90vh;">
+    <app-header [toggleIsMobileSidenavOpen]="toggleIsMobileSidenavOpen" [setIsMobileSidenavOpenFalse]="setIsMobileSidenavOpenFalse" class="h-10vh"></app-header>
+    <main [ngStyle]="{'pointer-events': isMobileSidenavOpen ? 'none' : 'auto'}" style="min-height: 90vh;">
       <router-outlet></router-outlet>
     </main>
     <app-footer></app-footer>

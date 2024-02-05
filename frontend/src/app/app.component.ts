@@ -1,7 +1,7 @@
 import { Component, ChangeDetectorRef} from '@angular/core';
 import { UserService } from 'api/user/user.service';
 import { SupabaseService } from 'api/supabase.service';
-import { finalize } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, finalize } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { CookieBannerComponent } from './legal/cookie-banner/cookie-banner.component';
 
@@ -13,7 +13,17 @@ import { CookieBannerComponent } from './legal/cookie-banner/cookie-banner.compo
 export class AppComponent {
   title = 'Smart Nutri';
   // isInitialized = this.supabaseService.isAppIntialized$
-    isValidSecret!: boolean
+  isValidSecret!: boolean
+  isMobileSidenavOpen: boolean = false
+
+  setIsMobileSidenavOpenFalse = () => {
+    this.isMobileSidenavOpen = false
+
+  }
+
+  toggleIsMobileSidenavOpen = () => {
+   this.isMobileSidenavOpen = !this.isMobileSidenavOpen
+  }
  
 
 

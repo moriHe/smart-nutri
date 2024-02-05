@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { HeroesComponent } from './heroes/heroes.component';
 import { MyRecipesComponent } from './my-recipes/my-recipes.component';
 import { RecipeDetailsComponent } from './recipe-details/recipe-details.component';
 import { SearchComponent } from './search/search.component';
@@ -21,7 +20,6 @@ import { RedirectComponentComponent } from './redirect-component/redirect-compon
 import { IngredientDatabaseComponent } from './legal/ingredient-database/ingredient-database.component';
 
 const routes: Routes = [
-  { path: 'heroes', component: HeroesComponent },
   {path: "", component: LandingPageComponent, canActivate: [noUserGuard]},
   {path: "meine-rezepte", component: MyRecipesComponent, canActivate: [authGuard, familyGuard]},
   {path: "rezept/:id", component: RecipeDetailsComponent, canActivate: [authGuard, familyGuard]},

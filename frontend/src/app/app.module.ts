@@ -4,7 +4,6 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
-import { HeroesComponent } from './heroes/heroes.component';
 import { MyRecipesComponent } from './my-recipes/my-recipes.component';
 import { RecipeDetailsComponent } from './recipe-details/recipe-details.component';
 import { SearchComponent } from './search/search.component';
@@ -56,7 +55,6 @@ import { IngredientDatabaseComponent } from './legal/ingredient-database/ingredi
   declarations: [
     AppComponent,
     HeaderComponent,
-    HeroesComponent,
     MyRecipesComponent,
     RecipeDetailsComponent,
     SearchComponent,

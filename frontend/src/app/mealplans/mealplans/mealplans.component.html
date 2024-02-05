@@ -1,5 +1,5 @@
 <!-- Mobile Search Screen -->
-<div *ngIf="isMobileDialogOpen">
+<div class="select-none" *ngIf="isMobileDialogOpen">
   <div class="flex justify-end">
     <button mat-icon-button (click)="closeMobileDialog()">
       <mat-icon aria-label="Close">close</mat-icon>
@@ -9,18 +9,18 @@
     <mat-label>Suche</mat-label>
     <input matInput [(ngModel)]="this.mobileSearchQuery">
   </mat-form-field>
-  <div class="w-4/5 mx-auto">
+  <div>
     <div
     (click)="openBottomSheet(recipe.id)"
-    class="flex my-2 h-16 items-center py-2 px-5 shadow-md cursor-pointer"
+    class="my-2 h-16 py-2 shadow-md cursor-pointer"
     *ngFor="let recipe of searchQueryRecipes()"
     >
-        <p class="w-1/2">{{recipe.name}}</p>
+        <p class="pl-5">{{recipe.name}}</p>
     </div>
   </div>
 </div> 
 <!-- Desktop and Mobile Main Screen -->
-<div *ngIf="!isMobileDialogOpen">
+<div class="select-none" *ngIf="!isMobileDialogOpen">
 <div class="flex items-center justify-center">
     <button mat-icon-button (click)="previousDay()">
       <mat-icon>keyboard_arrow_left</mat-icon>
@@ -32,8 +32,8 @@
       <mat-icon>keyboard_arrow_right</mat-icon>
     </button>
   </div>
-  <div class="flex flex-col items-center gap-10">
-    <app-mealplan-cards class="w-3/4" [mealKey]="mealsService.MealKey.BREAKFAST" [mealplan]="mealplan" [openDialog]="openDialog"></app-mealplan-cards>
-    <app-mealplan-cards class="w-3/4" [mealKey]="mealsService.MealKey.LUNCH" [mealplan]="mealplan" [openDialog]="openDialog"></app-mealplan-cards>
-    <app-mealplan-cards class="w-3/4" [mealKey]="mealsService.MealKey.DINNER" [mealplan]="mealplan" [openDialog]="openDialog"></app-mealplan-cards>
+  <div class="w-full flex flex-col items-center justify-center gap-10">
+    <app-mealplan-cards class="w-screen lg:w-3/4" [mealKey]="mealsService.MealKey.BREAKFAST" [mealplan]="mealplan" [openDialog]="openDialog"></app-mealplan-cards>
+    <app-mealplan-cards class="w-screen lg:w-3/4" [mealKey]="mealsService.MealKey.LUNCH" [mealplan]="mealplan" [openDialog]="openDialog"></app-mealplan-cards>
+    <app-mealplan-cards class="w-screen lg:w-3/4" [mealKey]="mealsService.MealKey.DINNER" [mealplan]="mealplan" [openDialog]="openDialog"></app-mealplan-cards>
   </div>

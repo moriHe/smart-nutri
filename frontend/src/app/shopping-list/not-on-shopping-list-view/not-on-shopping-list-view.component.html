@@ -1,6 +1,6 @@
 
 <app-shopping-list-bell [count]="mealplanNumberNotOnShoppingList"></app-shopping-list-bell>
-<div *ngIf="mealplanItem; else nonBlock">
+<div class="select-none" *ngIf="mealplanItem; else nonBlock">
     <div
     class="md:w-3/4 mx-auto"
     *ngFor="let item of mealplanItem.recipe.recipeIngredients"
@@ -22,11 +22,11 @@
     </mat-card-content>
   </mat-card>
   </div>
-  <div class="mx-auto lg:w-1/2 flex justify-around gap-3 mt-20">
-    <button (click)="openShoppingListView()" mat-raised-button color="warn">Abbrechen</button>
-    <button (click)="addMealplanToShoppingList('finish')" mat-raised-button color="accent">Speichern und Beenden</button>
+  <div class="mx-auto lg:w-1/2 flex justify-around gap-3 mt-20 md:mt-5">
+    <button color="warn" title="Abbrechen" mat-fab (click)="openShoppingListView()"><mat-icon>close</mat-icon></button>
+    <button title="Speichern und beenden" color="primary" mat-fab (click)="addMealplanToShoppingList('finish')"><mat-icon>add_to_queue</mat-icon></button>
     <div *ngIf="mealplanNumberNotOnShoppingList > 1">
-        <button (click)="addMealplanToShoppingList('next')" mat-raised-button color="primary">Speichern und weiter</button>  </div>
+        <button title="Speichern und weiter" color="primary" mat-fab (click)="addMealplanToShoppingList('next')"><mat-icon>queue_play_next</mat-icon></button></div>
   </div>
 </div>
 <ng-template #nonBlock>

@@ -7,6 +7,7 @@ import { Component, Input } from '@angular/core';
 })
 export class IngredientSourceComponent {
   @Input() url!: string
+  @Input() position: string = "bottom-0 left-0"
 
   openSource(event: Event) {
     event.stopPropagation()

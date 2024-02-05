@@ -23,7 +23,7 @@ class="md:w-3/4 mx-auto"
             <p>{{item.totalAmount}} <span>{{unitsService.ShoppingListUnitDisplay[item.unit]}}</span></p>
           </div>
             <div class="w-1/6">
-              <img *ngIf="item.isBio" class="w-8 h-8 mx-auto" src="assets/organic.png" />
+              <mat-icon *ngIf="item.isBio" [ngStyle]="{color: 'gray'}">compost</mat-icon>
             </div>
             <div *ngIf="category === 'TODAY'">
               Markt: {{marketsService.MarketDisplay[item.market]}}

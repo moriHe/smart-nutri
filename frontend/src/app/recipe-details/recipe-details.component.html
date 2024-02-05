@@ -1,6 +1,6 @@
-<section class="md:w-1/2 md:min-h-9/10 md:mx-auto md:shadow-paper md:border-x md:border-b">
+<section style="min-height: 80vh;" class="md:w-1/2 md:mx-auto md:shadow-paper md:border-x md:border-b">
     <ng-container *ngIf="recipe">
-        <div class="h-full w-full p-5">
+        <div class="h-full w-full md:p-5">
             <h2 class="text-center">{{recipe.name}}</h2>
             <div class="flex items-center my-10">
                 <div class="flex-grow h-[1px] bg-black">
@@ -30,21 +30,23 @@
         #accordionItem="cdkAccordionItem"
         >
         
-
+        <div class="relative">
+            <app-ingredient-source [position]="'top-0 right-0'" [url]="ingredient.sourceUrl"></app-ingredient-source>
+        </div>
         <div 
         (click)="accordionItem.toggle()"
-        class="flex h-16 items-center py-2 px-5 cursor-pointer" [class]="accordionItem.expanded ? '' : 'shadow-md'"
+        class="h-20 py-2 px-5 cursor-pointer select-none" [class]="accordionItem.expanded ? '' : 'shadow-md'"
         >
-          <p class="w-1/2">{{ingredient.name}}</p>
-            <div class="flex flex-grow">
-                <div class="basis-1/5">
+          <p>{{ingredient.name}}</p>
+            <div class="flex">
+                <div class="w-1/3">
                     <p class="text-center px-2 border border-slate-100 rounded-md bg-slate-100">{{ingredient.amountPerPortion}} {{unitsService.UnitDisplay[ingredient.unit]}}</p>
                 </div>
-                <div class="basis-3/5">
+                <div class="w-1/3">
                     <p class="text-center">{{marketsService.MarketDisplay[ingredient.market]}}</p>
                 </div>
-                <div class="basis-1/5">
-                    <img *ngIf="ingredient.isBio" class="w-8 h-8 mx-auto" src="assets/organic.png" />
+                <div class="flex justify-center w-1/3">
+                    <mat-icon *ngIf="ingredient.isBio" [ngStyle]="{color: 'gray'}">compost</mat-icon>
                 </div>
             </div>
         </div>
@@ -59,10 +61,6 @@
              (click)="deleteIngredient(ingredient.id, ingredient.name)"
              >delete_forever
              </mat-icon>
-            </div>
-            
-            <div class="relative">
-                <app-ingredient-source [url]="ingredient.sourceUrl"></app-ingredient-source>
             </div>
         </cdk-accordion-item >
     </div>

@@ -16,6 +16,9 @@ export class HeaderComponent {
 
   @HostListener("document:click", ["$event"])
   onDocumentClick(event: any): void {
+    if (!this.sidenav) {
+      return
+    }
     if (this.sidenav._elementRef.nativeElement.contains(event.target)) {
       return
     }

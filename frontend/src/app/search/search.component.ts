@@ -57,6 +57,7 @@ export class SearchComponent {
       if (this.recipe.id && result) {
         this.recipesService.addRecipeIngredient(this.recipe.id, {
           ingredientId,
+          // TODO: result.amountPerPortion is actually amountForAllPortions. Needs renaming
           amountPerPortion: Number(result.amountPerPortion) / this.recipe.defaultPortions,
           isBio: result.isBio,
           market: result.selectedMarket,

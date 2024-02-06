@@ -9,6 +9,7 @@ import { UnitsService } from "services/units.service";
   styleUrls: ['./search-ingredient-dialog.component.css']
 })
 export class SearchIngredientDialogComponent {
+  // TODO: result.amountPerPortion is actually amountForAllPortions. Needs renaming
   amountPerPortion: number = 1
   isBio: boolean = false
   selectedMarket: Markets = Markets.NONE

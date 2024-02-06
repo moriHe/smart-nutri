@@ -51,7 +51,7 @@ export class SearchComponent {
 
   openDialog(ingredientId: number, ingredientName: string): void {
     this.currentIngredientName = ingredientName
-    const dialogRef = this.dialog.open(SearchIngredientDialogComponent);
+    const dialogRef = this.dialog.open(SearchIngredientDialogComponent, {data: {defaultPortions: this.recipe.defaultPortions, ingredientName}});
 
     dialogRef.afterClosed().subscribe(result => {
       if (this.recipe.id && result) {

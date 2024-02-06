@@ -1,5 +1,5 @@
-import { Component } from "@angular/core";
-import { MatDialogRef } from '@angular/material/dialog';
+import { Component, Inject, Input } from "@angular/core";
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Markets, Units } from "api/recipes/recipes.interface";
 import { MarketsService } from "services/markets.service";
 import { UnitsService } from "services/units.service";
@@ -9,6 +9,7 @@ import { UnitsService } from "services/units.service";
   styleUrls: ['./search-ingredient-dialog.component.css']
 })
 export class SearchIngredientDialogComponent {
+  
   // TODO: result.amountPerPortion is actually amountForAllPortions. Needs renaming
   amountPerPortion: number = 1
   isBio: boolean = false
@@ -26,6 +27,7 @@ export class SearchIngredientDialogComponent {
   }
 
   constructor(
+    @Inject(MAT_DIALOG_DATA) public data: {defaultPortions: number, ingredientName: string},
     public dialogRef: MatDialogRef<SearchIngredientDialogComponent>,
     public marketsService: MarketsService,
     public unitsService: UnitsService

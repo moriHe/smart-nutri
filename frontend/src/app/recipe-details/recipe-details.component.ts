@@ -15,15 +15,6 @@ import { UnitsService } from 'services/units.service';
 export class RecipeDetailsComponent {
   recipe?: FullRecipe
 
-  ngOnInit(): void {
-    this.route.params.subscribe(params => {
-      const id = params['id']
-      this.recipesService.getRecipe(id).subscribe((response: FullRecipe) => {
-        this.recipe = response
-      });
-    })
-  }
-
   openSearch() {
     if (this.recipe) {
       this.router.navigateByUrl(`suche/${this.recipe.id}`)
@@ -69,6 +60,20 @@ export class RecipeDetailsComponent {
         }
       })
     }
+  }
+
+  roundAmount(amountPerPortion: number, defaultPortions: number): string {
+    const roundedAmount = (amountPerPortion * defaultPortions).toFixed(1)
+    return roundedAmount.endsWith(".0") ? parseInt(roundedAmount).toString() : roundedAmount
+  }
+
+  ngOnInit(): void {
+    this.route.params.subscribe(params => {
+      const id = params['id']
+      this.recipesService.getRecipe(id).subscribe((response: FullRecipe) => {
+        this.recipe = response
+      });
+    })
   }
 
   constructor(

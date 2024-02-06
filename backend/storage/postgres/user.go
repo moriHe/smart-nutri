@@ -49,7 +49,14 @@ func (s *Storage) PostUser(fireUid string) (*int, error) {
 
 func (s *Storage) PatchUser(userId int, newActiveFamilyId int) error {
 	var familyId int
-	err := s.Db.QueryRow(context.Background(), "select id from users_familys where user_id = $1 and family_id = $2", userId, newActiveFamilyId).Scan(&familyId)
+	tx, err := s.Db.Begin(context.Background())
+	if err != nil {
+		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("Start transaction failed")}
+	}
+
+	defer tx.Rollback(context.Background())
+
+	err = tx.QueryRow(context.Background(), "select id from users_familys where user_id = $1 and family_id = $2", userId, newActiveFamilyId).Scan(&familyId)
 	if err != nil || err == pgx.ErrNoRows {
 		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Not part of the community: %s", err)}
 	}
@@ -58,9 +65,14 @@ func (s *Storage) PatchUser(userId int, newActiveFamilyId int) error {
 		return nil
 	}
 
-	_, err = s.Db.Exec(context.Background(), "update users set active_family_id = $1 where id = $2", newActiveFamilyId, userId)
+	_, err = tx.Exec(context.Background(), "update users set active_family_id = $1 where id = $2", newActiveFamilyId, userId)
 	if err != nil {
 		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Failed to patch active family id: %s", err)}
+	}
+
+	err = tx.Commit(context.Background())
+	if err != nil {
+		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("Commit failed")}
 	}
 
 	return nil

@@ -70,7 +70,14 @@ var postRecipeIngredientQuery = "insert into recipes_ingredients(recipe_id, " +
 
 func (s *Storage) PostRecipe(familyId *int, payload types.PostRecipe) (*types.Id, error) {
 	var defaultMealId int
-	err := s.Db.QueryRow(context.Background(), "select (id) from meals where meals.meal = $1", payload.DefaultMeal).Scan(&defaultMealId)
+	tx, err := s.Db.Begin(context.Background())
+	if err != nil {
+		return nil, &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Transaction error: %s", err)}
+	}
+
+	defer tx.Rollback(context.Background())
+
+	err = tx.QueryRow(context.Background(), "select (id) from meals where meals.meal = $1", payload.DefaultMeal).Scan(&defaultMealId)
 	if err != nil {
 		return nil, &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Step 1: Failed to find meals name: %s", err)}
 	}
@@ -83,7 +90,7 @@ func (s *Storage) PostRecipe(familyId *int, payload types.PostRecipe) (*types.Id
 		defaultPortions = 1
 	}
 
-	err = s.Db.QueryRow(context.Background(), "insert into recipes (family_id, name, default_portions, default_meal) values ($1, $2, $3, $4) returning id", familyId, payload.Name, defaultPortions, defaultMealId).Scan(&recipeId)
+	err = tx.QueryRow(context.Background(), "insert into recipes (family_id, name, default_portions, default_meal) values ($1, $2, $3, $4) returning id", familyId, payload.Name, defaultPortions, defaultMealId).Scan(&recipeId)
 
 	if err != nil {
 		return nil, &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Step 1: Failed to create recipe: %s", err)}
@@ -92,7 +99,7 @@ func (s *Storage) PostRecipe(familyId *int, payload types.PostRecipe) (*types.Id
 	for i := 0; i < len(payload.RecipeIngredients); i++ {
 		recipeIngredient := payload.RecipeIngredients[i]
 		var unitId int
-		err := s.Db.QueryRow(context.Background(), "select (id) from units where units.name = $1", recipeIngredient.Unit).Scan(&unitId)
+		err := tx.QueryRow(context.Background(), "select (id) from units where units.name = $1", recipeIngredient.Unit).Scan(&unitId)
 
 		if err != nil {
 			s.DeleteRecipe(strconv.Itoa(recipeId))
@@ -100,41 +107,58 @@ func (s *Storage) PostRecipe(familyId *int, payload types.PostRecipe) (*types.Id
 		}
 
 		var marketId int
-		err = s.Db.QueryRow(context.Background(), "select (id) from markets where markets.name = $1", recipeIngredient.Market).Scan(&marketId)
+		err = tx.QueryRow(context.Background(), "select (id) from markets where markets.name = $1", recipeIngredient.Market).Scan(&marketId)
 
 		if err != nil {
 			s.DeleteRecipe(strconv.Itoa(recipeId))
 			return nil, &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Step 2a: Failed to create recipe: %s", err)}
 		}
 
-		_, err = s.Db.Exec(context.Background(), postRecipeIngredientQuery, recipeId, recipeIngredient.IngredientId, recipeIngredient.AmountPerPortion, unitId, marketId, recipeIngredient.IsBio)
+		_, err = tx.Exec(context.Background(), postRecipeIngredientQuery, recipeId, recipeIngredient.IngredientId, recipeIngredient.AmountPerPortion, unitId, marketId, recipeIngredient.IsBio)
 
 		if err != nil {
 			s.DeleteRecipe(strconv.Itoa(recipeId))
 			return nil, &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Step 2b: Failed to create recipe: %s", err)}
 		}
 	}
+
+	err = tx.Commit(context.Background())
+	if err != nil {
+		return nil, &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("Transaction failed")}
+	}
 	return &types.Id{Id: recipeId}, nil
 }
 
 func (s *Storage) PostRecipeIngredient(recipeId string, payload types.PostRecipeIngredient) (*int, error) {
 	var unitId int
-	err := s.Db.QueryRow(context.Background(), "select (id) from units where units.name = $1", payload.Unit).Scan(&unitId)
+	tx, err := s.Db.Begin(context.Background())
+	if err != nil {
+		return nil, &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Transaction error: %s", err)}
+	}
+
+	defer tx.Rollback(context.Background())
+
+	err = tx.QueryRow(context.Background(), "select (id) from units where units.name = $1", payload.Unit).Scan(&unitId)
 
 	if err != nil {
 		return nil, &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Step 1a: Failed to create recipe_ingredient: %s", err)}
 	}
 
 	var marketId int
-	err = s.Db.QueryRow(context.Background(), "select (id) from markets where markets.name = $1", payload.Market).Scan(&marketId)
+	err = tx.QueryRow(context.Background(), "select (id) from markets where markets.name = $1", payload.Market).Scan(&marketId)
 	if err != nil {
 		return nil, &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Step 1b: Failed to create recipe_ingredient: %s", err)}
 	}
 	var id int
-	err = s.Db.QueryRow(context.Background(), postRecipeIngredientQuery, recipeId, payload.IngredientId, payload.AmountPerPortion, unitId, marketId, payload.IsBio).Scan(&id)
+	err = tx.QueryRow(context.Background(), postRecipeIngredientQuery, recipeId, payload.IngredientId, payload.AmountPerPortion, unitId, marketId, payload.IsBio).Scan(&id)
 
 	if err != nil {
 		return nil, &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Step 2: Failed to post recipe_ingredient: %s", err)}
+	}
+
+	err = tx.Commit(context.Background())
+	if err != nil {
+		return nil, &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("Transaction failed")}
 	}
 
 	return &id, nil
@@ -157,8 +181,14 @@ func (s *Storage) PatchRecipeName(recipeId string, payload types.PatchRecipeName
 }
 
 func (s *Storage) DeleteRecipe(recipeId string) error {
+	tx, err := s.Db.Begin(context.Background())
+	if err != nil {
+		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Transaction error: %s", err)}
+	}
 
-	rows, err := s.Db.Query(context.Background(), "select id from mealplans where recipe_id = $1", recipeId)
+	defer tx.Rollback(context.Background())
+
+	rows, err := tx.Query(context.Background(), "select id from mealplans where recipe_id = $1", recipeId)
 	if err != nil {
 		return errors.New("delete mealplan recipe error 1")
 	}
@@ -170,24 +200,24 @@ func (s *Storage) DeleteRecipe(recipeId string) error {
 		if err != nil {
 			return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Delete recipe failed 1: %s", err)}
 		}
-		_, err = s.Db.Exec(context.Background(), "delete from shopping_list where mealplan_id = $1", mealplanId)
+		_, err = tx.Exec(context.Background(), "delete from shopping_list where mealplan_id = $1", mealplanId)
 		if err != nil {
 			return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Delete recipe failed 2: %s", err)}
 		}
 	}
 
-	_, err = s.Db.Exec(context.Background(), "delete from mealplans where recipe_id = $1", recipeId)
+	_, err = tx.Exec(context.Background(), "delete from mealplans where recipe_id = $1", recipeId)
 	if err != nil {
 		return errors.New("delete mealplan recipe error 2")
 
 	}
-	_, err = s.Db.Exec(context.Background(), "delete from recipes_ingredients where recipe_id = $1", recipeId)
+	_, err = tx.Exec(context.Background(), "delete from recipes_ingredients where recipe_id = $1", recipeId)
 	// rows affected
 	if err != nil {
 		return errors.New("deleteRecipe error")
 	}
 
-	recipe, err := s.Db.Exec(context.Background(), "delete from recipes where id = $1", recipeId)
+	recipe, err := tx.Exec(context.Background(), "delete from recipes where id = $1", recipeId)
 
 	if err != nil {
 		return errors.New("deleteRecipe error")
@@ -198,18 +228,30 @@ func (s *Storage) DeleteRecipe(recipeId string) error {
 		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("Recipe does not exist")}
 	}
 
+	err = tx.Commit(context.Background())
+	if err != nil {
+		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("Transaction failed")}
+	}
+
 	return nil
 }
 
 func (s *Storage) DeleteRecipeIngredient(recipeIngredientId string) error {
-	_, err := s.Db.Exec(context.Background(), "delete from shopping_list where recipes_ingredients_id = $1", recipeIngredientId)
+	tx, err := s.Db.Begin(context.Background())
+	if err != nil {
+		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("Start transaction failed")}
+	}
+
+	defer tx.Rollback(context.Background())
+
+	_, err = tx.Exec(context.Background(), "delete from shopping_list where recipes_ingredients_id = $1", recipeIngredientId)
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to delete recipe row: %v\n", err)
 		return errors.New("delete recipe ingredient because of shopping list error")
 	}
 
-	recipeIngredient, err := s.Db.Exec(context.Background(), "delete from recipes_ingredients where recipes_ingredients.id = $1", recipeIngredientId)
+	recipeIngredient, err := tx.Exec(context.Background(), "delete from recipes_ingredients where recipes_ingredients.id = $1", recipeIngredientId)
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to delete recipe row: %v\n", err)
@@ -218,6 +260,11 @@ func (s *Storage) DeleteRecipeIngredient(recipeIngredientId string) error {
 
 	if recipeIngredient.RowsAffected() == 0 {
 		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("Recipe ingredient does not exist")}
+	}
+
+	err = tx.Commit(context.Background())
+	if err != nil {
+		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("Commit failed")}
 	}
 
 	return nil

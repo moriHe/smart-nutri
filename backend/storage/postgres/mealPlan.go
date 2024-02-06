@@ -85,28 +85,47 @@ func (s *Storage) GetMealPlanItem(id string) (*types.FullMealPlanItem, error) {
 
 func (s *Storage) PostMealPlanItem(familyId *int, payload types.PostMealPlanItem) error {
 	var mealId int
-	err := s.Db.QueryRow(context.Background(), "select (id) from meals where meals.meal = $1", payload.Meal).Scan(&mealId)
+	tx, err := s.Db.Begin(context.Background())
+	if err != nil {
+		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Transaction error: %s", err)}
+	}
+
+	defer tx.Rollback(context.Background())
+
+	err = tx.QueryRow(context.Background(), "select (id) from meals where meals.meal = $1", payload.Meal).Scan(&mealId)
 	if err != nil {
 		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Step 1: Failed to find meal name: %s", err)}
 	}
 
-	_, err = s.Db.Exec(context.Background(), "insert into mealplans (family_id, recipe_id, date, meal, portions, is_shopping_list_item) values ($1, $2, $3, $4, $5, $6)", &familyId, &payload.RecipeId, &payload.Date, &mealId, &payload.Portions, &payload.IsShoppingListItem)
+	_, err = tx.Exec(context.Background(), "insert into mealplans (family_id, recipe_id, date, meal, portions, is_shopping_list_item) values ($1, $2, $3, $4, $5, $6)", &familyId, &payload.RecipeId, &payload.Date, &mealId, &payload.Portions, &payload.IsShoppingListItem)
 
 	if err != nil {
 		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Step 2: Failed to create mealplan item: %s", err)}
+	}
+
+	err = tx.Commit(context.Background())
+	if err != nil {
+		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("Transaction failed")}
 	}
 
 	return nil
 }
 
 func (s *Storage) DeleteMealPlanItem(id string) error {
-	shoppingListItem, err := s.Db.Exec(context.Background(), "delete from shopping_list where mealplan_id = $1", id)
+	tx, err := s.Db.Begin(context.Background())
+	if err != nil {
+		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Transaction error: %s", err)}
+	}
+
+	defer tx.Rollback(context.Background())
+
+	shoppingListItem, err := tx.Exec(context.Background(), "delete from shopping_list where mealplan_id = $1", id)
 
 	if err != nil {
 		return errors.New(fmt.Sprintf("Unable to delete mealplan item 1: %v\n", err))
 	}
 
-	mealplanItem, err := s.Db.Exec(context.Background(), "delete from mealplans where mealplans.id = $1", id)
+	mealplanItem, err := tx.Exec(context.Background(), "delete from mealplans where mealplans.id = $1", id)
 
 	if err != nil {
 		return errors.New(fmt.Sprintf("Unable to delete mealplan item 2: %v\n", err))
@@ -114,6 +133,11 @@ func (s *Storage) DeleteMealPlanItem(id string) error {
 
 	if shoppingListItem.RowsAffected() == 0 || mealplanItem.RowsAffected() == 0 {
 		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("Mealplan item does not exist")}
+	}
+
+	err = tx.Commit(context.Background())
+	if err != nil {
+		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("Transaction failed")}
 	}
 
 	return nil

@@ -2,23 +2,24 @@
     <ng-container *ngIf="recipe">
         <div class="h-full w-full md:p-5">
             <h2 class="text-center">{{recipe.name}}</h2>
-            <div class="flex items-center my-10">
-                <div class="flex-grow h-[1px] bg-black">
-                    <p class="text-xs text-slate-500 text-start">Mahlzeit: {{mealsService.MealDisplay[recipe.defaultMeal]}}</p>
-                </div>
-                <div class="w-42 h-32 rounded-full mx-[0] my-[10px] overflow-hidden">
-                    <img class="w-full h-full" src="/assets/recipe-placeholder.jpg" />
-                </div>
-                <div class="flex-grow h-[1px] bg-black">
-                    <p class="text-xs text-slate-500 text-end">Portionen: {{recipe.defaultPortions}}</p>
-                        <button
-                        (click)="openSearch()"
-                         mat-fab color="primary"
-                         >
-                            <mat-icon>add</mat-icon>
-                        </button>
-                </div>
+            <div class="mx-auto w-32 h-32 rounded-full mx-[0] my-[10px] overflow-hidden">
+                <img class="w-full h-full" src="/assets/recipe-placeholder.jpg" />
             </div>
+            <mat-divider></mat-divider>
+            <div class="flex p-5 gap-20">
+                <div class="pl-2">
+                    <p class="text-xs text-slate-500">Mahlzeit: {{mealsService.MealDisplay[recipe.defaultMeal]}}</p>
+                    <p class="text-xs text-slate-500">Portionen: {{recipe.defaultPortions}}</p>
+                </div>
+                <button
+                    class="ml-auto"
+                    (click)="openSearch()"
+                    mat-fab color="primary"
+                    >
+                    <mat-icon>add</mat-icon>
+                </button>
+            </div>
+            
         <cdk-accordion 
         *ngFor="let ingredient of recipe.recipeIngredients"
         >

@@ -51,6 +51,8 @@ import { RedirectComponentComponent } from './redirect-component/redirect-compon
 import { IngredientSourceComponent } from './ingredient-source/ingredient-source.component';
 import { IngredientDatabaseComponent } from './legal/ingredient-database/ingredient-database.component';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import {MatDividerModule} from '@angular/material/divider';
+
 
 
 @NgModule({
@@ -107,7 +109,8 @@ import {MatTooltipModule} from '@angular/material/tooltip';
     MatSidenavModule,
     MatCardModule,
     MatTooltipModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatDividerModule
   ],
   providers: [
     SupabaseService,

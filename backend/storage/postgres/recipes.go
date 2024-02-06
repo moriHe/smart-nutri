@@ -185,52 +185,37 @@ func (s *Storage) DeleteRecipe(recipeId string) error {
 	if err != nil {
 		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Transaction error: %s", err)}
 	}
-
 	defer tx.Rollback(context.Background())
 
-	rows, err := tx.Query(context.Background(), "select id from mealplans where recipe_id = $1", recipeId)
+	// Delete related records in a single transaction
+	_, err = tx.Exec(context.Background(), "DELETE FROM shopping_list WHERE mealplan_id IN (SELECT id FROM mealplans WHERE recipe_id = $1)", recipeId)
 	if err != nil {
-		return errors.New("delete mealplan recipe error 1")
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var mealplanId int
-		err := rows.Scan(&mealplanId)
-		if err != nil {
-			return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Delete recipe failed 1: %s", err)}
-		}
-		_, err = tx.Exec(context.Background(), "delete from shopping_list where mealplan_id = $1", mealplanId)
-		if err != nil {
-			return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Delete recipe failed 2: %s", err)}
-		}
+		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Delete shopping list error: %s", err)}
 	}
 
-	_, err = tx.Exec(context.Background(), "delete from mealplans where recipe_id = $1", recipeId)
+	_, err = tx.Exec(context.Background(), "DELETE FROM mealplans WHERE recipe_id = $1", recipeId)
 	if err != nil {
-		return errors.New("delete mealplan recipe error 2")
-
+		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Delete mealplans error: %s", err)}
 	}
-	_, err = tx.Exec(context.Background(), "delete from recipes_ingredients where recipe_id = $1", recipeId)
-	// rows affected
+
+	_, err = tx.Exec(context.Background(), "DELETE FROM recipes_ingredients WHERE recipe_id = $1", recipeId)
 	if err != nil {
-		return errors.New("deleteRecipe error")
+		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Delete recipes ingredients error: %s", err)}
 	}
 
-	recipe, err := tx.Exec(context.Background(), "delete from recipes where id = $1", recipeId)
-
+	res, err := tx.Exec(context.Background(), "DELETE FROM recipes WHERE id = $1", recipeId)
 	if err != nil {
-		return errors.New("deleteRecipe error")
-
+		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Delete recipe error: %s", err)}
 	}
 
-	if recipe.RowsAffected() == 0 {
-		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("Recipe does not exist")}
+	if res.RowsAffected() == 0 {
+		return &types.RequestError{Status: http.StatusBadRequest, Msg: "Recipe does not exist"}
 	}
 
+	// Commit the transaction
 	err = tx.Commit(context.Background())
 	if err != nil {
-		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("Transaction failed")}
+		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Transaction commit failed: %s", err)}
 	}
 
 	return nil

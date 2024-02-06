@@ -23,10 +23,10 @@
   </mat-card>
   </div>
   <div class="mx-auto lg:w-1/2 flex justify-around gap-3 mt-20 md:mt-5">
-    <button color="warn" title="Abbrechen" mat-fab (click)="openShoppingListView()"><mat-icon>close</mat-icon></button>
-    <button title="Speichern und beenden" color="primary" mat-fab (click)="addMealplanToShoppingList('finish')"><mat-icon>add_to_queue</mat-icon></button>
+    <button color="warn" matTooltip="Abbrechen" mat-fab (click)="openShoppingListView()"><mat-icon>close</mat-icon></button>
+    <button matTooltip="Speichern und beenden" color="primary" mat-fab (click)="addMealplanToShoppingList('finish')"><mat-icon>add_to_queue</mat-icon></button>
     <div *ngIf="mealplanNumberNotOnShoppingList > 1">
-        <button title="Speichern und weiter" color="primary" mat-fab (click)="addMealplanToShoppingList('next')"><mat-icon>queue_play_next</mat-icon></button></div>
+        <button matTooltip="Speichern und weiter" color="primary" mat-fab (click)="addMealplanToShoppingList('next')"><mat-icon>queue_play_next</mat-icon></button></div>
   </div>
 </div>
 <ng-template #nonBlock>

@@ -50,6 +50,8 @@ import { CookieBannerComponent } from './legal/cookie-banner/cookie-banner.compo
 import { RedirectComponentComponent } from './redirect-component/redirect-component.component';
 import { IngredientSourceComponent } from './ingredient-source/ingredient-source.component';
 import { IngredientDatabaseComponent } from './legal/ingredient-database/ingredient-database.component';
+import {MatTooltipModule} from '@angular/material/tooltip';
+
 
 @NgModule({
   declarations: [
@@ -104,6 +106,7 @@ import { IngredientDatabaseComponent } from './legal/ingredient-database/ingredi
     MatBottomSheetModule,
     MatSidenavModule,
     MatCardModule,
+    MatTooltipModule,
     MatExpansionModule
   ],
   providers: [

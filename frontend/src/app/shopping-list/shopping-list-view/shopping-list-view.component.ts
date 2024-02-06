@@ -1,3 +1,4 @@
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { DatePipe } from '@angular/common';
 import { Component, Inject, Input, LOCALE_ID } from '@angular/core';
 import { MealplansService } from 'api/mealplans/mealplans.service';
@@ -15,6 +16,7 @@ import { UnitsService } from 'services/units.service';
   styleUrls: ['./shopping-list-view.component.css']
 })
 export class ShoppingListViewComponent {
+  isMobile = false
   @Input() openAddItemsView!: () => void
   categories = shoppingListCategories
   shoppingListByCategory: ShoppingListByCategory = {
@@ -73,9 +75,17 @@ removeFromShoppingList(ids: number[], event: Event) {
 
   ngOnInit(): void {
     this.updateListItems()
+
+    this.breakpointObserver.observe([
+      Breakpoints.Handset,
+      Breakpoints.Tablet,
+    ]).subscribe(result => {
+      this.isMobile = result.matches;
+    });
   }
 
   constructor(
+    private breakpointObserver: BreakpointObserver,
     private datePipe: DatePipe,
     @Inject(LOCALE_ID) private locale: string,
     private mealplansService: MealplansService,

@@ -21,7 +21,7 @@ func (s *Server) handleGetInvitationLink(c *gin.Context) {
 	token, err := s.store.GetInvitationLink(user)
 
 	encodedToken := url.QueryEscape(token)
-	invitationURL := fmt.Sprintf("%seinladung/akzeptieren?token=%s", os.Getenv("FRONTEND_URL"), encodedToken)
+	invitationURL := fmt.Sprintf("%s/einladung/akzeptieren?token=%s", os.Getenv("FRONTEND_URL"), encodedToken)
 	responses.HandleResponse[string](c, invitationURL, err)
 }
 

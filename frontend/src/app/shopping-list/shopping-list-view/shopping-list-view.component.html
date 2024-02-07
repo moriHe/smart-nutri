@@ -36,7 +36,7 @@
                 <mat-icon
                  (click)="$event.stopPropagation();"
                  matTooltipHideDelay="500"
-                 matTooltipPosition="above"
+                 [matTooltipPosition]="'above'"
                  [ngStyle]="{color: 'gray'}" 
                  [matTooltip]="marketsService.MarketDisplay[item.market]">
                  storefront

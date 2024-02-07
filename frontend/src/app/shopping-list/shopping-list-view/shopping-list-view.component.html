@@ -15,7 +15,7 @@
       </div>
       <mat-expansion-panel>
         <mat-expansion-panel-header [collapsedHeight]="'5em'">
-          <mat-panel-description>
+          <mat-panel-description (click)="$event.stopPropagation();">
            
           <div class="flex-col w-full">
             <div class="flex">

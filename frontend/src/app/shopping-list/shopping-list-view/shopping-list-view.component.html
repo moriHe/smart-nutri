@@ -7,20 +7,18 @@
     <div *ngIf="shoppingListByCategory[category].length > 0">
       <h2>Markt: {{marketsService.ShoppingListDisplay[category]}}</h2>
       <div *ngFor="let item of shoppingListByCategory[category]"
-      [ngClass]="item.shoppingListIds.length <= 1 ? 'pointer-events-none' : ''"
       style="margin-top: 25px; margin-bottom: 10px; padding-top: 10px; padding-bottom: 10px;">
       <mat-accordion [hideToggle]="item.shoppingListIds.length <= 1">
-        <div class="relative pointer-events-auto">
+        <div class="relative">
         <app-ingredient-source [url]="item.sourceUrl"></app-ingredient-source>
       </div>
-      <mat-expansion-panel>
+      <mat-expansion-panel [disabled]="item.shoppingListIds.length <= 1">
         <mat-expansion-panel-header [collapsedHeight]="'5em'">
-          <mat-panel-description (click)="$event.stopPropagation();">
+          <mat-panel-description>
            
           <div class="flex-col w-full">
             <div class="flex">
               <mat-icon 
-            class="pointer-events-auto"
             (click)="removeFromShoppingList(item.shoppingListIds, $event)"
             color="primary" 
             aria-label="Example icon button with a menu icon">
@@ -35,7 +33,14 @@
             <div class="w-1/5">
                 <mat-icon *ngIf="item.isBio" [ngStyle]="{color: 'gray'}">compost</mat-icon>
             </div>
-                <mat-icon [ngStyle]="{color: 'gray'}" [matTooltip]="marketsService.MarketDisplay[item.market]">storefront</mat-icon>
+                <mat-icon
+                 (click)="$event.stopPropagation();"
+                 matTooltipHideDelay="500"
+                 matTooltipPosition="above"
+                 [ngStyle]="{color: 'gray'}" 
+                 [matTooltip]="marketsService.MarketDisplay[item.market]">
+                 storefront
+                </mat-icon>
             </div>
           </div>
             </mat-panel-description>

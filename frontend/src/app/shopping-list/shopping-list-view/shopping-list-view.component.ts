@@ -1,11 +1,10 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { DatePipe } from '@angular/common';
-import { Component, Inject, Input, LOCALE_ID } from '@angular/core';
+import { Component, Inject, Input, LOCALE_ID, ViewChild } from '@angular/core';
+import { MatExpansionPanel } from '@angular/material/expansion';
 import { MealplansService } from 'api/mealplans/mealplans.service';
-import { Markets } from 'api/recipes/recipes.interface';
 import { ShoppingListByCategory, shoppingListCategories } from 'api/shopping-list/shopping-list.interface';
 import { ShoppingListService } from 'api/shopping-list/shopping-list.service';
-import { isSameDay } from 'date-fns';
 import { take } from 'rxjs';
 import { MarketsService } from 'services/markets.service';
 import { UnitsService } from 'services/units.service';
@@ -23,6 +22,21 @@ export class ShoppingListViewComponent {
     TODAY: [], REWE: [], EDEKA: [], BIO_COMPANY: [], WEEKLY_MARKET: [], ALDI: [], LIDL: [], NONE: []
   }
   mealplanNumberNotOnShoppingList = 0
+  @ViewChild(MatExpansionPanel, {static: true}) matExpansionPanelElement!: MatExpansionPanel;
+
+
+  closePanel() {
+    this.matExpansionPanelElement.close()
+}
+
+  openPanel() {
+    this.matExpansionPanelElement.open()
+  }
+
+  togglePanel() {
+    this.matExpansionPanelElement.toggle()
+  }
+
 
 displayDate(dateString: string): string {
   const mealplanDateStr = new Date(dateString).toDateString()

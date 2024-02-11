@@ -48,6 +48,7 @@ func (s *Server) handlePostMealPlanItem(c *gin.Context) {
 
 	if err := c.BindJSON(&payload); err != nil {
 		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Payload malformed"})
+		return
 	} else {
 		responses.HandleResponse(c, "Added mealplan item", s.store.PostMealPlanItem(user.ActiveFamilyId, payload))
 	}

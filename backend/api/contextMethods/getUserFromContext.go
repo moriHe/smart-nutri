@@ -12,7 +12,6 @@ func GetUserFromContext(c *gin.Context) *types.User {
 	userInterface, exists := c.Get("user")
 	if !exists {
 		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusUnauthorized, Msg: "User interface not found"})
-		c.Abort()
 		return nil
 	}
 
@@ -20,7 +19,6 @@ func GetUserFromContext(c *gin.Context) *types.User {
 
 	if !ok || !exists {
 		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusInternalServerError, Msg: "Internal Server Error"})
-		c.Abort()
 		return nil
 	}
 	return user

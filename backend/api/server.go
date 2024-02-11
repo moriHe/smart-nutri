@@ -65,10 +65,11 @@ func (s *Server) handleGetSecret(c *gin.Context) {
 	secretHeader := c.GetHeader("Secret")
 	if secret == secretHeader {
 		responses.HandleResponse(c, "Permission acknowledged", nil)
+		return
 	} else {
 		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Permission denied"})
+		return
 	}
-	c.Abort()
 }
 
 func (s *Server) handleGetIngredientTable(c *gin.Context) {

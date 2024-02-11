@@ -40,13 +40,11 @@ func (s *Server) AuthMiddleWare() gin.HandlerFunc {
 		fireUid := s.GetIdToken(c)
 		if fireUid == "" {
 			responses.ErrorResponse(c, &types.RequestError{Status: http.StatusUnauthorized, Msg: "No uid in token"})
-			c.Abort()
 			return
 		}
 		user, err := s.store.GetUser(fireUid)
 		if err != nil {
 			responses.ErrorResponse(c, &types.RequestError{Status: http.StatusUnauthorized, Msg: "No user found"})
-			c.Abort()
 			return
 		}
 

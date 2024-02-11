@@ -24,7 +24,6 @@ func (s *Server) handleGetAllRecipes(c *gin.Context) {
 
 	if user.ActiveFamilyId == nil {
 		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "No Family"})
-		c.Abort() // TODO: abort where necessary
 		return
 	}
 	recipes, err := s.store.GetAllRecipes(user)
@@ -52,6 +51,7 @@ func (s *Server) handlePostRecipe(c *gin.Context) {
 
 	if err := c.BindJSON(&payload); err != nil {
 		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: err.Error()})
+		return
 	} else {
 		response, err := s.store.PostRecipe(user.ActiveFamilyId, payload)
 		responses.HandleResponse(c, response, err)
@@ -63,6 +63,7 @@ func (s *Server) handlePostRecipeIngredient(c *gin.Context) {
 	var payload types.PostRecipeIngredient
 	if err := c.BindJSON(&payload); err != nil {
 		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Payload malformed"})
+		return
 	} else {
 		id, err := s.store.PostRecipeIngredient(recipeId, payload)
 		responses.HandleResponse(c, id, err)
@@ -75,6 +76,7 @@ func (s *Server) handlePatchRecipeName(c *gin.Context) {
 
 	if err := c.BindJSON(&payload); err != nil {
 		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Payload malformed"})
+		return
 	} else {
 		responses.HandleResponse(c, "Recipe name updated", s.store.PatchRecipeName(recipeId, payload))
 	}

@@ -27,7 +27,6 @@ func (s *Server) handlePostUser(c *gin.Context) {
 	fireUid := s.GetIdToken(c)
 	if fireUid == "" {
 		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusUnauthorized, Msg: "Not authorized 1"})
-		c.Abort()
 		return
 	} else {
 		userId, err := s.store.PostUser(fireUid)
@@ -47,6 +46,7 @@ func (s *Server) handlePatchUser(c *gin.Context) {
 	var payload types.PatchUser
 	if err := c.BindJSON(&payload); err != nil {
 		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: err.Error()})
+		return
 	} else {
 		err := s.store.PatchUser(user.Id, payload.NewActiveFamilyId)
 		responses.HandleResponse(c, "Patch succeeded", err)

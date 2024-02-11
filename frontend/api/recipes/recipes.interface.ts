@@ -30,6 +30,9 @@ export enum Units {
   'MILLILITER' = 'MILLILITER',
   'TABLESPOON' = 'TABLESPOON',
   'TEASPOON' = 'TEASPOON',
+  'PINCH' = 'PINCH',
+  'PIECE' = 'PIECE',
+  'WHOLE' = 'WHOLE'
 }
 
 export interface RecipeIngredient {

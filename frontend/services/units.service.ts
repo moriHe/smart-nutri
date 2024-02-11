@@ -11,6 +11,9 @@ export class UnitsService {
     [Units.MILLILITER]: "ml",
     [Units.TABLESPOON]: "EL",
     [Units.TEASPOON]: "TL",
+    [Units.PINCH]: "Prise",
+    [Units.PIECE]: "Stk.",
+    [Units.WHOLE]: "Ganze/r"
   }
 
   ShoppingListUnitDisplay = {...this.UnitDisplay, PARTIAL: ""}

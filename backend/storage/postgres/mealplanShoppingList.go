@@ -18,9 +18,11 @@ var newQuery = "select shopping_list.id, markets.name, shopping_list.is_bio, rec
 	"left join markets on shopping_list.market = markets.id left join ingredients on recipes_ingredients.ingredient_id = ingredients.id " +
 	"where shopping_list.family_id = $1;"
 
-	// type ShoppingList struct {
-
-	// }
+var validUnits = map[string]bool{
+	"PINCH":      true,
+	"TABLESPOON": true,
+	"TEASPOON":   true,
+}
 
 func (s *Storage) GetShoppingListSorted(familyId *int) (*types.ShoppingListByategory, error) {
 	currentDate := time.Now().UTC()
@@ -82,7 +84,7 @@ func (s *Storage) GetShoppingListSorted(familyId *int) (*types.ShoppingListByate
 				existingItem.IsBio == item.IsBio &&
 				existingItem.IngredientId == item.IngredientId &&
 				existingItem.IngredientUnit == "PARTIAL" &&
-				(item.IngredientUnit == "TABLESPOON" || item.IngredientUnit == "TEASPOON") {
+				validUnits[item.IngredientUnit] {
 				shoppingList[i].IsDueToday = shoppingList[i].IsDueToday || isDueToday
 				shoppingList[i].ShoppingListIds = append(shoppingList[i].ShoppingListIds, item.ShoppingListId)
 				shoppingList[i].Items = append(existingItem.Items, types.ShoppingListItem{
@@ -99,7 +101,7 @@ func (s *Storage) GetShoppingListSorted(familyId *int) (*types.ShoppingListByate
 			}
 		}
 
-		if !found && (item.IngredientUnit == "TABLESPOON" || item.IngredientUnit == "TEASPOON") {
+		if !found && validUnits[item.IngredientUnit] {
 			shoppingList = append(shoppingList, types.ShoppingListItemsCommonProps{
 				ShoppingListIds: []int{item.ShoppingListId},
 				SourceUrl:       item.SourceUrl,

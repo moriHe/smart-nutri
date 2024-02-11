@@ -25,9 +25,10 @@ func (s *Server) handleGetAllRecipes(c *gin.Context) {
 	if user.ActiveFamilyId == nil {
 		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "No Family"})
 		c.Abort() // TODO: abort where necessary
+		return
 	}
 	recipes, err := s.store.GetAllRecipes(user)
-	responses.HandleResponse[*[]types.RecipeWithoutIngredients](c, recipes, err)
+	responses.HandleResponse(c, recipes, err)
 }
 
 func (s *Server) handleGetRecipeById(c *gin.Context) {
@@ -36,10 +37,11 @@ func (s *Server) handleGetRecipeById(c *gin.Context) {
 
 	if user.ActiveFamilyId == nil {
 		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "No Family"})
+		return
 	}
 
 	recipe, err := s.store.GetRecipeById(id, user.ActiveFamilyId)
-	responses.HandleResponse[*types.FullRecipe](c, recipe, err)
+	responses.HandleResponse(c, recipe, err)
 
 }
 
@@ -52,7 +54,7 @@ func (s *Server) handlePostRecipe(c *gin.Context) {
 		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: err.Error()})
 	} else {
 		response, err := s.store.PostRecipe(user.ActiveFamilyId, payload)
-		responses.HandleResponse[*types.Id](c, response, err)
+		responses.HandleResponse(c, response, err)
 	}
 }
 
@@ -63,7 +65,7 @@ func (s *Server) handlePostRecipeIngredient(c *gin.Context) {
 		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Payload malformed"})
 	} else {
 		id, err := s.store.PostRecipeIngredient(recipeId, payload)
-		responses.HandleResponse[*int](c, id, err)
+		responses.HandleResponse(c, id, err)
 	}
 }
 
@@ -74,16 +76,16 @@ func (s *Server) handlePatchRecipeName(c *gin.Context) {
 	if err := c.BindJSON(&payload); err != nil {
 		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Payload malformed"})
 	} else {
-		responses.HandleResponse[string](c, "Recipe name updated", s.store.PatchRecipeName(recipeId, payload))
+		responses.HandleResponse(c, "Recipe name updated", s.store.PatchRecipeName(recipeId, payload))
 	}
 }
 
 func (s *Server) handleDeleteRecipe(c *gin.Context) {
 	recipeId := c.Param("id")
-	responses.HandleResponse[string](c, "Recipe deleted", s.store.DeleteRecipe(recipeId))
+	responses.HandleResponse(c, "Recipe deleted", s.store.DeleteRecipe(recipeId))
 }
 
 func (s *Server) handleDeleteRecipeIngredient(c *gin.Context) {
 	recipeId := c.Param("id")
-	responses.HandleResponse[string](c, "Recipe ingredient deleted", s.store.DeleteRecipeIngredient(recipeId))
+	responses.HandleResponse(c, "Recipe ingredient deleted", s.store.DeleteRecipeIngredient(recipeId))
 }

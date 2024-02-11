@@ -64,7 +64,7 @@ func (s *Server) handleGetSecret(c *gin.Context) {
 	secret := os.Getenv("USER_SECRET")
 	secretHeader := c.GetHeader("Secret")
 	if secret == secretHeader {
-		responses.HandleResponse[string](c, "Permission acknowledged", nil)
+		responses.HandleResponse(c, "Permission acknowledged", nil)
 	} else {
 		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Permission denied"})
 	}

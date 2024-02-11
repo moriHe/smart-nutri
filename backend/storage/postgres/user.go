@@ -10,22 +10,22 @@ import (
 	"github.com/moriHe/smart-nutri/types"
 )
 
-func marshalUser(user *types.User) (*types.User, error) {
+func marshalUser(user *types.User) (*types.User, *types.RequestError) {
 	result, err := json.Marshal(user)
 	if err != nil {
-		return nil, err
+		return nil, &types.RequestError{Status: http.StatusInternalServerError, Msg: "Something went wrong"}
 	}
 
 	var marshaledUser types.User
 	err = json.Unmarshal(result, &marshaledUser)
 	if err != nil {
-		return nil, err
+		return nil, &types.RequestError{Status: http.StatusInternalServerError, Msg: "Something went wrong"}
 	}
 
 	return &marshaledUser, nil
 }
 
-func (s *Storage) GetUser(fireUid string) (*types.User, error) {
+func (s *Storage) GetUser(fireUid string) (*types.User, *types.RequestError) {
 	var user types.User
 	err := s.Db.QueryRow(context.Background(), "select id, active_family_id from users where supabase_uid = $1", fireUid).Scan(&user.Id, &user.ActiveFamilyId)
 
@@ -35,7 +35,7 @@ func (s *Storage) GetUser(fireUid string) (*types.User, error) {
 	return marshalUser(&user)
 }
 
-func (s *Storage) PostUser(fireUid string) (*int, error) {
+func (s *Storage) PostUser(fireUid string) (*int, *types.RequestError) {
 	var userId int
 
 	err := s.Db.QueryRow(context.Background(), "insert into users (supabase_uid) values ($1) returning id", fireUid).Scan(&userId)
@@ -47,7 +47,7 @@ func (s *Storage) PostUser(fireUid string) (*int, error) {
 	return &userId, nil
 }
 
-func (s *Storage) PatchUser(userId int, newActiveFamilyId int) error {
+func (s *Storage) PatchUser(userId int, newActiveFamilyId int) *types.RequestError {
 	var familyId int
 	tx, err := s.Db.Begin(context.Background())
 	if err != nil {
@@ -78,7 +78,7 @@ func (s *Storage) PatchUser(userId int, newActiveFamilyId int) error {
 	return nil
 }
 
-func (s *Storage) GetUserFamilys(userId int) (*[]types.UserFamily, error) {
+func (s *Storage) GetUserFamilys(userId int) (*[]types.UserFamily, *types.RequestError) {
 	rows, err := s.Db.Query(context.Background(), "select uf.id, uf.family_id, familys.name, uf.user_role from users_familys as uf join familys on uf.family_id = familys.id where uf.user_id = $1", userId)
 	if err != nil {
 		return nil, &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Failed to query users_familys: %s", err)}

@@ -25,7 +25,7 @@ func generateSecureToken() (string, error) {
 	return token, nil
 }
 
-func (s *Storage) GetInvitationLink(user *types.User) (string, error) {
+func (s *Storage) GetInvitationLink(user *types.User) (string, *types.RequestError) {
 	var userRole string
 	err := s.Db.QueryRow(
 		context.Background(),
@@ -56,7 +56,7 @@ func (s *Storage) GetInvitationLink(user *types.User) (string, error) {
 
 }
 
-func addUserToFamily(db *pgxpool.Pool, userId int, token string) error {
+func addUserToFamily(db *pgxpool.Pool, userId int, token string) *types.RequestError {
 	var familyId int
 
 	tx, err := db.Begin(context.Background())
@@ -103,19 +103,20 @@ func addUserToFamily(db *pgxpool.Pool, userId int, token string) error {
 }
 
 // TODO: proper rollback and delete invitation link no matter what
-func (s *Storage) AcceptInvitation(userId int, token string) error {
-	var queryErr error = nil
+func (s *Storage) AcceptInvitation(userId int, token string) *types.RequestError {
+	var queryErr *types.RequestError = nil
 	err := addUserToFamily(s.Db, userId, token)
 	if err != nil {
 		queryErr = err
 	}
-	_, err = s.Db.Exec(context.Background(), "delete from invitations where token = $1", token)
-	if err != nil {
-		if queryErr != nil {
-			return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("Delete invitation failed")}
-		}
-		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("Could not delete invitation")}
+	_, errOnDelete := s.Db.Exec(context.Background(), "delete from invitations where token = $1", token)
+	if queryErr != nil {
+		return queryErr
+
+	}
+	if errOnDelete != nil {
+		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprint("Could not delete invitation link")}
 	}
 
-	return queryErr
+	return nil
 }

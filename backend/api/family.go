@@ -21,6 +21,6 @@ func (s *Server) handlePostFamily(c *gin.Context) {
 		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: err.Error()})
 	} else {
 		err := s.store.PostFamily(payload.Name, user.Id)
-		responses.HandleResponse[string](c, "Added family", err)
+		responses.HandleResponse(c, "Added family", err)
 	}
 }

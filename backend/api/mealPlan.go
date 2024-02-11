@@ -30,8 +30,8 @@ func (s *Server) handleGetMealPlan(c *gin.Context) {
 		return
 	}
 
-	mealPlan, err := s.store.GetMealPlan(user.ActiveFamilyId, formattedTimestamp, forShoppingListStr)
-	responses.HandleResponse[*[]types.ShallowMealPlanItem](c, mealPlan, err)
+	mealPlan, getmealplanErr := s.store.GetMealPlan(user.ActiveFamilyId, formattedTimestamp, forShoppingListStr)
+	responses.HandleResponse(c, mealPlan, getmealplanErr)
 }
 
 func (s *Server) handleGetMealPlanItem(c *gin.Context) {
@@ -39,7 +39,7 @@ func (s *Server) handleGetMealPlanItem(c *gin.Context) {
 
 	mealPlanItem, err := s.store.GetMealPlanItem(id)
 
-	responses.HandleResponse[*types.FullMealPlanItem](c, mealPlanItem, err)
+	responses.HandleResponse(c, mealPlanItem, err)
 }
 
 func (s *Server) handlePostMealPlanItem(c *gin.Context) {
@@ -49,12 +49,12 @@ func (s *Server) handlePostMealPlanItem(c *gin.Context) {
 	if err := c.BindJSON(&payload); err != nil {
 		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Payload malformed"})
 	} else {
-		responses.HandleResponse[string](c, "Added mealplan item", s.store.PostMealPlanItem(user.ActiveFamilyId, payload))
+		responses.HandleResponse(c, "Added mealplan item", s.store.PostMealPlanItem(user.ActiveFamilyId, payload))
 	}
 }
 
 func (s *Server) handleDeleteMealPlanItem(c *gin.Context) {
 	id := c.Param("id")
 
-	responses.HandleResponse[string](c, "Deleted mealplan item", s.store.DeleteMealPlanItem(id))
+	responses.HandleResponse(c, "Deleted mealplan item", s.store.DeleteMealPlanItem(id))
 }

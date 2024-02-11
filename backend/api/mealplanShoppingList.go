@@ -21,7 +21,7 @@ func (s *Server) handleGetMealplanItemsShoppingList(c *gin.Context) {
 	user := contextmethods.GetUserFromContext(c)
 	mealplanItemsShoppingList, err := s.store.GetMealPlanItemsShoppingList(user.ActiveFamilyId)
 
-	responses.HandleResponse[*[]types.ShoppingListMealplanItem](c, mealplanItemsShoppingList, err)
+	responses.HandleResponse(c, mealplanItemsShoppingList, err)
 }
 
 func (s *Server) handlePostShoppingList(c *gin.Context) {
@@ -34,23 +34,23 @@ func (s *Server) handlePostShoppingList(c *gin.Context) {
 		return
 	}
 
-	responses.HandleResponse[string](c, "Added mealplan item to shopping list", s.store.PostShoppingList(payload, user.ActiveFamilyId, mealplanId))
+	responses.HandleResponse(c, "Added mealplan item to shopping list", s.store.PostShoppingList(payload, user.ActiveFamilyId, mealplanId))
 }
 
 func (s *Server) handleDeleteMealPlanItemShoppingList(c *gin.Context) {
 	id := c.Param("id")
-	responses.HandleResponse[string](c, "Deleted shopping list item", s.store.DeleteMealPlanItemShoppingList(id))
+	responses.HandleResponse(c, "Deleted shopping list item", s.store.DeleteMealPlanItemShoppingList(id))
 }
 
 func (s *Server) handleDeleteShoppingListItems(c *gin.Context) {
 	user := contextmethods.GetUserFromContext(c)
 	ids := c.Param("ids")
-	responses.HandleResponse[string](c, "Deleted shopping list items", s.store.DeleteShoppingListItems(ids, user.ActiveFamilyId))
+	responses.HandleResponse(c, "Deleted shopping list items", s.store.DeleteShoppingListItems(ids, user.ActiveFamilyId))
 }
 
 func (s *Server) handleGetShoppingList(c *gin.Context) {
 	user := contextmethods.GetUserFromContext(c)
 
 	shoppingList, err := s.store.GetShoppingListSorted(user.ActiveFamilyId)
-	responses.HandleResponse[*types.ShoppingListByategory](c, shoppingList, err)
+	responses.HandleResponse(c, shoppingList, err)
 }

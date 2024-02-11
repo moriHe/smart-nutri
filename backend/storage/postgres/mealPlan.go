@@ -2,7 +2,6 @@ package postgres
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -14,7 +13,7 @@ import (
 ** a) forShoppingList false returns all entries for provided date regardless of is_shopping_list_item true/false
 ** b) forShoppingList true returns all entries from provided date until date.now() where is_shopping_list_item = false
 *****************************/
-func (s *Storage) GetMealPlan(familyId *int, date string, forShoppingListStr string) (*[]types.ShallowMealPlanItem, error) {
+func (s *Storage) GetMealPlan(familyId *int, date string, forShoppingListStr string) (*[]types.ShallowMealPlanItem, *types.RequestError) {
 	query := "select mealplans.id, recipes.id, recipes.name, mealplans.date, portions, meals.meal, is_shopping_list_item " +
 		"from mealplans join recipes on mealplans.recipe_id = recipes.id " +
 		"join meals on mealplans.meal = meals.id where mealplans.family_id = $1 " +
@@ -54,7 +53,7 @@ func (s *Storage) GetMealPlan(familyId *int, date string, forShoppingListStr str
 }
 
 // TODO familyId
-func (s *Storage) GetMealPlanItem(id string) (*types.FullMealPlanItem, error) {
+func (s *Storage) GetMealPlanItem(id string) (*types.FullMealPlanItem, *types.RequestError) {
 	var test types.FullMealPlanItem
 
 	query := "select mealplans.id, mealplans.date, meals.meal, portions, is_shopping_list_item, recipes.id " +
@@ -83,7 +82,7 @@ func (s *Storage) GetMealPlanItem(id string) (*types.FullMealPlanItem, error) {
 	return &test, nil
 }
 
-func (s *Storage) PostMealPlanItem(familyId *int, payload types.PostMealPlanItem) error {
+func (s *Storage) PostMealPlanItem(familyId *int, payload types.PostMealPlanItem) *types.RequestError {
 	var mealId int
 	tx, err := s.Db.Begin(context.Background())
 	if err != nil {
@@ -111,7 +110,7 @@ func (s *Storage) PostMealPlanItem(familyId *int, payload types.PostMealPlanItem
 	return nil
 }
 
-func (s *Storage) DeleteMealPlanItem(id string) error {
+func (s *Storage) DeleteMealPlanItem(id string) *types.RequestError {
 	tx, err := s.Db.Begin(context.Background())
 	if err != nil {
 		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Transaction error: %s", err)}
@@ -122,13 +121,13 @@ func (s *Storage) DeleteMealPlanItem(id string) error {
 	shoppingListItem, err := tx.Exec(context.Background(), "delete from shopping_list where mealplan_id = $1", id)
 
 	if err != nil {
-		return errors.New(fmt.Sprintf("Unable to delete mealplan item 1: %v\n", err))
+		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Delete failed: %s", err)}
 	}
 
 	mealplanItem, err := tx.Exec(context.Background(), "delete from mealplans where mealplans.id = $1", id)
 
 	if err != nil {
-		return errors.New(fmt.Sprintf("Unable to delete mealplan item 2: %v\n", err))
+		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Delete failed again: %s", err)}
 	}
 
 	if shoppingListItem.RowsAffected() == 0 || mealplanItem.RowsAffected() == 0 {

@@ -33,7 +33,7 @@ func generateUniqueKey(length int) (string, error) {
 	return uniqueKey, nil
 }
 
-func (s *Storage) PostFamily(name string, userId int) error {
+func (s *Storage) PostFamily(name string, userId int) *types.RequestError {
 	tx, err := s.Db.Begin(context.Background())
 	if err != nil {
 		return &types.RequestError{Status: http.StatusInternalServerError, Msg: "Failed to begin transaction"}

@@ -2,7 +2,6 @@ package postgres
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"math"
 	"net/http"
@@ -24,7 +23,7 @@ var validUnits = map[string]bool{
 	"TEASPOON":   true,
 }
 
-func (s *Storage) GetShoppingListSorted(familyId *int) (*types.ShoppingListByategory, error) {
+func (s *Storage) GetShoppingListSorted(familyId *int) (*types.ShoppingListByategory, *types.RequestError) {
 	currentDate := time.Now().UTC()
 
 	rows, _ := s.Db.Query(context.Background(), newQuery, familyId)
@@ -197,7 +196,7 @@ var getQuery = "select shopping_list.id, mealplans.is_shopping_list_item, mealpl
 	"left join markets on shopping_list.market = markets.id left join ingredients on recipes_ingredients.ingredient_id = ingredients.id " +
 	"where shopping_list.family_id = $1;"
 
-func (s *Storage) GetMealPlanItemsShoppingList(familyId *int) (*[]types.ShoppingListMealplanItem, error) {
+func (s *Storage) GetMealPlanItemsShoppingList(familyId *int) (*[]types.ShoppingListMealplanItem, *types.RequestError) {
 
 	rows, _ := s.Db.Query(context.Background(), getQuery, familyId)
 	defer rows.Close()
@@ -248,7 +247,7 @@ func (s *Storage) GetMealPlanItemsShoppingList(familyId *int) (*[]types.Shopping
 // 	return nil
 // }
 
-func (s *Storage) PostShoppingList(payload []types.PostShoppingListMealplanItem, activeFamilyId *int, mealplanId string) error {
+func (s *Storage) PostShoppingList(payload []types.PostShoppingListMealplanItem, activeFamilyId *int, mealplanId string) *types.RequestError {
 	// Start a database transaction
 	tx, err := s.Db.Begin(context.Background())
 	if err != nil {
@@ -281,11 +280,11 @@ func (s *Storage) PostShoppingList(payload []types.PostShoppingListMealplanItem,
 }
 
 // TODO: Portions needs to be in mealplanItem
-func (s *Storage) DeleteMealPlanItemShoppingList(id string) error {
+func (s *Storage) DeleteMealPlanItemShoppingList(id string) *types.RequestError {
 	item, err := s.Db.Exec(context.Background(), "delete from shopping_list where shopping_list.id = $1", id)
 
 	if err != nil {
-		return errors.New(fmt.Sprintf("Unable to delete shopping list item: %v\n", err))
+		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Unable to delete shopping list item: %s", err)}
 	}
 
 	if item.RowsAffected() == 0 {
@@ -295,7 +294,7 @@ func (s *Storage) DeleteMealPlanItemShoppingList(id string) error {
 	return nil
 }
 
-func (s *Storage) DeleteShoppingListItems(ids string, familyId *int) error {
+func (s *Storage) DeleteShoppingListItems(ids string, familyId *int) *types.RequestError {
 	if len(ids) == 0 {
 		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("No id or ids provided")}
 	}

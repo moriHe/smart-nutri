@@ -20,7 +20,7 @@ func (s *Server) userRoutes(r *gin.Engine) {
 
 func (s *Server) handleGetUser(c *gin.Context) {
 	user := contextmethods.GetUserFromContext(c)
-	responses.HandleResponse[*types.User](c, user, nil)
+	responses.HandleResponse(c, user, nil)
 }
 
 func (s *Server) handlePostUser(c *gin.Context) {
@@ -31,7 +31,7 @@ func (s *Server) handlePostUser(c *gin.Context) {
 		return
 	} else {
 		userId, err := s.store.PostUser(fireUid)
-		responses.HandleResponse[*int](c, userId, err)
+		responses.HandleResponse(c, userId, err)
 	}
 
 }
@@ -39,7 +39,7 @@ func (s *Server) handlePostUser(c *gin.Context) {
 func (s *Server) handleGetUserFamilys(c *gin.Context) {
 	user := contextmethods.GetUserFromContext(c)
 	familys, err := s.store.GetUserFamilys(user.Id)
-	responses.HandleResponse[*[]types.UserFamily](c, familys, err)
+	responses.HandleResponse(c, familys, err)
 }
 
 func (s *Server) handlePatchUser(c *gin.Context) {
@@ -49,7 +49,7 @@ func (s *Server) handlePatchUser(c *gin.Context) {
 		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: err.Error()})
 	} else {
 		err := s.store.PatchUser(user.Id, payload.NewActiveFamilyId)
-		responses.HandleResponse[string](c, "Patch succeeded", err)
+		responses.HandleResponse(c, "Patch succeeded", err)
 	}
 
 }

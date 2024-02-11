@@ -11,7 +11,7 @@ import (
 func GetUserFromContext(c *gin.Context) *types.User {
 	userInterface, exists := c.Get("user")
 	if !exists {
-		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusUnauthorized, Msg: "Not authorized 2"})
+		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusUnauthorized, Msg: "User interface not found"})
 		c.Abort()
 		return nil
 	}

@@ -22,12 +22,12 @@ func (s *Server) handleGetInvitationLink(c *gin.Context) {
 
 	encodedToken := url.QueryEscape(token)
 	invitationURL := fmt.Sprintf("%s/einladung/akzeptieren?token=%s", os.Getenv("FRONTEND_URL"), encodedToken)
-	responses.HandleResponse[string](c, invitationURL, err)
+	responses.HandleResponse(c, invitationURL, err)
 }
 
 func (s *Server) handleAcceptInvitation(c *gin.Context) {
 	user := contextmethods.GetUserFromContext(c)
 	token := c.Query("token")
 
-	responses.HandleResponse[string](c, "Joined community", s.store.AcceptInvitation(user.Id, token))
+	responses.HandleResponse(c, "Joined community", s.store.AcceptInvitation(user.Id, token))
 }

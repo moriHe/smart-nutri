@@ -2,7 +2,6 @@ package postgres
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -11,7 +10,7 @@ import (
 	"github.com/moriHe/smart-nutri/types"
 )
 
-func (s *Storage) GetAllRecipes(user *types.User) (*[]types.RecipeWithoutIngredients, error) {
+func (s *Storage) GetAllRecipes(user *types.User) (*[]types.RecipeWithoutIngredients, *types.RequestError) {
 	rows, _ := s.Db.Query(context.Background(), "select recipes.id, name, default_portions, meal from recipes join meals on recipes.default_meal = meals.id where family_id=$1", user.ActiveFamilyId)
 	// error handling um silent errors zu vermeiden (hatte id anstatt recipes nach einbau von join, was n silent error warf)
 	defer rows.Close()
@@ -31,7 +30,7 @@ func (s *Storage) GetAllRecipes(user *types.User) (*[]types.RecipeWithoutIngredi
 	return &recipes, nil
 }
 
-func (s *Storage) GetRecipeById(id string, activeFamilyId *int) (*types.FullRecipe, error) {
+func (s *Storage) GetRecipeById(id string, activeFamilyId *int) (*types.FullRecipe, *types.RequestError) {
 
 	recipe := types.FullRecipe{RecipeIngredients: []types.RecipeIngredient{}}
 	query := "select recipes.id, name, default_portions, meal from recipes join meals on recipes.default_meal = meals.id where recipes.id = $1 and family_id = $2"
@@ -68,7 +67,7 @@ func (s *Storage) GetRecipeById(id string, activeFamilyId *int) (*types.FullReci
 var postRecipeIngredientQuery = "insert into recipes_ingredients(recipe_id, " +
 	"ingredient_id, amount_per_portion, unit, market, is_bio) values ($1, $2, $3, $4, $5, $6) returning id"
 
-func (s *Storage) PostRecipe(familyId *int, payload types.PostRecipe) (*types.Id, error) {
+func (s *Storage) PostRecipe(familyId *int, payload types.PostRecipe) (*types.Id, *types.RequestError) {
 	var defaultMealId int
 	tx, err := s.Db.Begin(context.Background())
 	if err != nil {
@@ -129,7 +128,7 @@ func (s *Storage) PostRecipe(familyId *int, payload types.PostRecipe) (*types.Id
 	return &types.Id{Id: recipeId}, nil
 }
 
-func (s *Storage) PostRecipeIngredient(recipeId string, payload types.PostRecipeIngredient) (*int, error) {
+func (s *Storage) PostRecipeIngredient(recipeId string, payload types.PostRecipeIngredient) (*int, *types.RequestError) {
 	var unitId int
 	tx, err := s.Db.Begin(context.Background())
 	if err != nil {
@@ -164,13 +163,13 @@ func (s *Storage) PostRecipeIngredient(recipeId string, payload types.PostRecipe
 	return &id, nil
 }
 
-func (s *Storage) PatchRecipeName(recipeId string, payload types.PatchRecipeName) error {
+func (s *Storage) PatchRecipeName(recipeId string, payload types.PatchRecipeName) *types.RequestError {
 	if payload.Name == "" {
 		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("No recipe name specified")}
 	}
 	recipe, err := s.Db.Exec(context.Background(), "update recipes set name = $1 where id = $2 returning id", payload.Name, recipeId)
 	if err != nil {
-		return errors.New("PatchRecipe error")
+		return &types.RequestError{Status: http.StatusBadRequest, Msg: "Update failed"}
 	}
 
 	if recipe.RowsAffected() == 0 {
@@ -180,7 +179,7 @@ func (s *Storage) PatchRecipeName(recipeId string, payload types.PatchRecipeName
 	return nil
 }
 
-func (s *Storage) DeleteRecipe(recipeId string) error {
+func (s *Storage) DeleteRecipe(recipeId string) *types.RequestError {
 	tx, err := s.Db.Begin(context.Background())
 	if err != nil {
 		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Transaction error: %s", err)}
@@ -221,7 +220,7 @@ func (s *Storage) DeleteRecipe(recipeId string) error {
 	return nil
 }
 
-func (s *Storage) DeleteRecipeIngredient(recipeIngredientId string) error {
+func (s *Storage) DeleteRecipeIngredient(recipeIngredientId string) *types.RequestError {
 	tx, err := s.Db.Begin(context.Background())
 	if err != nil {
 		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("Start transaction failed")}
@@ -233,14 +232,14 @@ func (s *Storage) DeleteRecipeIngredient(recipeIngredientId string) error {
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to delete recipe row: %v\n", err)
-		return errors.New("delete recipe ingredient because of shopping list error")
+		return &types.RequestError{Status: http.StatusInternalServerError, Msg: "Delete recipe ingredient failed"}
 	}
 
 	recipeIngredient, err := tx.Exec(context.Background(), "delete from recipes_ingredients where recipes_ingredients.id = $1", recipeIngredientId)
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to delete recipe row: %v\n", err)
-		return errors.New("delee recipe ingredient error")
+		return &types.RequestError{Status: http.StatusInternalServerError, Msg: "Delete recipe ingredient failed"}
 	}
 
 	if recipeIngredient.RowsAffected() == 0 {

@@ -7,28 +7,33 @@ import (
 	"github.com/moriHe/smart-nutri/types"
 )
 
-func ErrorResponse(c *gin.Context, err error) bool {
-	if err != nil {
-		if requestErr, ok := err.(*types.RequestError); ok {
-			c.JSON(requestErr.Status, gin.H{"error": requestErr})
-		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Something went wrong"})
-		}
-		return true
-	}
-
-	return false
+type ErrorDetails struct {
+	Message string `json:"message"`
+}
+type Response struct {
+	Error        bool          `json:"error"`
+	Status       int           `json:"status"`
+	Data         interface{}   `json:"data,omitempty"`
+	ErrorDetails *ErrorDetails `json:"errorDetails,omitempty"`
 }
 
-func HandleResponse[T any](c *gin.Context, successResponse T, err error) {
+func ErrorResponse(c *gin.Context, err *types.RequestError) {
+	c.JSON(err.Status, Response{
+		Error:        true,
+		Status:       err.Status,
+		ErrorDetails: &ErrorDetails{Message: err.Msg},
+	})
+}
+
+func HandleResponse(c *gin.Context, data any, err *types.RequestError) {
 	if err != nil {
-		if requestErr, ok := err.(*types.RequestError); ok {
-			c.JSON(requestErr.Status, gin.H{"error": requestErr})
-		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Something went wrong"})
-		}
+		ErrorResponse(c, err)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": successResponse})
+	c.JSON(http.StatusOK, Response{
+		Error:  false,
+		Status: http.StatusOK,
+		Data:   data,
+	})
 }

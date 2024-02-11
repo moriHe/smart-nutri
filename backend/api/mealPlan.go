@@ -1,7 +1,6 @@
 package api
 
 import (
-	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -26,7 +25,7 @@ func (s *Server) handleGetMealPlan(c *gin.Context) {
 	formattedTimestamp := date.Truncate(24 * time.Hour).Format("2006-01-02 15:04:05.999")
 
 	if err != nil {
-		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Invalid UTC Date"})
+		responses.ErrorResponse(c, types.NewRequestError(&types.BadRequestError, "Invalid UTC Date."))
 		return
 	}
 
@@ -47,7 +46,7 @@ func (s *Server) handlePostMealPlanItem(c *gin.Context) {
 	var payload types.PostMealPlanItem
 
 	if err := c.BindJSON(&payload); err != nil {
-		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Payload malformed"})
+		responses.ErrorResponse(c, types.NewRequestError(&types.BadRequestError, "Payload malformed"))
 		return
 	} else {
 		responses.HandleResponse(c, "Added mealplan item", s.store.PostMealPlanItem(user.ActiveFamilyId, payload))

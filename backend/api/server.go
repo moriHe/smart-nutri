@@ -67,7 +67,7 @@ func (s *Server) handleGetSecret(c *gin.Context) {
 		responses.HandleResponse(c, "Permission acknowledged", nil)
 		return
 	} else {
-		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Permission denied"})
+		responses.ErrorResponse(c, &types.UnauthorizedError)
 		return
 	}
 }
@@ -90,7 +90,7 @@ func (s *Server) handleGetIngredientTable(c *gin.Context) {
 	// Copy the file contents to the response writer
 	_, err = io.Copy(c.Writer, file)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Something went wrong"})
+		responses.ErrorResponse(c, types.NewRequestError(&types.BadRequestError, "Something went wrong."))
 		return
 	}
 }

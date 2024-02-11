@@ -5,7 +5,6 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"fmt"
-	"net/http"
 	"time"
 
 	"github.com/moriHe/smart-nutri/types"
@@ -33,39 +32,39 @@ func generateUniqueKey(length int) (string, error) {
 	return uniqueKey, nil
 }
 
-func (s *Storage) PostFamily(name string, userId int) *types.RequestError {
+func (s *Storage) PostFamily(name string, userId int) error {
 	tx, err := s.Db.Begin(context.Background())
 	if err != nil {
-		return &types.RequestError{Status: http.StatusInternalServerError, Msg: "Failed to begin transaction"}
+		return &types.InternalServerError
 	}
 	defer tx.Rollback(context.Background())
 
 	uniqueKey, err := generateUniqueKey(8)
 	if err != nil {
-		return &types.RequestError{Status: http.StatusInternalServerError, Msg: "Something went wrong"}
+		return &types.InternalServerError
 	}
 
 	var familyId int
 	err = tx.QueryRow(context.Background(), "insert into familys (name, code) values ($1, $2) returning id", name, uniqueKey).Scan(&familyId)
 
 	if err != nil {
-		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Failed to create family: %s", err)}
+		return &types.BadRequestError
 	}
 
 	_, err = tx.Exec(context.Background(), "update users set active_family_id = $1 where id = $2", familyId, userId)
 	if err != nil {
-		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Failed to update user: %s", err)}
+		return &types.BadRequestError
 	}
 
 	_, err = tx.Exec(context.Background(), "insert into users_familys (family_id, user_id, user_role) values ($1, $2, $3)", familyId, userId, "OWNER")
 
 	if err != nil {
-		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Failed to create users_familys: %s", err)}
+		return &types.BadRequestError
 	}
 
 	err = tx.Commit(context.Background())
 	if err != nil {
-		return &types.RequestError{Status: http.StatusInternalServerError, Msg: "Failed to commit transaction"}
+		return &types.BadRequestError
 	}
 
 	return nil

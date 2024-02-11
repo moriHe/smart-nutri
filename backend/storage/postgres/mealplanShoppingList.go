@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"math"
-	"net/http"
 	"time"
 
 	"github.com/moriHe/smart-nutri/types"
@@ -23,7 +22,7 @@ var validUnits = map[string]bool{
 	"TEASPOON":   true,
 }
 
-func (s *Storage) GetShoppingListSorted(familyId *int) (*types.ShoppingListByategory, *types.RequestError) {
+func (s *Storage) GetShoppingListSorted(familyId *int) (*types.ShoppingListByategory, error) {
 	currentDate := time.Now().UTC()
 
 	rows, _ := s.Db.Query(context.Background(), newQuery, familyId)
@@ -48,7 +47,7 @@ func (s *Storage) GetShoppingListSorted(familyId *int) (*types.ShoppingListByate
 			&item.IngredientUnit,
 		)
 		if err != nil {
-			return nil, &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Scan Get menu plan shopping list failed: %s", err)}
+			return nil, &types.InternalServerError
 		}
 
 		roundedAmount := math.Round(float64(item.IngredientAmountPerPortion)*float64(item.MealPlanPortions)*10) / 10
@@ -150,7 +149,7 @@ func (s *Storage) GetShoppingListSorted(familyId *int) (*types.ShoppingListByate
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Something went wrong: %s", err)}
+		return nil, &types.InternalServerError
 	}
 
 	categorizedItems := types.ShoppingListByategory{
@@ -196,7 +195,7 @@ var getQuery = "select shopping_list.id, mealplans.is_shopping_list_item, mealpl
 	"left join markets on shopping_list.market = markets.id left join ingredients on recipes_ingredients.ingredient_id = ingredients.id " +
 	"where shopping_list.family_id = $1;"
 
-func (s *Storage) GetMealPlanItemsShoppingList(familyId *int) (*[]types.ShoppingListMealplanItem, *types.RequestError) {
+func (s *Storage) GetMealPlanItemsShoppingList(familyId *int) (*[]types.ShoppingListMealplanItem, error) {
 
 	rows, _ := s.Db.Query(context.Background(), getQuery, familyId)
 	defer rows.Close()
@@ -223,7 +222,7 @@ func (s *Storage) GetMealPlanItemsShoppingList(familyId *int) (*[]types.Shopping
 		)
 
 		if err != nil {
-			return nil, &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Scan Get menu plan shopping list failed: %s", err)}
+			return nil, &types.InternalServerError
 		}
 
 		shoppingList = append(shoppingList, item)
@@ -232,26 +231,11 @@ func (s *Storage) GetMealPlanItemsShoppingList(familyId *int) (*[]types.Shopping
 	return &shoppingList, nil
 }
 
-// maybe of use for posting individual items
-// func (s *Storage) PostMealPlanItemShoppingList(payload types.PostShoppingListMealplanItem) error {
-// 	var marketId int
-// 	err := s.Db.QueryRow(context.Background(), "select (id) from markets where markets.name = $1", payload.Market).Scan(&marketId)
-// 	if err != nil {
-// 		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Step 1: Failed to find market name: %s", err)}
-// 	}
-// 	_, err = s.Db.Exec(context.Background(), "insert into shopping_list (family_id, mealplan_id, recipes_ingredients_id, market, is_bio) values ($1, $2, $3, $4, $5)", &payload.FamilyId, &payload.MealplanId, &payload.RecipeIngredientId, &marketId, &payload.IsBio)
-// 	if err != nil {
-// 		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Error: Failed to post mealplan item shopping list: %s", err)}
-// 	}
-
-// 	return nil
-// }
-
-func (s *Storage) PostShoppingList(payload []types.PostShoppingListMealplanItem, activeFamilyId *int, mealplanId string) *types.RequestError {
+func (s *Storage) PostShoppingList(payload []types.PostShoppingListMealplanItem, activeFamilyId *int, mealplanId string) error {
 	// Start a database transaction
 	tx, err := s.Db.Begin(context.Background())
 	if err != nil {
-		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Failed to start database transaction: %s", err)}
+		return &types.InternalServerError
 	}
 	defer tx.Rollback(context.Background())
 
@@ -260,12 +244,12 @@ func (s *Storage) PostShoppingList(payload []types.PostShoppingListMealplanItem,
 		var marketID int
 		err := s.Db.QueryRow(context.Background(), "SELECT id FROM markets WHERE name = $1", item.Market).Scan(&marketID)
 		if err != nil {
-			return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Failed to find market name: %s", err)}
+			return &types.InternalServerError
 		}
 
 		_, err = tx.Exec(context.Background(), "insert into shopping_list (family_id, mealplan_id, recipes_ingredients_id, market, is_bio) VALUES ($1, $2, $3, $4, $5)", activeFamilyId, mealplanId, item.RecipeIngredientId, marketID, item.IsBio)
 		if err != nil {
-			return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Error: Failed to post mealplan item shopping list: %s", err)}
+			return &types.BadRequestError
 		}
 
 		_, err = tx.Exec(context.Background(), "update mealplans set is_shopping_list_item = true where family_id = $1 and mealplans.id = $2", activeFamilyId, mealplanId)
@@ -273,41 +257,41 @@ func (s *Storage) PostShoppingList(payload []types.PostShoppingListMealplanItem,
 
 	// Commit the transaction if all insertions are successful
 	if err := tx.Commit(context.Background()); err != nil {
-		return &types.RequestError{Status: http.StatusInternalServerError, Msg: fmt.Sprintf("Failed to commit transaction: %s", err)}
+		return &types.InternalServerError
 	}
 
 	return nil
 }
 
 // TODO: Portions needs to be in mealplanItem
-func (s *Storage) DeleteMealPlanItemShoppingList(id string) *types.RequestError {
+func (s *Storage) DeleteMealPlanItemShoppingList(id string) error {
 	item, err := s.Db.Exec(context.Background(), "delete from shopping_list where shopping_list.id = $1", id)
 
 	if err != nil {
-		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprintf("Unable to delete shopping list item: %s", err)}
+		return &types.BadRequestError
 	}
 
 	if item.RowsAffected() == 0 {
-		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("Shopping list item does not exist")}
+		return &types.BadRequestError
 	}
 
 	return nil
 }
 
-func (s *Storage) DeleteShoppingListItems(ids string, familyId *int) *types.RequestError {
+func (s *Storage) DeleteShoppingListItems(ids string, familyId *int) error {
 	if len(ids) == 0 {
-		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("No id or ids provided")}
+		return &types.BadRequestError
 	}
 
 	query := fmt.Sprintf("delete from shopping_list where shopping_list.id in (%s) and family_id = $1", ids)
 
 	item, err := s.Db.Exec(context.Background(), query, &familyId)
 	if err != nil {
-		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("Unable to delete shopping list item")}
+		return &types.BadRequestError
 	}
 
 	if item.RowsAffected() == 0 {
-		return &types.RequestError{Status: http.StatusBadRequest, Msg: fmt.Sprint("Shopping list item(s) do not exist")}
+		return &types.BadRequestError
 	}
 
 	return nil

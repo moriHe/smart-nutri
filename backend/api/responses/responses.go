@@ -17,15 +17,24 @@ type Response struct {
 	ErrorDetails *ErrorDetails `json:"errorDetails,omitempty"`
 }
 
-func ErrorResponse(c *gin.Context, err *types.RequestError) {
-	c.JSON(err.Status, Response{
-		Error:        true,
-		Status:       err.Status,
-		ErrorDetails: &ErrorDetails{Message: err.Msg},
-	})
+func ErrorResponse(c *gin.Context, err error) {
+	if requestErr, ok := err.(*types.RequestError); ok {
+		c.JSON(requestErr.Status, Response{
+			Error:        true,
+			Status:       requestErr.Status,
+			ErrorDetails: &ErrorDetails{Message: requestErr.Msg},
+		})
+		return
+	} else {
+		c.JSON(http.StatusInternalServerError, Response{
+			Error:        true,
+			Status:       http.StatusInternalServerError,
+			ErrorDetails: &ErrorDetails{Message: "Unhandled error type"},
+		})
+	}
 }
 
-func HandleResponse(c *gin.Context, data any, err *types.RequestError) {
+func HandleResponse(c *gin.Context, data any, err error) {
 	if err != nil {
 		ErrorResponse(c, err)
 		return

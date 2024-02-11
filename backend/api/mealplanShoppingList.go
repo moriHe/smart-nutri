@@ -1,8 +1,6 @@
 package api
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	contextmethods "github.com/moriHe/smart-nutri/api/contextMethods"
 	"github.com/moriHe/smart-nutri/api/responses"
@@ -30,7 +28,7 @@ func (s *Server) handlePostShoppingList(c *gin.Context) {
 
 	var payload []types.PostShoppingListMealplanItem
 	if err := c.BindJSON(&payload); err != nil {
-		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Payload malformed"})
+		responses.ErrorResponse(c, types.NewRequestError(&types.BadRequestError, "Payload malformed"))
 		return
 	}
 

@@ -5,33 +5,33 @@ import (
 )
 
 type Storage interface {
-	GetUser(fireUid string) (*types.User, *types.RequestError)
-	GetUserFamilys(userId int) (*[]types.UserFamily, *types.RequestError)
+	GetUser(fireUid string) (*types.User, error)
+	GetUserFamilys(userId int) (*[]types.UserFamily, error)
 	// header instead of body?
-	PostUser(fireUid string) (*int, *types.RequestError)
-	PatchUser(userId int, newActiveFamilyId int) *types.RequestError
-	PostFamily(name string, userId int) *types.RequestError
+	PostUser(fireUid string) (*int, error)
+	PatchUser(userId int, newActiveFamilyId int) error
+	PostFamily(name string, userId int) error
 
-	GetAllRecipes(user *types.User) (*[]types.RecipeWithoutIngredients, *types.RequestError)
-	GetRecipeById(recipeId string, activeFamilyId *int) (*types.FullRecipe, *types.RequestError)
-	PostRecipe(familyId *int, payload types.PostRecipe) (*types.Id, *types.RequestError)
-	PostRecipeIngredient(recipeId string, payload types.PostRecipeIngredient) (*int, *types.RequestError)
-	PatchRecipeName(recipeId string, payload types.PatchRecipeName) *types.RequestError
-	DeleteRecipe(recipeId string) *types.RequestError
-	DeleteRecipeIngredient(recipeIngredientId string) *types.RequestError
+	GetAllRecipes(user *types.User) (*[]types.RecipeWithoutIngredients, error)
+	GetRecipeById(recipeId string, activeFamilyId *int) (*types.FullRecipe, error)
+	PostRecipe(familyId *int, payload types.PostRecipe) (*types.Id, error)
+	PostRecipeIngredient(recipeId string, payload types.PostRecipeIngredient) (*int, error)
+	PatchRecipeName(recipeId string, payload types.PatchRecipeName) error
+	DeleteRecipe(recipeId string) error
+	DeleteRecipeIngredient(recipeIngredientId string) error
 
-	GetMealPlan(familyId *int, date string, forShoppingListStr string) (*[]types.ShallowMealPlanItem, *types.RequestError)
-	GetMealPlanItem(id string) (*types.FullMealPlanItem, *types.RequestError)
-	PostMealPlanItem(familyId *int, payload types.PostMealPlanItem) *types.RequestError
-	DeleteMealPlanItem(id string) *types.RequestError
+	GetMealPlan(familyId *int, date string, forShoppingListStr string) (*[]types.ShallowMealPlanItem, error)
+	GetMealPlanItem(id string) (*types.FullMealPlanItem, error)
+	PostMealPlanItem(familyId *int, payload types.PostMealPlanItem) error
+	DeleteMealPlanItem(id string) error
 
-	GetShoppingListSorted(familyId *int) (*types.ShoppingListByategory, *types.RequestError)
+	GetShoppingListSorted(familyId *int) (*types.ShoppingListByategory, error)
 
-	GetMealPlanItemsShoppingList(familyId *int) (*[]types.ShoppingListMealplanItem, *types.RequestError)
-	PostShoppingList(payload []types.PostShoppingListMealplanItem, activeFamilyId *int, mealplanId string) *types.RequestError
-	DeleteMealPlanItemShoppingList(id string) *types.RequestError
-	DeleteShoppingListItems(ids string, familyId *int) *types.RequestError
+	GetMealPlanItemsShoppingList(familyId *int) (*[]types.ShoppingListMealplanItem, error)
+	PostShoppingList(payload []types.PostShoppingListMealplanItem, activeFamilyId *int, mealplanId string) error
+	DeleteMealPlanItemShoppingList(id string) error
+	DeleteShoppingListItems(ids string, familyId *int) error
 
-	GetInvitationLink(user *types.User) (string, *types.RequestError)
-	AcceptInvitation(userId int, token string) *types.RequestError
+	GetInvitationLink(user *types.User) (string, error)
+	AcceptInvitation(userId int, token string) error
 }

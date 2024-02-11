@@ -1,8 +1,6 @@
 package api
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	contextmethods "github.com/moriHe/smart-nutri/api/contextMethods"
 	"github.com/moriHe/smart-nutri/api/responses"
@@ -26,7 +24,7 @@ func (s *Server) handleGetUser(c *gin.Context) {
 func (s *Server) handlePostUser(c *gin.Context) {
 	fireUid := s.GetIdToken(c)
 	if fireUid == "" {
-		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusUnauthorized, Msg: "Not authorized 1"})
+		responses.ErrorResponse(c, &types.UnauthorizedError)
 		return
 	} else {
 		userId, err := s.store.PostUser(fireUid)
@@ -45,7 +43,7 @@ func (s *Server) handlePatchUser(c *gin.Context) {
 	user := contextmethods.GetUserFromContext(c)
 	var payload types.PatchUser
 	if err := c.BindJSON(&payload); err != nil {
-		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: err.Error()})
+		responses.ErrorResponse(c, &types.BadRequestError)
 		return
 	} else {
 		err := s.store.PatchUser(user.Id, payload.NewActiveFamilyId)

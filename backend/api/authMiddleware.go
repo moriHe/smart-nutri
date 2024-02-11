@@ -1,8 +1,6 @@
 package api
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/moriHe/smart-nutri/api/responses"
 	"github.com/moriHe/smart-nutri/types"
@@ -39,12 +37,12 @@ func (s *Server) AuthMiddleWare() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		fireUid := s.GetIdToken(c)
 		if fireUid == "" {
-			responses.ErrorResponse(c, &types.RequestError{Status: http.StatusUnauthorized, Msg: "No uid in token"})
+			responses.ErrorResponse(c, &types.UnauthorizedError)
 			return
 		}
 		user, err := s.store.GetUser(fireUid)
 		if err != nil {
-			responses.ErrorResponse(c, &types.RequestError{Status: http.StatusUnauthorized, Msg: "No user found"})
+			responses.ErrorResponse(c, &types.UnauthorizedError)
 			return
 		}
 

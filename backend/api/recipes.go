@@ -1,8 +1,6 @@
 package api
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	contextmethods "github.com/moriHe/smart-nutri/api/contextMethods"
 	"github.com/moriHe/smart-nutri/api/responses"
@@ -23,7 +21,7 @@ func (s *Server) handleGetAllRecipes(c *gin.Context) {
 	user := contextmethods.GetUserFromContext(c)
 
 	if user.ActiveFamilyId == nil {
-		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "No Family"})
+		responses.ErrorResponse(c, types.NewRequestError(&types.BadRequestError, "No family found"))
 		return
 	}
 	recipes, err := s.store.GetAllRecipes(user)
@@ -35,7 +33,7 @@ func (s *Server) handleGetRecipeById(c *gin.Context) {
 	user := contextmethods.GetUserFromContext(c)
 
 	if user.ActiveFamilyId == nil {
-		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "No Family"})
+		responses.ErrorResponse(c, types.NewRequestError(&types.BadRequestError, "No family found"))
 		return
 	}
 
@@ -50,7 +48,7 @@ func (s *Server) handlePostRecipe(c *gin.Context) {
 	var payload types.PostRecipe
 
 	if err := c.BindJSON(&payload); err != nil {
-		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: err.Error()})
+		responses.ErrorResponse(c, types.NewRequestError(&types.BadRequestError, err.Error()))
 		return
 	} else {
 		response, err := s.store.PostRecipe(user.ActiveFamilyId, payload)
@@ -62,7 +60,7 @@ func (s *Server) handlePostRecipeIngredient(c *gin.Context) {
 	recipeId := c.Param("id")
 	var payload types.PostRecipeIngredient
 	if err := c.BindJSON(&payload); err != nil {
-		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Payload malformed"})
+		responses.ErrorResponse(c, types.NewRequestError(&types.BadRequestError, "Payload malformed"))
 		return
 	} else {
 		id, err := s.store.PostRecipeIngredient(recipeId, payload)
@@ -75,7 +73,7 @@ func (s *Server) handlePatchRecipeName(c *gin.Context) {
 	var payload types.PatchRecipeName
 
 	if err := c.BindJSON(&payload); err != nil {
-		responses.ErrorResponse(c, &types.RequestError{Status: http.StatusBadRequest, Msg: "Payload malformed"})
+		responses.ErrorResponse(c, types.NewRequestError(&types.BadRequestError, "Payload malformed"))
 		return
 	} else {
 		responses.HandleResponse(c, "Recipe name updated", s.store.PatchRecipeName(recipeId, payload))

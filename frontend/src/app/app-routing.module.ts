@@ -18,6 +18,7 @@ import { ImprintComponent } from './legal/imprint/imprint.component';
 import { DataProtectionComponent } from './legal/data-protection/data-protection.component';
 import { RedirectComponentComponent } from './redirect-component/redirect-component.component';
 import { IngredientDatabaseComponent } from './legal/ingredient-database/ingredient-database.component';
+import { AccountComponent } from './account/account.component';
 
 const routes: Routes = [
   {path: "", component: LandingPageComponent, canActivate: [noUserGuard]},
@@ -30,6 +31,7 @@ const routes: Routes = [
   {path: "einkaufszettel", component: ShoppingListComponent, canActivate: [authGuard, familyGuard]},
   {path: "einladung/akzeptieren", component: AcceptInviationComponent, canActivate: [authGuard]},
   {path: "gemeinschaften", component: FamilySpaceComponent, canActivate: [authGuard, familyGuard]},
+  {path: "account", component: AccountComponent, canActivate: [authGuard]},
   {path: "impressum", component: ImprintComponent},
   {path: "datenschutz", component: DataProtectionComponent},
   {path: "datenbank-nahrungsmittel", component: IngredientDatabaseComponent},

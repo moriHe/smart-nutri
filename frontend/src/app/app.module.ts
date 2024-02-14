@@ -53,6 +53,7 @@ import { IngredientDatabaseComponent } from './legal/ingredient-database/ingredi
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatDividerModule} from '@angular/material/divider';
 import { HttpErrorInterceptor } from './http-error.interceptor';
+import { AccountComponent } from './account/account.component';
 
 
 
@@ -85,7 +86,8 @@ import { HttpErrorInterceptor } from './http-error.interceptor';
     CookieBannerComponent,
     RedirectComponentComponent,
     IngredientSourceComponent,
-    IngredientDatabaseComponent
+    IngredientDatabaseComponent,
+    AccountComponent
   ],
   imports: [
     BrowserModule,

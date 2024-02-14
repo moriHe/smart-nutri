@@ -19,7 +19,11 @@ export class LandingPageComponent {
         await this.supabaseService.initialize()
         this.router.navigate(['/meine-rezepte']);        
       } else if (response.error) {
-        this.snackbarService.openSnackbar("Ungültige Logindaten", "Ok")
+        let snackbarMsg = "Etwas ging schief."
+        if (response.error.message === "Invalid login credentials") {
+          snackbarMsg = "Ungültige Logindaten"
+        }
+        this.snackbarService.openSnackbar(snackbarMsg, "Ok")
       }
     
     }

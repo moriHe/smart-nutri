@@ -8,6 +8,7 @@ import { MatSnackBar, MatSnackBarRef, SimpleSnackBar } from '@angular/material/s
 import { FullRecipe } from 'api/recipes/recipes.interface';
 import algoliasearch from 'algoliasearch/lite';
 import { environment } from 'src/environments/environment.development';
+import { SnackbarService } from 'services/snackbar.service';
 
 type AlgoliaResult = {
   objectID: string
@@ -63,38 +64,18 @@ export class SearchComponent {
           market: result.selectedMarket,
           unit: result.selectedUnit
         }).subscribe({
-          next: (response) => {
-            this.openSnackbar({type: "SUCCESS", recipeIngredientId: response})
+          next: (recipeIngredientId) => {
+            this.snackbarService.openSnackbar(
+              `Hinzugefügt: ${this.currentIngredientName}`, "Rückgängig"
+              ).subscribe(() => {
+                this.recipesService.removeRecipeIngredient(recipeIngredientId).subscribe()
+              })
 
-          },
-          error: () => {
-            this.openSnackbar({type: "ERROR"})
           }
         })
       }
     });
   }
-
-  openSnackbar({type, recipeIngredientId = 0}: {type: "SUCCESS" | "ERROR", recipeIngredientId?: number}) {
-    if (type === "SUCCESS") {
-      const snackBarRef: MatSnackBarRef<SimpleSnackBar> = this.snackbar.open(
-        `Hinzugefügt: ${this.currentIngredientName}`,
-         "Rückgängig", 
-         {
-        horizontalPosition: "start",
-        verticalPosition: "bottom",
-        duration: 3000
-        })
-        snackBarRef.onAction().subscribe(() => {
-          this.recipesService.removeRecipeIngredient(recipeIngredientId).subscribe()
-        });
-    } else {
-      this.snackbar.open("Etwas ging schief.", "Ok", {
-        horizontalPosition: "start",
-        verticalPosition: "bottom"
-    })
-  }
-}
 
 ngOnInit(): void {
   this.route.params.subscribe(params => {
@@ -110,6 +91,7 @@ ngOnInit(): void {
 }
 
   constructor(
+    private snackbarService: SnackbarService,
     private route: ActivatedRoute,
     private recipesService: RecipesService,
     public dialog: MatDialog,

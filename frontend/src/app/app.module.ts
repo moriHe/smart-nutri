@@ -52,6 +52,7 @@ import { IngredientSourceComponent } from './ingredient-source/ingredient-source
 import { IngredientDatabaseComponent } from './legal/ingredient-database/ingredient-database.component';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatDividerModule} from '@angular/material/divider';
+import { HttpErrorInterceptor } from './http-error.interceptor';
 
 
 
@@ -123,6 +124,11 @@ import {MatDividerModule} from '@angular/material/divider';
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpErrorInterceptor,
       multi: true
     },
     DatePipe

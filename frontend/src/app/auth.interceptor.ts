@@ -7,7 +7,6 @@ import {
 } from '@angular/common/http';
 import { Observable, switchMap, take } from 'rxjs';
 import { SupabaseService } from 'api/supabase.service';
-import { UserService } from 'api/user/user.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {

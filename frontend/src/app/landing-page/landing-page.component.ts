@@ -3,6 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { SupabaseService } from 'api/supabase.service';
 import { Router } from '@angular/router';
 import { UserService } from 'api/user/user.service';
+import { SnackbarService } from 'services/snackbar.service';
 @Component({
   selector: 'app-landing-page',
   templateUrl: './landing-page.component.html',
@@ -17,6 +18,8 @@ export class LandingPageComponent {
       if (response.data.session) {
         await this.supabaseService.initialize()
         this.router.navigate(['/meine-rezepte']);        
+      } else if (response.error) {
+        this.snackbarService.openSnackbar("Ungültige Logindaten", "Ok")
       }
     
     }
@@ -28,6 +31,7 @@ export class LandingPageComponent {
 
 
     constructor(
+      private snackbarService: SnackbarService,
       private router: Router,
       private supabaseService: SupabaseService
       ) {}

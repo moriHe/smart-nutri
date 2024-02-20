@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/moriHe/smart-nutri/types"
@@ -43,6 +44,109 @@ func (s *Storage) PostUser(fireUid string) (*int, error) {
 	}
 
 	return &userId, nil
+}
+
+type AffiliatedFamily struct {
+	Id       int
+	Role     string
+	FamilyId int
+}
+
+func (s *Storage) DeleteUser(userId int) error {
+	tx, err := s.Db.Begin(context.Background())
+	if err != nil {
+		return types.NewRequestError(&types.InternalServerError, "1")
+	}
+	defer tx.Rollback(context.Background())
+
+	rows, err := tx.Query(context.Background(), "select id, family_id, user_role from users_familys where user_id = $1", userId)
+	if err != nil {
+		return types.NewRequestError(&types.InternalServerError, "2")
+	}
+
+	affiliatedFamilys := make([]AffiliatedFamily, 0)
+
+	for rows.Next() {
+		var aFamily AffiliatedFamily
+		err := rows.Scan(&aFamily.Id, &aFamily.FamilyId, &aFamily.Role)
+		if err != nil {
+			return types.NewRequestError(&types.InternalServerError, "3")
+		}
+		if aFamily.Role != "OWNER" {
+			err := tx.QueryRow(context.Background(), "delete from users_familys where id = $1", aFamily.Id)
+			if err != nil {
+				return types.NewRequestError(&types.InternalServerError, "4")
+			}
+		} else {
+			affiliatedFamilys = append(affiliatedFamilys, aFamily)
+		}
+	}
+
+	wholeDeletion := make([]int, 0)
+	for _, aFamily := range affiliatedFamilys {
+		var id int
+		err := tx.QueryRow(context.Background(), "select id from users_familys where family_id = $1 and user_id != $2", aFamily.FamilyId, userId).Scan(&id)
+		if err != nil {
+			if err == pgx.ErrNoRows {
+				wholeDeletion = append(wholeDeletion, aFamily.FamilyId)
+			} else {
+				return types.NewRequestError(&types.InternalServerError, "6")
+			}
+		} else {
+			_, err = tx.Exec(context.Background(), "update users_familys set user_role = $1 where id = $2", "OWNER", id)
+			if err != nil {
+				return types.NewRequestError(&types.InternalServerError, "7")
+			}
+		}
+	}
+
+	for _, familyId := range wholeDeletion {
+		_, err = tx.Exec(context.Background(), "DELETE FROM invitations WHERE family_id = $1", familyId)
+		if err != nil {
+			fmt.Println(err)
+			return types.NewRequestError(&types.InternalServerError, "5")
+		}
+
+		_, err = tx.Exec(context.Background(), "DELETE FROM shopping_list WHERE family_id = $1", familyId)
+		if err != nil {
+			fmt.Println(err)
+			return types.NewRequestError(&types.InternalServerError, "5")
+		}
+
+		_, err = tx.Exec(context.Background(), "DELETE FROM mealplans WHERE family_id = $1", familyId)
+		if err != nil {
+			fmt.Println(err)
+			return types.NewRequestError(&types.InternalServerError, "5")
+		}
+		_, err = tx.Exec(context.Background(), "DELETE FROM recipes WHERE family_id = $1", familyId)
+		if err != nil {
+			fmt.Println(err)
+			return types.NewRequestError(&types.InternalServerError, "5")
+		}
+		_, err = tx.Exec(context.Background(), "DELETE FROM users_familys WHERE family_id = $1", familyId)
+		if err != nil {
+			fmt.Println(err)
+			return types.NewRequestError(&types.InternalServerError, "5")
+		}
+		_, err = tx.Exec(context.Background(), "DELETE FROM users WHERE id = $1", userId)
+		if err != nil {
+			fmt.Println(err)
+			return types.NewRequestError(&types.InternalServerError, "5")
+		}
+		_, err = tx.Exec(context.Background(), "DELETE FROM familys WHERE id = $1", familyId)
+		if err != nil {
+			fmt.Println(err)
+			return types.NewRequestError(&types.InternalServerError, "5")
+		}
+	}
+
+	err = tx.Commit(context.Background())
+	if err != nil {
+		return types.NewRequestError(&types.InternalServerError, "8")
+	}
+
+	return nil
+
 }
 
 func (s *Storage) PatchUser(userId int, newActiveFamilyId int) error {

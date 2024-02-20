@@ -64,6 +64,13 @@ func injectAuthorizationHeader(req *http.Request, value string) {
 }
 
 func (s *Server) handleDeleteUser(c *gin.Context) {
+	user := contextmethods.GetUserFromContext(c)
+	err := s.store.DeleteUser(user.Id)
+	if err != nil {
+		responses.ErrorResponse(c, err)
+		return
+	}
+
 	supabaseUid := s.GetIdToken(c)
 
 	supabaseUrl := os.Getenv("SUPABASE_URL")
@@ -79,9 +86,11 @@ func (s *Server) handleDeleteUser(c *gin.Context) {
 	httpClient := http.DefaultClient
 	resp, err := httpClient.Do(req)
 	if err != nil {
-		// handle error
+		responses.ErrorResponse(c, types.NewRequestError(&types.InternalServerError, "Failed to delete account"))
 		return
+
 	}
+	responses.HandleResponse(c, "Account deleted", nil)
 	defer resp.Body.Close()
 
 }

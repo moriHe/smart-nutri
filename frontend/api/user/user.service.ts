@@ -47,6 +47,13 @@ export class UserService {
     )
   }
 
+  deleteUser(): Observable<string> {
+    return this.http.delete<Response<string>>(`${environment.backendBaseUrl}/user/delete`)
+      .pipe(
+        map((response) => response.data)
+      )
+  }
+
   getUserFamilys(): Observable<UserFamilys> {
     return this.http.get<Response<UserFamilys>>(`${environment.backendBaseUrl}/user/familys`).pipe(map((response) => response.data))
   }

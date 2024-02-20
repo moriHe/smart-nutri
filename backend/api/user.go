@@ -1,10 +1,16 @@
 package api
 
 import (
+	"context"
+	"fmt"
+	"net/http"
+	"os"
+
 	"github.com/gin-gonic/gin"
 	contextmethods "github.com/moriHe/smart-nutri/api/contextMethods"
 	"github.com/moriHe/smart-nutri/api/responses"
 	"github.com/moriHe/smart-nutri/types"
+	"github.com/nedpals/supabase-go"
 )
 
 func (s *Server) userRoutes(r *gin.Engine) {
@@ -14,6 +20,7 @@ func (s *Server) userRoutes(r *gin.Engine) {
 	userGroup.GET("", s.handleGetUser)
 	userGroup.GET("/familys", s.handleGetUserFamilys)
 	userGroup.PATCH("", s.handlePatchUser)
+	userGroup.DELETE("/delete", s.handleDeleteUser)
 }
 
 func (s *Server) handleGetUser(c *gin.Context) {
@@ -49,5 +56,32 @@ func (s *Server) handlePatchUser(c *gin.Context) {
 		err := s.store.PatchUser(user.Id, payload.NewActiveFamilyId)
 		responses.HandleResponse(c, "Patch succeeded", err)
 	}
+
+}
+
+func injectAuthorizationHeader(req *http.Request, value string) {
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", value))
+}
+
+func (s *Server) handleDeleteUser(c *gin.Context) {
+	supabaseUid := s.GetIdToken(c)
+
+	supabaseUrl := os.Getenv("SUPABASE_URL")
+	supabaseKey := os.Getenv("SUPABASE_ADMIN_KEY")
+	client := supabase.CreateClient(supabaseUrl, supabaseKey)
+	reqURL := fmt.Sprintf("%s/%s/users/%s", client.BaseURL, "auth/v1/admin", supabaseUid)
+	req, err := http.NewRequestWithContext(context.Background(), http.MethodDelete, reqURL, nil)
+	if err != nil {
+		return
+	}
+	injectAuthorizationHeader(req, supabaseKey)
+	req.Header.Set("apikey", supabaseKey)
+	httpClient := http.DefaultClient
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		// handle error
+		return
+	}
+	defer resp.Body.Close()
 
 }

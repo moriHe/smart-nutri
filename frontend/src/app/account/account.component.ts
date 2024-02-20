@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { UserService } from 'api/user/user.service';
 
 @Component({
   selector: 'app-account',
@@ -8,6 +9,8 @@ import { Component } from '@angular/core';
 export class AccountComponent {
 
   deleteAccount() {
-    console.log("Delete account")
+    this.userService.deleteUser().subscribe()
   }
+
+  constructor(private userService: UserService) {}
 }

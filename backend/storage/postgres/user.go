@@ -36,7 +36,7 @@ func (s *Storage) GetUser(fireUid string) (*types.User, error) {
 func (s *Storage) PostUser(fireUid string) (*int, error) {
 	var userId int
 
-	err := s.Db.QueryRow(context.Background(), "insert into users (supabase_uid) values ($1) returning id", fireUid).Scan(&userId)
+	err := s.Db.QueryRow(context.Background(), "insert into users (supabase_uid) values ($1) on conflict do nothing returning id", fireUid).Scan(&userId)
 
 	if err != nil {
 		return nil, &types.BadRequestError

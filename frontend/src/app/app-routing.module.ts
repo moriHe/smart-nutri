@@ -4,7 +4,7 @@ import { MyRecipesComponent } from './my-recipes/my-recipes.component';
 import { RecipeDetailsComponent } from './recipe-details/recipe-details.component';
 import { SearchComponent } from './search/search.component';
 import { SignupComponent } from './signup/signup.component';
-import { SignupSuccessComponent } from './signup-success/signup-success.component';
+import { WelcomeComponent } from './signup-success/signup-success.component';
 import { LandingPageComponent } from './landing-page/landing-page.component';
 import { authGuard } from 'guards/auth.guard';
 import { noUserGuard } from 'guards/no-user.guard';
@@ -19,6 +19,7 @@ import { DataProtectionComponent } from './legal/data-protection/data-protection
 import { RedirectComponentComponent } from './redirect-component/redirect-component.component';
 import { IngredientDatabaseComponent } from './legal/ingredient-database/ingredient-database.component';
 import { AccountComponent } from './account/account.component';
+import { RegisterRedirectComponent } from './register-redirect/register-redirect.component';
 
 const routes: Routes = [
   {path: "", component: LandingPageComponent, canActivate: [noUserGuard]},
@@ -26,7 +27,7 @@ const routes: Routes = [
   {path: "rezept/:id", component: RecipeDetailsComponent, canActivate: [authGuard, familyGuard]},
   {path: "suche/:recipeId", component: SearchComponent, canActivate: [authGuard, familyGuard]},
   {path: "registrieren", component: SignupComponent, canActivate: [noUserGuard]},
-  {path: "willkommen", component: SignupSuccessComponent, canActivate: [authGuard, noFamilyGuard]},
+  {path: "willkommen", component: WelcomeComponent, canActivate: [authGuard, noFamilyGuard]},
   {path: "essensplan", component: MealplansComponent, canActivate: [authGuard, familyGuard]},
   {path: "einkaufszettel", component: ShoppingListComponent, canActivate: [authGuard, familyGuard]},
   {path: "einladung/akzeptieren", component: AcceptInviationComponent, canActivate: [authGuard]},
@@ -35,6 +36,7 @@ const routes: Routes = [
   {path: "impressum", component: ImprintComponent},
   {path: "datenschutz", component: DataProtectionComponent},
   {path: "datenbank-nahrungsmittel", component: IngredientDatabaseComponent},
+  {path: "registrieren/redirect", component: RegisterRedirectComponent},
   {path: "**", component: RedirectComponentComponent}
 ];
 

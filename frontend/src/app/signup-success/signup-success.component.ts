@@ -10,7 +10,7 @@ import { take } from 'rxjs';
   templateUrl: './signup-success.component.html',
   styleUrls: ['./signup-success.component.css']
 })
-export class SignupSuccessComponent {
+export class WelcomeComponent {
   name = ""
 
   createFamily() {
@@ -26,17 +26,6 @@ export class SignupSuccessComponent {
             }}
           )
         }
-    })
-  }
-
-  ngOnInit(): void {
-    this.userService.user$.subscribe(user => {
-      if (user) {
-        return
-      }
-      this.userService.addUser().subscribe(() => {
-        this.userService.getUser().subscribe()
-      })
     })
   }
 

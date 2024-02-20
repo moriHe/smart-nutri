@@ -35,12 +35,12 @@ func (s *Server) GetIdToken(c *gin.Context) string {
 
 func (s *Server) AuthMiddleWare() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		fireUid := s.GetIdToken(c)
-		if fireUid == "" {
+		supabaseUid := s.GetIdToken(c)
+		if supabaseUid == "" {
 			responses.ErrorResponse(c, &types.UnauthorizedError)
 			return
 		}
-		user, err := s.store.GetUser(fireUid)
+		user, err := s.store.GetUser(supabaseUid)
 		if err != nil {
 			responses.ErrorResponse(c, &types.UnauthorizedError)
 			return

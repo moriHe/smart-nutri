@@ -43,7 +43,7 @@ export class SupabaseService {
   }
 
   async signUp(email: string, password: string) {
-    return await this.supabase.auth.signUp({email, password, options: {emailRedirectTo: `${environment.frontendBaseUrl}/willkommen/`}})
+    return await this.supabase.auth.signUp({email, password, options: {emailRedirectTo: `${environment.frontendBaseUrl}/registrieren/redirect/`}})
   }
 
   async login(email: string, password: string) {

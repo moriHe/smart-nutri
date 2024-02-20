@@ -20,7 +20,7 @@ import {MatChipsModule} from '@angular/material/chips';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { CreateRecipeDialogComponent } from './create-recipe-dialog/create-recipe-dialog.component';
 import {CdkAccordionModule} from '@angular/cdk/accordion';
-import { SignupSuccessComponent } from './signup-success/signup-success.component';
+import { WelcomeComponent } from './signup-success/signup-success.component';
 import { LandingPageComponent } from './landing-page/landing-page.component';
 import { AuthInterceptor } from './auth.interceptor';
 import { MealplansComponent } from './mealplans/mealplans/mealplans.component';
@@ -54,6 +54,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatDividerModule} from '@angular/material/divider';
 import { HttpErrorInterceptor } from './http-error.interceptor';
 import { AccountComponent } from './account/account.component';
+import { RegisterRedirectComponent } from './register-redirect/register-redirect.component';
 
 
 
@@ -67,7 +68,7 @@ import { AccountComponent } from './account/account.component';
     SearchIngredientDialogComponent,
     CreateRecipeDialogComponent,
     SignupComponent,
-    SignupSuccessComponent,
+    WelcomeComponent,
     LandingPageComponent,
     MealplansComponent,
     CreateMealplanDialogComponent,
@@ -87,7 +88,8 @@ import { AccountComponent } from './account/account.component';
     RedirectComponentComponent,
     IngredientSourceComponent,
     IngredientDatabaseComponent,
-    AccountComponent
+    AccountComponent,
+    RegisterRedirectComponent
   ],
   imports: [
     BrowserModule,

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from 'api/user/user.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-register-redirect',
@@ -8,23 +9,35 @@ import { UserService } from 'api/user/user.service';
   styleUrls: ['./register-redirect.component.css']
 })
 export class RegisterRedirectComponent {
+  private destroy$ = new Subject<void>();
 
   ngOnInit(): void {
-    this.userService.user$.subscribe(user => {
+    this.userService.user$.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(user => {
       if (user) {
-         this.router.navigate(["/willkommen"])
+         this.router.navigate(["/willkommen"]);
       } else {
-        this.userService.addUser().subscribe(() => {
-          this.userService.getUser().subscribe((activeFamilyId) => {
+        this.userService.addUser().pipe(
+          takeUntil(this.destroy$)
+        ).subscribe(() => {
+          this.userService.getUser().pipe(
+            takeUntil(this.destroy$)
+          ).subscribe((activeFamilyId) => {
             if (activeFamilyId) {
-              return this.router.navigate(["/meine-rezepte"])
+              this.router.navigate(["/meine-rezepte"]);
             } else {
-              return this.router.navigate(["/willkommen"])
+              this.router.navigate(["/willkommen"]);
             }
-          })
-        })
+          });
+        });
       }
-    })
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   constructor(

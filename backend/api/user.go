@@ -65,13 +65,13 @@ func injectAuthorizationHeader(req *http.Request, value string) {
 
 func (s *Server) handleDeleteUser(c *gin.Context) {
 	user := contextmethods.GetUserFromContext(c)
+	supabaseUid := s.GetIdToken(c)
+
 	err := s.store.DeleteUser(user.Id)
 	if err != nil {
 		responses.ErrorResponse(c, err)
 		return
 	}
-
-	supabaseUid := s.GetIdToken(c)
 
 	supabaseUrl := os.Getenv("SUPABASE_URL")
 	supabaseKey := os.Getenv("SUPABASE_ADMIN_KEY")

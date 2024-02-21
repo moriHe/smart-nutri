@@ -59,6 +59,12 @@ func (s *Storage) DeleteUser(userId int) error {
 	}
 	defer tx.Rollback(context.Background())
 
+	_, err = tx.Exec(context.Background(), "update users set active_family_id = NULL where id = $1", userId)
+	if err != nil {
+		fmt.Println(err)
+		return &types.InternalServerError
+	}
+
 	rows, err := tx.Query(context.Background(), "select id, family_id, user_role from users_familys where user_id = $1", userId)
 	if err != nil {
 		return types.NewRequestError(&types.InternalServerError, "2")
@@ -97,6 +103,11 @@ func (s *Storage) DeleteUser(userId int) error {
 			if err != nil {
 				return types.NewRequestError(&types.InternalServerError, "7")
 			}
+
+			_, err = tx.Exec(context.Background(), "delete from invitations where family_id = $1", aFamily.Id)
+			if err != nil {
+				return types.NewRequestError(&types.InternalServerError, "7a")
+			}
 		}
 	}
 
@@ -104,40 +115,47 @@ func (s *Storage) DeleteUser(userId int) error {
 		_, err = tx.Exec(context.Background(), "DELETE FROM invitations WHERE family_id = $1", familyId)
 		if err != nil {
 			fmt.Println(err)
-			return types.NewRequestError(&types.InternalServerError, "5")
+			return types.NewRequestError(&types.InternalServerError, "5a")
 		}
 
 		_, err = tx.Exec(context.Background(), "DELETE FROM shopping_list WHERE family_id = $1", familyId)
 		if err != nil {
 			fmt.Println(err)
-			return types.NewRequestError(&types.InternalServerError, "5")
+			return types.NewRequestError(&types.InternalServerError, "5b")
 		}
 
 		_, err = tx.Exec(context.Background(), "DELETE FROM mealplans WHERE family_id = $1", familyId)
 		if err != nil {
 			fmt.Println(err)
-			return types.NewRequestError(&types.InternalServerError, "5")
+			return types.NewRequestError(&types.InternalServerError, "5c")
 		}
 		_, err = tx.Exec(context.Background(), "DELETE FROM recipes WHERE family_id = $1", familyId)
 		if err != nil {
 			fmt.Println(err)
-			return types.NewRequestError(&types.InternalServerError, "5")
+			return types.NewRequestError(&types.InternalServerError, "5d")
 		}
 		_, err = tx.Exec(context.Background(), "DELETE FROM users_familys WHERE family_id = $1", familyId)
 		if err != nil {
 			fmt.Println(err)
-			return types.NewRequestError(&types.InternalServerError, "5")
+			return types.NewRequestError(&types.InternalServerError, "5e")
 		}
-		_, err = tx.Exec(context.Background(), "DELETE FROM users WHERE id = $1", userId)
-		if err != nil {
-			fmt.Println(err)
-			return types.NewRequestError(&types.InternalServerError, "5")
-		}
+
 		_, err = tx.Exec(context.Background(), "DELETE FROM familys WHERE id = $1", familyId)
 		if err != nil {
 			fmt.Println(err)
-			return types.NewRequestError(&types.InternalServerError, "5")
+			return types.NewRequestError(&types.InternalServerError, "5f")
 		}
+	}
+
+	_, err = tx.Exec(context.Background(), "delete from users_familys where user_id = $1", userId)
+	if err != nil {
+		return types.NewRequestError(&types.InternalServerError, "7b")
+	}
+
+	_, err = tx.Exec(context.Background(), "DELETE FROM users WHERE id = $1", userId)
+	if err != nil {
+		fmt.Println(err)
+		return types.NewRequestError(&types.InternalServerError, "5g")
 	}
 
 	err = tx.Commit(context.Background())

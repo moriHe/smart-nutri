@@ -55,19 +55,23 @@ type AffiliatedFamily struct {
 func (s *Storage) DeleteUser(userId int) error {
 	tx, err := s.Db.Begin(context.Background())
 	if err != nil {
-		return types.NewRequestError(&types.InternalServerError, "1")
+		fmt.Println(err)
+		return &types.InternalServerError
 	}
 	defer tx.Rollback(context.Background())
 
+	// set active family id to null to avoid foreign key conflicts
 	_, err = tx.Exec(context.Background(), "update users set active_family_id = NULL where id = $1", userId)
 	if err != nil {
 		fmt.Println(err)
 		return &types.InternalServerError
 	}
 
+	// select all familys the user is affiliated with
 	rows, err := tx.Query(context.Background(), "select id, family_id, user_role from users_familys where user_id = $1", userId)
 	if err != nil {
-		return types.NewRequestError(&types.InternalServerError, "2")
+		fmt.Println(err)
+		return &types.InternalServerError
 	}
 
 	affiliatedFamilys := make([]AffiliatedFamily, 0)
@@ -76,14 +80,18 @@ func (s *Storage) DeleteUser(userId int) error {
 		var aFamily AffiliatedFamily
 		err := rows.Scan(&aFamily.Id, &aFamily.FamilyId, &aFamily.Role)
 		if err != nil {
-			return types.NewRequestError(&types.InternalServerError, "3")
+			fmt.Println(err)
+			return &types.InternalServerError
 		}
+		// If user is not the owner, they can be deleted from users_familys
 		if aFamily.Role != "OWNER" {
 			err := tx.QueryRow(context.Background(), "delete from users_familys where id = $1", aFamily.Id)
 			if err != nil {
-				return types.NewRequestError(&types.InternalServerError, "4")
+				fmt.Println(err)
+				return &types.InternalServerError
 			}
 		} else {
+			// If user is the owner, further actions need to be taken
 			affiliatedFamilys = append(affiliatedFamilys, aFamily)
 		}
 	}
@@ -91,76 +99,87 @@ func (s *Storage) DeleteUser(userId int) error {
 	wholeDeletion := make([]int, 0)
 	for _, aFamily := range affiliatedFamilys {
 		var id int
+		// Check if there is at least one other member in the user's (OWNER) family
 		err := tx.QueryRow(context.Background(), "select id from users_familys where family_id = $1 and user_id != $2", aFamily.FamilyId, userId).Scan(&id)
 		if err != nil {
 			if err == pgx.ErrNoRows {
+				// If no other members, further action to delete the user is processed in the next loop
 				wholeDeletion = append(wholeDeletion, aFamily.FamilyId)
 			} else {
-				return types.NewRequestError(&types.InternalServerError, "6")
+				fmt.Println(err)
+				return &types.InternalServerError
 			}
 		} else {
+			// If there is another member, the other member gets assigned the user_role OWNER
 			_, err = tx.Exec(context.Background(), "update users_familys set user_role = $1 where id = $2", "OWNER", id)
 			if err != nil {
-				return types.NewRequestError(&types.InternalServerError, "7")
+				fmt.Println(err)
+				return &types.InternalServerError
 			}
-
+			// Any pending invitation links generated from the old OWNER can be deleted
 			_, err = tx.Exec(context.Background(), "delete from invitations where family_id = $1", aFamily.Id)
 			if err != nil {
-				return types.NewRequestError(&types.InternalServerError, "7a")
+				fmt.Println(err)
+				return &types.InternalServerError
 			}
 		}
 	}
 
+	// This runs the delete logic for each instance where the user was the sole person in the family
 	for _, familyId := range wholeDeletion {
 		_, err = tx.Exec(context.Background(), "DELETE FROM invitations WHERE family_id = $1", familyId)
 		if err != nil {
 			fmt.Println(err)
-			return types.NewRequestError(&types.InternalServerError, "5a")
+			return &types.InternalServerError
 		}
 
 		_, err = tx.Exec(context.Background(), "DELETE FROM shopping_list WHERE family_id = $1", familyId)
 		if err != nil {
 			fmt.Println(err)
-			return types.NewRequestError(&types.InternalServerError, "5b")
+			return &types.InternalServerError
 		}
 
 		_, err = tx.Exec(context.Background(), "DELETE FROM mealplans WHERE family_id = $1", familyId)
 		if err != nil {
 			fmt.Println(err)
-			return types.NewRequestError(&types.InternalServerError, "5c")
+			return &types.InternalServerError
 		}
 		_, err = tx.Exec(context.Background(), "DELETE FROM recipes WHERE family_id = $1", familyId)
 		if err != nil {
 			fmt.Println(err)
-			return types.NewRequestError(&types.InternalServerError, "5d")
+			return &types.InternalServerError
 		}
 		_, err = tx.Exec(context.Background(), "DELETE FROM users_familys WHERE family_id = $1", familyId)
 		if err != nil {
 			fmt.Println(err)
-			return types.NewRequestError(&types.InternalServerError, "5e")
+			return &types.InternalServerError
 		}
 
 		_, err = tx.Exec(context.Background(), "DELETE FROM familys WHERE id = $1", familyId)
 		if err != nil {
 			fmt.Println(err)
-			return types.NewRequestError(&types.InternalServerError, "5f")
+			return &types.InternalServerError
 		}
 	}
 
+	// Lastly, delete the user from the final tables users_familys and users.
+	// This is generally a further action to "If there is another member, the other member gets assigned the user_role OWNER"
 	_, err = tx.Exec(context.Background(), "delete from users_familys where user_id = $1", userId)
 	if err != nil {
-		return types.NewRequestError(&types.InternalServerError, "7b")
+		fmt.Println(err)
+		return &types.InternalServerError
 	}
 
 	_, err = tx.Exec(context.Background(), "DELETE FROM users WHERE id = $1", userId)
 	if err != nil {
 		fmt.Println(err)
-		return types.NewRequestError(&types.InternalServerError, "5g")
+		return &types.InternalServerError
 	}
 
 	err = tx.Commit(context.Background())
 	if err != nil {
-		return types.NewRequestError(&types.InternalServerError, "8")
+		fmt.Println(err)
+		return &types.InternalServerError
 	}
 
 	return nil

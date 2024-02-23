@@ -2,8 +2,6 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/moriHe/smart-nutri/api/responses"
-	"github.com/moriHe/smart-nutri/types"
 )
 
 func extractBearerToken(authHeader string) string {
@@ -37,12 +35,10 @@ func (s *Server) AuthMiddleWare() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		supabaseUid := s.GetIdToken(c)
 		if supabaseUid == "" {
-			responses.ErrorResponse(c, &types.UnauthorizedError)
 			return
 		}
 		user, err := s.store.GetUser(supabaseUid)
 		if err != nil {
-			responses.ErrorResponse(c, &types.UnauthorizedError)
 			return
 		}
 

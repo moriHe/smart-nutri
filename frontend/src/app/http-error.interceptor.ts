@@ -18,7 +18,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     if (this.shouldShowGenericError(request.method, request.url)) {
       return next.handle(request).pipe(
-        catchError((error) => {
+        catchError(() => {
           // Handle errors for specific endpoints
           this.snackbarService.openGenericErrorSnackbar()
           return []

@@ -18,6 +18,10 @@ func (s *Server) mealPlanRoutes(r *gin.Engine) {
 
 func (s *Server) handleGetMealPlan(c *gin.Context) {
 	user := contextmethods.GetUserFromContext(c)
+	if user == nil {
+		responses.ErrorResponse(c, &types.UnauthorizedError)
+		return
+	}
 	// error handling if user nil?
 	dateStr := c.Param("date")
 	forShoppingListStr := c.Query("forShoppingList")
@@ -43,6 +47,10 @@ func (s *Server) handleGetMealPlanItem(c *gin.Context) {
 
 func (s *Server) handlePostMealPlanItem(c *gin.Context) {
 	user := contextmethods.GetUserFromContext(c)
+	if user == nil {
+		responses.ErrorResponse(c, &types.UnauthorizedError)
+		return
+	}
 	var payload types.PostMealPlanItem
 
 	if err := c.BindJSON(&payload); err != nil {

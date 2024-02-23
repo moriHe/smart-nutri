@@ -19,6 +19,10 @@ func (s *Server) recipeRoutes(r *gin.Engine) {
 
 func (s *Server) handleGetAllRecipes(c *gin.Context) {
 	user := contextmethods.GetUserFromContext(c)
+	if user == nil {
+		responses.ErrorResponse(c, &types.UnauthorizedError)
+		return
+	}
 
 	if user.ActiveFamilyId == nil {
 		responses.ErrorResponse(c, types.NewRequestError(&types.BadRequestError, "No family found"))
@@ -31,6 +35,10 @@ func (s *Server) handleGetAllRecipes(c *gin.Context) {
 func (s *Server) handleGetRecipeById(c *gin.Context) {
 	id := c.Param("id")
 	user := contextmethods.GetUserFromContext(c)
+	if user == nil {
+		responses.ErrorResponse(c, &types.UnauthorizedError)
+		return
+	}
 
 	if user.ActiveFamilyId == nil {
 		responses.ErrorResponse(c, types.NewRequestError(&types.BadRequestError, "No family found"))
@@ -44,6 +52,10 @@ func (s *Server) handleGetRecipeById(c *gin.Context) {
 
 func (s *Server) handlePostRecipe(c *gin.Context) {
 	user := contextmethods.GetUserFromContext(c)
+	if user == nil {
+		responses.ErrorResponse(c, &types.UnauthorizedError)
+		return
+	}
 
 	var payload types.PostRecipe
 

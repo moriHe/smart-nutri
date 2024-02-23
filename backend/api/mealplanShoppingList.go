@@ -17,6 +17,10 @@ func (s *Server) mealplanShoppingListRoutes(r *gin.Engine) {
 
 func (s *Server) handleGetMealplanItemsShoppingList(c *gin.Context) {
 	user := contextmethods.GetUserFromContext(c)
+	if user == nil {
+		responses.ErrorResponse(c, &types.UnauthorizedError)
+		return
+	}
 	mealplanItemsShoppingList, err := s.store.GetMealPlanItemsShoppingList(user.ActiveFamilyId)
 
 	responses.HandleResponse(c, mealplanItemsShoppingList, err)
@@ -24,6 +28,10 @@ func (s *Server) handleGetMealplanItemsShoppingList(c *gin.Context) {
 
 func (s *Server) handlePostShoppingList(c *gin.Context) {
 	user := contextmethods.GetUserFromContext(c)
+	if user == nil {
+		responses.ErrorResponse(c, &types.UnauthorizedError)
+		return
+	}
 	mealplanId := c.Param("mealplanId")
 
 	var payload []types.PostShoppingListMealplanItem
@@ -42,12 +50,20 @@ func (s *Server) handleDeleteMealPlanItemShoppingList(c *gin.Context) {
 
 func (s *Server) handleDeleteShoppingListItems(c *gin.Context) {
 	user := contextmethods.GetUserFromContext(c)
+	if user == nil {
+		responses.ErrorResponse(c, &types.UnauthorizedError)
+		return
+	}
 	ids := c.Param("ids")
 	responses.HandleResponse(c, "Deleted shopping list items", s.store.DeleteShoppingListItems(ids, user.ActiveFamilyId))
 }
 
 func (s *Server) handleGetShoppingList(c *gin.Context) {
 	user := contextmethods.GetUserFromContext(c)
+	if user == nil {
+		responses.ErrorResponse(c, &types.UnauthorizedError)
+		return
+	}
 
 	shoppingList, err := s.store.GetShoppingListSorted(user.ActiveFamilyId)
 	responses.HandleResponse(c, shoppingList, err)

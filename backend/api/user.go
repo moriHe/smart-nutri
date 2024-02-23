@@ -25,6 +25,10 @@ func (s *Server) userRoutes(r *gin.Engine) {
 
 func (s *Server) handleGetUser(c *gin.Context) {
 	user := contextmethods.GetUserFromContext(c)
+	if user == nil {
+		responses.ErrorResponse(c, &types.UnauthorizedError)
+		return
+	}
 	responses.HandleResponse(c, user, nil)
 }
 
@@ -42,12 +46,20 @@ func (s *Server) handlePostUser(c *gin.Context) {
 
 func (s *Server) handleGetUserFamilys(c *gin.Context) {
 	user := contextmethods.GetUserFromContext(c)
+	if user == nil {
+		responses.ErrorResponse(c, &types.UnauthorizedError)
+		return
+	}
 	familys, err := s.store.GetUserFamilys(user.Id)
 	responses.HandleResponse(c, familys, err)
 }
 
 func (s *Server) handlePatchUser(c *gin.Context) {
 	user := contextmethods.GetUserFromContext(c)
+	if user == nil {
+		responses.ErrorResponse(c, &types.UnauthorizedError)
+		return
+	}
 	var payload types.PatchUser
 	if err := c.BindJSON(&payload); err != nil {
 		responses.ErrorResponse(c, &types.BadRequestError)
@@ -65,6 +77,10 @@ func injectAuthorizationHeader(req *http.Request, value string) {
 
 func (s *Server) handleDeleteUser(c *gin.Context) {
 	user := contextmethods.GetUserFromContext(c)
+	if user == nil {
+		responses.ErrorResponse(c, &types.UnauthorizedError)
+		return
+	}
 	supabaseUid := s.GetIdToken(c)
 
 	err := s.store.DeleteUser(user.Id)

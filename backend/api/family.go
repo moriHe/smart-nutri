@@ -13,6 +13,10 @@ func (s *Server) familyRoutes(r *gin.Engine) {
 
 func (s *Server) handlePostFamily(c *gin.Context) {
 	user := contextmethods.GetUserFromContext(c)
+	if user == nil {
+		responses.ErrorResponse(c, &types.UnauthorizedError)
+		return
+	}
 	var payload types.FamilyBody
 
 	if err := c.BindJSON(&payload); err != nil {

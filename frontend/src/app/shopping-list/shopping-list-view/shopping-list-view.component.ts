@@ -62,7 +62,6 @@ displayDate(dateString: string) {
 }
 
 displayMarket(market: Markets) {
-  console.log("test")
   this.snackbarRef = this.snackbarService.openSnackbar(this.marketsService.MarketDisplay[market], "")
 }
 

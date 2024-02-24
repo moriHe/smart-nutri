@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class SnackbarService {
-  openSnackbar(message: string, action: string): Observable<void> {
+  openSnackbar(message: string, action: string): MatSnackBarRef<SimpleSnackBar> {
   const ref: MatSnackBarRef<SimpleSnackBar> = this.snackbar.open(
       message, action, 
       {
@@ -16,7 +16,7 @@ export class SnackbarService {
       }
     )
 
-    return ref.onAction()
+    return ref
   }
 
   openGenericErrorSnackbar(): Observable<void> {

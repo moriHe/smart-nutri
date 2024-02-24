@@ -36,10 +36,10 @@
             <div
             *ngIf="category === 'TODAY'"
                  (click)="$event.stopPropagation();"
-                 [matTooltipHideDelay]="1000"
-                 [matTooltipPosition]="'above'"
-                 [matTooltip]="marketsService.MarketDisplay[item.market]">
-                 
+                 (mouseenter)="displayMarket(item.market)" 
+                 (touchstart)="displayMarket(item.market)"
+                 (mouseleave)="dismissSnackbar()"
+                 (touchend)="dismissSnackbar()">
                  <mat-icon
               
                  [ngStyle]="{color: 'gray'}" >
@@ -53,7 +53,14 @@
         <div *ngFor="let individualItem of item.items">
           <div class="flex w-full gap-5 md:gap-20">
             <mat-icon color="primary" class="cursor-pointer mr-5" (click)="removeFromShoppingList([individualItem.shoppingListId], $event)">done</mat-icon>
-            <mat-icon [matTooltip]="displayDate(individualItem.mealplanDate)" [ngStyle]="{color: 'gray'}">calendar_month</mat-icon>
+            <mat-icon 
+            (mouseenter)="displayDate(individualItem.mealplanDate)" 
+            (touchstart)="displayDate(individualItem.mealplanDate)"
+            (mouseleave)="dismissSnackbar()"
+            (touchend)="dismissSnackbar()"
+            [ngStyle]="{color: 'gray'}"
+            >calendar_month
+          </mat-icon>
             <p class="mmd:w-1/12 w-1/6 w-text-xs text-slate-400">{{roundAmount(individualItem.mealplanPortions, individualItem.recipeIngredientAmountPerPortion)}} <span>{{unitsService.UnitDisplay[individualItem.recipeIngredientUnit]}}</span></p>
             <p class="text-xs text-slate-400">{{individualItem.recipeName}}</p>
           </div>

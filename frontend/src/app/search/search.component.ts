@@ -67,7 +67,7 @@ export class SearchComponent {
           next: (recipeIngredientId) => {
             this.snackbarService.openSnackbar(
               `Hinzugefügt: ${this.currentIngredientName}`, "Rückgängig"
-              ).subscribe(() => {
+              ).onAction().subscribe(() => {
                 this.recipesService.removeRecipeIngredient(recipeIngredientId).subscribe()
               })
 

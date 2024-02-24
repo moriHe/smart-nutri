@@ -1,12 +1,15 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { DatePipe } from '@angular/common';
-import { Component, Inject, Input, LOCALE_ID, ViewChild } from '@angular/core';
+import { Component, Inject, Input, LOCALE_ID, Renderer2, ViewChild } from '@angular/core';
 import { MatExpansionPanel } from '@angular/material/expansion';
+import { MatSnackBarRef, SimpleSnackBar } from '@angular/material/snack-bar';
 import { MealplansService } from 'api/mealplans/mealplans.service';
+import { Markets } from 'api/recipes/recipes.interface';
 import { ShoppingListByCategory, shoppingListCategories } from 'api/shopping-list/shopping-list.interface';
 import { ShoppingListService } from 'api/shopping-list/shopping-list.service';
 import { take } from 'rxjs';
 import { MarketsService } from 'services/markets.service';
+import { SnackbarService } from 'services/snackbar.service';
 import { UnitsService } from 'services/units.service';
 
 @Component({
@@ -16,6 +19,7 @@ import { UnitsService } from 'services/units.service';
 })
 export class ShoppingListViewComponent {
   isMobile = false
+  snackbarRef!: MatSnackBarRef<SimpleSnackBar>
   @Input() openAddItemsView!: () => void
   categories = shoppingListCategories
   shoppingListByCategory: ShoppingListByCategory = {
@@ -37,8 +41,7 @@ export class ShoppingListViewComponent {
     this.matExpansionPanelElement.toggle()
   }
 
-
-displayDate(dateString: string): string {
+displayDate(dateString: string) {
   const mealplanDateStr = new Date(dateString).toDateString()
   const today = new Date()
   const yesterday = new Date(today);
@@ -55,7 +58,16 @@ displayDate(dateString: string): string {
     format = "'Morgen', " + format;
   }
   const displayDate = this.datePipe.transform(mealplanDateStr, format, undefined, this.locale);
-  return displayDate || '';
+  this.snackbarRef = this.snackbarService.openSnackbar(displayDate || "", "")
+}
+
+displayMarket(market: Markets) {
+  console.log("test")
+  this.snackbarRef = this.snackbarService.openSnackbar(this.marketsService.MarketDisplay[market], "")
+}
+
+dismissSnackbar() {
+  this.snackbarRef.dismiss()
 }
 
 roundAmount(portionAmount: number, amountPerPortion: number): string {
@@ -99,6 +111,7 @@ removeFromShoppingList(ids: number[], event: Event) {
   }
 
   constructor(
+    private snackbarService: SnackbarService,
     private breakpointObserver: BreakpointObserver,
     private datePipe: DatePipe,
     @Inject(LOCALE_ID) private locale: string,

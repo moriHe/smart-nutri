@@ -35,11 +35,8 @@
             </div>
             <div
             *ngIf="category === 'TODAY'"
-                 (click)="$event.stopPropagation();"
-                 (mouseenter)="displayMarket(item.market)" 
-                 (touchstart)="displayMarket(item.market)"
-                 (mouseleave)="dismissSnackbar()"
-                 (touchend)="dismissSnackbar()">
+                 (click)="displayMarket($event, item.market);"
+                 >
                  <mat-icon
               
                  [ngStyle]="{color: 'gray'}" >
@@ -54,10 +51,7 @@
           <div class="flex w-full gap-5 md:gap-20">
             <mat-icon color="primary" class="cursor-pointer mr-5" (click)="removeFromShoppingList([individualItem.shoppingListId], $event)">done</mat-icon>
             <mat-icon 
-            (mouseenter)="displayDate(individualItem.mealplanDate)" 
-            (touchstart)="displayDate(individualItem.mealplanDate)"
-            (mouseleave)="dismissSnackbar()"
-            (touchend)="dismissSnackbar()"
+            (click)="displayDate($event, individualItem.mealplanDate)"
             [ngStyle]="{color: 'gray'}"
             >calendar_month
           </mat-icon>

@@ -19,7 +19,6 @@ import { UnitsService } from 'services/units.service';
 })
 export class ShoppingListViewComponent {
   isMobile = false
-  snackbarRef!: MatSnackBarRef<SimpleSnackBar>
   @Input() openAddItemsView!: () => void
   categories = shoppingListCategories
   shoppingListByCategory: ShoppingListByCategory = {
@@ -41,7 +40,8 @@ export class ShoppingListViewComponent {
     this.matExpansionPanelElement.toggle()
   }
 
-displayDate(dateString: string) {
+displayDate(event: MouseEvent, dateString: string) {
+  event.stopPropagation()
   const mealplanDateStr = new Date(dateString).toDateString()
   const today = new Date()
   const yesterday = new Date(today);
@@ -58,15 +58,12 @@ displayDate(dateString: string) {
     format = "'Morgen', " + format;
   }
   const displayDate = this.datePipe.transform(mealplanDateStr, format, undefined, this.locale);
-  this.snackbarRef = this.snackbarService.openSnackbar(displayDate || "", "")
+  this.snackbarService.openSnackbar(displayDate || "", "")
 }
 
-displayMarket(market: Markets) {
-  this.snackbarRef = this.snackbarService.openSnackbar(this.marketsService.MarketDisplay[market], "")
-}
-
-dismissSnackbar() {
-  this.snackbarRef.dismiss()
+displayMarket(event: MouseEvent, market: Markets) {
+  event.stopPropagation()
+  this.snackbarService.openSnackbar(this.marketsService.MarketDisplay[market], "")
 }
 
 roundAmount(portionAmount: number, amountPerPortion: number): string {

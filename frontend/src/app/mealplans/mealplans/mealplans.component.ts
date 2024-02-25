@@ -12,6 +12,7 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { RecipesService } from 'api/recipes/recipes.service';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { CreateMealplanBottomsheetComponent } from '../create-mealplan-bottomsheet/create-mealplan-bottomsheet.component';
+import { isToday, isTomorrow, isYesterday } from 'date-fns';
 
 @Component({
   selector: 'app-mealplans',
@@ -29,8 +30,7 @@ export class MealplansComponent {
   mealplan: Mealplans = []
 
   private mealplanSubscription!: Subscription
-  today: Date = new Date()
-  selectedDate: Date = this.today
+  selectedDate: Date = new Date()
   private updateMealplan(): void {
       if (this.mealplanSubscription) {
         this.mealplanSubscription.unsubscribe();
@@ -58,18 +58,12 @@ export class MealplansComponent {
   }
 
   displayDate(): string {
-
-    const yesterday = new Date(this.today);
-    yesterday.setDate(this.today.getDate() - 1);
-    const tomorrow = new Date(this.today);
-    tomorrow.setDate(this.today.getDate() + 1);
-    let format = 'EEEE, dd. MMMM';
-
-    if (this.selectedDate.toDateString() === this.today.toDateString()) {
+    let format = 'EE, dd. MMM.';
+    if (isToday(this.selectedDate)) {
       format = "'Heute', " + format;
-    } else if (this.selectedDate.toDateString() === yesterday.toDateString()) {
+    } else if (isYesterday(this.selectedDate)) {
       format = "'Gestern', " + format;
-    } else if (this.selectedDate.toDateString() === tomorrow.toDateString()) {
+    } else if (isTomorrow(this.selectedDate)) {
       format = "'Morgen', " + format;
     }
 

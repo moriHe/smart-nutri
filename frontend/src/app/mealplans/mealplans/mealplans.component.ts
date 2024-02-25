@@ -58,7 +58,7 @@ export class MealplansComponent {
   }
 
   displayDate(): string {
-    let format = 'EE, dd. MMM.';
+    let format = 'EEEE dd. MMM';
     if (isToday(this.selectedDate)) {
       format = "'Heute', " + format;
     } else if (isYesterday(this.selectedDate)) {

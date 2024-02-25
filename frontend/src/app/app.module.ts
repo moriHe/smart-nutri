@@ -1,4 +1,4 @@
-import { NgModule, APP_INITIALIZER } from '@angular/core';
+import { NgModule, APP_INITIALIZER, LOCALE_ID } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
@@ -55,7 +55,10 @@ import {MatDividerModule} from '@angular/material/divider';
 import { HttpErrorInterceptor } from './http-error.interceptor';
 import { AccountComponent } from './account/account.component';
 import { RegisterRedirectComponent } from './register-redirect/register-redirect.component';
+import { registerLocaleData } from '@angular/common';
+import localeDe from '@angular/common/locales/de';
 
+registerLocaleData(localeDe)
 
 
 @NgModule({
@@ -118,6 +121,7 @@ import { RegisterRedirectComponent } from './register-redirect/register-redirect
     MatDividerModule
   ],
   providers: [
+    { provide: LOCALE_ID, useValue: 'de'},
     SupabaseService,
     {
       provide: APP_INITIALIZER,
